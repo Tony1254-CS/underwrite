@@ -295,3 +295,14 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
     - `ClaimRejected(uint256 indexed claimId, bytes32 indexed reasonHash)`
 - **Consequences**: Explicit custom errors allow deterministic testing and clean UI error reporting for the underwriter and adjudicator workflows.
 - **Status**: ACCEPTED
+---
+
+## DEC-021 — BondPool completion and cut-line not triggered (P2-T08, QG-2)
+
+- **Context**: `PHASES.md` P2-T08 specifies a cut-line checkpoint for BondPool. If `QG-2` is satisfied, the cut-line is not triggered and the real `BondPool.sol` is preserved across all execution tracks.
+- **Options**:
+  1. Trigger cut-line and substitute `StubBondPool.sol`.
+  2. Complete full BondPool test suite, invariants, demo script, and pass `QG-2`.
+- **Decision**: Complete `BondPool` fully. With 101 contract tests passing across 17 suites (including stateful invariants for INV-10, 11, 14, fuzz test for INV-11, and `ClaimDemo.s.sol`), Gate `QG-2` is passed and the cut-line is NOT triggered.
+- **Consequences**: Full underwriter capital backing, claims filing, adjudication payouts, and atomic consequence (qualification revocation on claim approval) are production-ready for the TypeScript engine and Base Sepolia deployment.
+- **Status**: ACCEPTED
