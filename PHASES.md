@@ -394,11 +394,12 @@ Read first: plan §9.7 (BondPool table), §9.8 (INV-10, 11, 14), §4.E, §12.2 P
   Spec: plan §9.7, §5.5
   Done when: `forge test --match-path "*BondPool*"` passes with a named test for each item.
   Evidence: 2026-10-16 14:42 UTC · antigravity-1 · cd contracts && forge test --match-path *BondPool.t.sol* passed (11 tests); all scenarios from plan §12.2 P2 verified; total 99 tests pass across 16 suites → 0
-- [ ] P2-T05 | A | needs: P2-T03 | Fuzz and invariant tests for INV-10, 11, 14
+- [x] P2-T05 | A | needs: P2-T03 | Fuzz and invariant tests for INV-10, 11, 14
   Do: handler that interleaves pay, reconcile, claims, time warps across window boundaries; `invariant_INV10_*`, `invariant_INV11_*`, `invariant_INV14_*`, `testFuzz_INV11_*`.
   Files: `contracts/test/invariant/**`
   Spec: plan §9.8
   Done when: `forge test --match-path "*invariant*"` passes; `grep -rq "INV11_" contracts/test` succeeds.
+  Evidence: 2026-10-16 14:54 UTC · antigravity-1 · cd contracts && forge test --match-path *invariant* passed (256 runs, 25,600 calls, 6 invariants: INV-1, 2, 5, 10, 11, 14); testFuzz_INV11 passed (512 runs); grep -rq INV11_ succeeded; total 100 tests pass across 16 suites → 0
 - [ ] P2-T06 | A | needs: P2-T04 | Anvil script: claim → revoke → next payment reverts
   Do: `contracts/script/ClaimDemo.s.sol` (or a node script) run on a fresh Anvil: agent pays T1, owner files a claim, adjudicator approves (payout + revoke in one tx), agent's next `pay` reverts `QualificationRevoked`. Print the three outcomes and tx hashes.
   Files: `contracts/script/ClaimDemo.s.sol scripts/claim-demo.sh`

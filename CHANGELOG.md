@@ -41,4 +41,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `contracts/test/BondPool.Claims.t.sol`: 4 unit tests verifying claim filing, expiration checks, adjudication payout calculation, and atomic suspension.
 - `contracts/test/integration/VaultBondPool.Integration.t.sol`: integration tests combining MockUSDC, BondPool, and UnderwriteVault verifying lock on activation, BondLockFailed, and InsufficientBacking with live BondPool.
 - `contracts/test/BondPool.t.sol`: comprehensive test suite with 11 tests verifying all plan §12.2 P2 requirements (lock failure, payout caps, duplicate claim rejection, T2/owner/reconciled claim rejection, atomic claim approve + revoke, insufficient backing drain, exhausted bond claim, release rules).
+- `contracts/test/invariant/`: stateful invariant suite with live BondPool executing 25,600 calls across 256 runs, validating INV-1, INV-2, INV-5, INV-10, INV-11, and INV-14 with interleaved pay, reconcile, claim filing, approval, rejection, and time warps; added property fuzz `testFuzz_INV11_payout_bounded_and_transferred_to_vault` (512 runs) to `contracts/test/BondPool.t.sol`.
 

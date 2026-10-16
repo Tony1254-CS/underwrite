@@ -4,16 +4,17 @@ pragma solidity 0.8.28;
 import { Test } from "forge-std/Test.sol";
 import { UnderwriteVault } from "../../src/UnderwriteVault.sol";
 import { MockUSDC } from "../../src/MockUSDC.sol";
-import { MockBondPool } from "../mocks/MockBondPool.sol";
+import { BondPool } from "../../src/BondPool.sol";
 
 contract InvariantHandler is Test {
     UnderwriteVault public immutable vault;
     MockUSDC public immutable token;
-    MockBondPool public immutable bondPool;
+    BondPool public immutable bondPool;
 
     bytes32 public immutable qualId;
     address public immutable agentKey;
     address public immutable owner;
+    address public immutable adjudicator;
     address public immutable vendor1;
     address public immutable vendor2;
     address public immutable unallowedRecipient;
@@ -29,14 +30,22 @@ contract InvariantHandler is Test {
     mapping(uint256 => bool) private seenWindows;
 
     uint256[] public pendingIds;
+    uint256[] public t1PaymentIds;
+    uint256[] public filedClaimIds;
+
+    // Tracking for INV-11 & INV-14
+    mapping(uint256 => uint256) public ghost_paymentPayoutCount; // paymentId => count of approved claim payouts
+    mapping(uint256 => uint256) public ghost_paymentPayoutTotal; // paymentId => total payout amount
+    uint256 public ghost_totalPayoutsForQual; // sum of all payouts for qualId
 
     constructor(
         UnderwriteVault _vault,
         MockUSDC _token,
-        MockBondPool _bondPool,
+        BondPool _bondPool,
         bytes32 _qualId,
         address _agentKey,
         address _owner,
+        address _adjudicator,
         address _vendor1,
         address _vendor2,
         address _unallowedRecipient
@@ -47,6 +56,7 @@ contract InvariantHandler is Test {
         qualId = _qualId;
         agentKey = _agentKey;
         owner = _owner;
+        adjudicator = _adjudicator;
         vendor1 = _vendor1;
         vendor2 = _vendor2;
         unallowedRecipient = _unallowedRecipient;
@@ -58,6 +68,10 @@ contract InvariantHandler is Test {
 
     function getWindowIds() external view returns (uint256[] memory) {
         return ghost_windowIds;
+    }
+
+    function getT1PaymentIds() external view returns (uint256[] memory) {
+        return t1PaymentIds;
     }
 
     function pay(uint256 recipientChoice, uint256 amount, uint256 invoiceNonce, uint256 memoNonce) external {
@@ -73,10 +87,11 @@ contract InvariantHandler is Test {
         }
 
         vm.prank(agentKey);
-        try vault.pay(recipient, amount, invoiceKey, memoHash) returns (uint256) {
+        try vault.pay(recipient, amount, invoiceKey, memoHash) returns (uint256 pid) {
             ghost_totalT1Paid += amount;
             ghost_successfulT1Count++;
             ghost_paidInvoiceKeys.push(invoiceKey);
+            t1PaymentIds.push(pid);
         } catch { }
     }
 
@@ -121,6 +136,50 @@ contract InvariantHandler is Test {
 
         vm.prank(owner);
         try vault.reconcile(qualId, upToPaymentId) { } catch { }
+    }
+
+    function fileClaim(uint256 paymentIndex, uint256 lossFractionSeed) external {
+        if (t1PaymentIds.length == 0) return;
+        uint256 pid = t1PaymentIds[paymentIndex % t1PaymentIds.length];
+
+        (,, uint256 pAmount,,,,,) = vault.payments(pid);
+        if (pAmount == 0) return;
+
+        uint256 lossAmount = bound(lossFractionSeed, 1, pAmount);
+        bytes32 evidenceHash = keccak256(abi.encode("claim-evidence", pid, lossAmount));
+
+        vm.prank(owner);
+        try bondPool.fileClaim(pid, lossAmount, evidenceHash) returns (uint256 claimId) {
+            filedClaimIds.push(claimId);
+        } catch { }
+    }
+
+    function approveClaim(uint256 claimIndex, uint256 lossFractionSeed) external {
+        if (filedClaimIds.length == 0) return;
+        uint256 claimId = filedClaimIds[claimIndex % filedClaimIds.length];
+
+        BondPool.Claim memory c = bondPool.getClaim(claimId);
+        if (c.status != BondPool.ClaimStatus.FILED) return;
+
+        uint256 approvedLoss = bound(lossFractionSeed, 1, c.lossAmount);
+
+        vm.prank(adjudicator);
+        try bondPool.approveClaim(claimId, approvedLoss) returns (uint256 payout) {
+            ghost_paymentPayoutCount[c.paymentId]++;
+            ghost_paymentPayoutTotal[c.paymentId] += payout;
+            ghost_totalPayoutsForQual += payout;
+        } catch { }
+    }
+
+    function rejectClaim(uint256 claimIndex) external {
+        if (filedClaimIds.length == 0) return;
+        uint256 claimId = filedClaimIds[claimIndex % filedClaimIds.length];
+
+        BondPool.Claim memory c = bondPool.getClaim(claimId);
+        if (c.status != BondPool.ClaimStatus.FILED) return;
+
+        vm.prank(adjudicator);
+        try bondPool.rejectClaim(claimId, keccak256("rejected")) { } catch { }
     }
 
     function warpTime(uint256 jump) external {
