@@ -1,0 +1,83 @@
+{
+  "vendors": [
+    {
+      "vendorId": "vendor-acme",
+      "name": "Acme Hardware & Tools",
+      "payoutAddress": "0x1111111111111111111111111111111111111111",
+      "perWindowCap": "500",
+      "active": true,
+      "activatesAt": 0
+    },
+    {
+      "vendorId": "vendor-bolt",
+      "name": "Bolt Fasteners & Supply",
+      "payoutAddress": "0x2222222222222222222222222222222222222222",
+      "perWindowCap": "500",
+      "active": true,
+      "activatesAt": 0
+    },
+    {
+      "vendorId": "vendor-cloud",
+      "name": "CloudScale Hosting LLC",
+      "payoutAddress": "0x3333333333333333333333333333333333333333",
+      "perWindowCap": "500",
+      "active": true,
+      "activatesAt": 0
+    },
+    {
+      "vendorId": "vendor-delta",
+      "name": "Delta Logistics & Freight",
+      "payoutAddress": "0x4444444444444444444444444444444444444444",
+      "perWindowCap": "1000",
+      "active": true,
+      "activatesAt": 0
+    },
+    {
+      "vendorId": "vendor-echo",
+      "name": "Echo Industrial Safety",
+      "payoutAddress": "0x5555555555555555555555555555555555555555",
+      "perWindowCap": "500",
+      "active": true,
+      "activatesAt": 0
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "poNumber": "PO-ACME-01",
+      "vendorId": "vendor-acme",
+      "amount": "500",
+      "remaining": "400",
+      "status": "OPEN"
+    },
+    {
+      "poNumber": "PO-BOLT-01",
+      "vendorId": "vendor-bolt",
+      "amount": "300",
+      "remaining": "180",
+      "status": "OPEN"
+    },
+    {
+      "poNumber": "PO-CLOUD-01",
+      "vendorId": "vendor-cloud",
+      "amount": "400",
+      "remaining": "320",
+      "status": "OPEN"
+    },
+    {
+      "poNumber": "PO-DELTA-01",
+      "vendorId": "vendor-delta",
+      "amount": "1000",
+      "remaining": "1000",
+      "status": "OPEN"
+    },
+    {
+      "poNumber": "PO-ECHO-CLOSED",
+      "vendorId": "vendor-echo",
+      "amount": "500",
+      "remaining": "0",
+      "status": "CLOSED"
+    }
+  ],
+  "paidInvoiceKeys": [],
+  "recipientCooldowns": {}
+}

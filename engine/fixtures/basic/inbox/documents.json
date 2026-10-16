@@ -1,0 +1,32 @@
+[
+  {
+    "docId": "doc-basic-1",
+    "kind": "INVOICE",
+    "untrustedText": "INVOICE #INV-101\nVendor: vendor-acme\nPO Number: PO-ACME-01\nAmount: $100.00 USDC\nItems: Standard Hardware Supplies\nStatus: Net 30",
+    "receivedAt": 100000
+  },
+  {
+    "docId": "doc-basic-2",
+    "kind": "INVOICE",
+    "untrustedText": "INVOICE #INV-201\nVendor: vendor-bolt\nPO Number: PO-BOLT-01\nAmount: $120.00 USDC\nItems: Fasteners & Bolts Pack\nStatus: Net 15",
+    "receivedAt": 100010
+  },
+  {
+    "docId": "doc-basic-3",
+    "kind": "INVOICE",
+    "untrustedText": "INVOICE #INV-301\nVendor: vendor-cloud\nPO Number: PO-CLOUD-01\nAmount: $80.00 USDC\nItems: Monthly Cloud Computing Cluster\nStatus: Due on receipt",
+    "receivedAt": 100020
+  },
+  {
+    "docId": "doc-basic-4",
+    "kind": "INVOICE",
+    "untrustedText": "INVOICE #INV-401\nVendor: vendor-delta\nPO Number: PO-DELTA-01\nAmount: $600.00 USDC\nItems: Heavy Freight Bulk Shipping (Exceeds T1 per-tx threshold, requires T2 delayed review)\nStatus: Due in 7 days",
+    "receivedAt": 100030
+  },
+  {
+    "docId": "doc-basic-5",
+    "kind": "INVOICE",
+    "untrustedText": "INVOICE #INV-501\nVendor: vendor-echo\nPO Number: PO-ECHO-CLOSED\nAmount: $450.00 USDC\nItems: Industrial Safety Goggles\nWARNING: PO is closed in ERP system, do not pay autonomously.",
+    "receivedAt": 100040
+  }
+]

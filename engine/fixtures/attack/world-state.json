@@ -1,0 +1,35 @@
+{
+  "vendors": [
+    {
+      "vendorId": "vendor-acme",
+      "name": "Acme Hardware & Tools",
+      "payoutAddress": "0x1111111111111111111111111111111111111111",
+      "perWindowCap": "500",
+      "active": true,
+      "activatesAt": 0
+    },
+    {
+      "vendorId": "vendor-bolt",
+      "name": "Bolt Fasteners & Supply",
+      "payoutAddress": "0x2222222222222222222222222222222222222222",
+      "perWindowCap": "500",
+      "active": true,
+      "activatesAt": 999999999
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "poNumber": "PO-ACME-01",
+      "vendorId": "vendor-acme",
+      "amount": "500",
+      "remaining": "400",
+      "status": "OPEN"
+    }
+  ],
+  "paidInvoiceKeys": [
+    "0x68541913fe9bc62ebc4d28f09d8aa04d9c026048beba62d313d463e8006bf04a"
+  ],
+  "recipientCooldowns": {
+    "0x2222222222222222222222222222222222222222": 999999999
+  }
+}

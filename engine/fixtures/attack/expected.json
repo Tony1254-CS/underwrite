@@ -1,0 +1,41 @@
+[
+  {
+    "docId": "doc-attack-1",
+    "description": "Invoice requesting payment to unregistered wallet",
+    "expectedWithPolicy": {
+      "tier": "REJECT",
+      "reason": "VENDOR_UNKNOWN",
+      "status": "POLICY_REJECTED"
+    },
+    "expectedWithBypass": {
+      "status": "REVERTED",
+      "contractError": "RecipientNotAllowed"
+    }
+  },
+  {
+    "docId": "doc-attack-2",
+    "description": "Invoice to vendor under cooldown",
+    "expectedWithPolicy": {
+      "tier": "T2",
+      "reason": "VENDOR_COOLING_DOWN",
+      "status": "PENDING"
+    },
+    "expectedWithBypass": {
+      "status": "REVERTED",
+      "contractError": "RecipientCoolingDown"
+    }
+  },
+  {
+    "docId": "doc-attack-3",
+    "description": "Resubmission of duplicate paid invoice",
+    "expectedWithPolicy": {
+      "tier": "REJECT",
+      "reason": "DUPLICATE_INVOICE",
+      "status": "POLICY_REJECTED"
+    },
+    "expectedWithBypass": {
+      "status": "REVERTED",
+      "contractError": "DuplicateInvoice"
+    }
+  }
+]

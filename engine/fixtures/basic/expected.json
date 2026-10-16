@@ -1,0 +1,43 @@
+[
+  {
+    "docId": "doc-basic-1",
+    "vendorId": "vendor-acme",
+    "invoiceNumber": "INV-101",
+    "amount": "100",
+    "expectedTier": "T1",
+    "expectedStatus": "EXECUTED"
+  },
+  {
+    "docId": "doc-basic-2",
+    "vendorId": "vendor-bolt",
+    "invoiceNumber": "INV-201",
+    "amount": "120",
+    "expectedTier": "T1",
+    "expectedStatus": "EXECUTED"
+  },
+  {
+    "docId": "doc-basic-3",
+    "vendorId": "vendor-cloud",
+    "invoiceNumber": "INV-301",
+    "amount": "80",
+    "expectedTier": "T1",
+    "expectedStatus": "EXECUTED"
+  },
+  {
+    "docId": "doc-basic-4",
+    "vendorId": "vendor-delta",
+    "invoiceNumber": "INV-401",
+    "amount": "600",
+    "expectedTier": "T2",
+    "expectedStatus": "PENDING"
+  },
+  {
+    "docId": "doc-basic-5",
+    "vendorId": "vendor-echo",
+    "invoiceNumber": "INV-501",
+    "amount": "450",
+    "expectedTier": "REJECT",
+    "expectedReason": "PO_CLOSED",
+    "expectedStatus": "POLICY_REJECTED"
+  }
+]
