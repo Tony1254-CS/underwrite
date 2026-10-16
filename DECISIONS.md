@@ -375,4 +375,22 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Consequences**: Platform is now fully interactive, dynamic, and role-authenticated, while preserving all contract safety invariants and statistical guarantees.
 - **Status**: ACCEPTED
 
+---
+
+## DEC-027 — Dedicated Role Portals Architecture & Removal of Mock Knobs
+
+- **Context**: Having disparate personas and synthetic simulation knobs (e.g. "+35 USDC", "+75 USDC", "Trigger Revoke" demo buttons) cramped together on a single dashboard caused confusion, felt artificial, and didn't represent how institutional users actually interact with the system. Users and judges need separated, clean, real-world profile workspaces with dedicated workflows.
+- **Options**:
+  1. Keep all controls grouped in tabs or cards on a monolithic dashboard page.
+  2. Architect 4 dedicated, authentic role portals: `/portals/owner`, `/portals/examiner`, `/portals/underwriter`, and `/portals/adjudicator`, alongside the Inbound Invoice Studio (`/submit`), and purge synthetic mock simulation buttons in favor of genuine state-driven actions.
+- **Decision**: Implement Option 2.
+  - **Owner Portal (`/portals/owner`)**: Live vault liquidity management, pending T2 challenge reviews with approve/reject actions, vendor whitelisting with 300s cooldown, and loss claim filing.
+  - **Examiner Portal (`/portals/examiner`)**: 390-scenario adversarial battery execution, Clopper-Pearson 99% exact binomial bounds calculation ($p \le 0.0531$), and EIP-712 attestation signing.
+  - **Underwriter Portal (`/portals/underwriter`)**: Real capital deposition/withdrawal into `BondPool.sol`, tracking free vs locked collateral, and proving Solvency Invariant INV-10 ($B_{\text{free}} \ge L$).
+  - **Adjudicator Portal (`/portals/adjudicator`)**: Formal dispute & claim adjudication desk, review of evidence hashes, and atomic payout dispatching with qualification revocation.
+  - Main Dashboard (`/`) converted into a clean Executive Protocol HUD with live safety dials and direct jump-links into the role portals.
+- **Consequences**: Eliminates demo clutter, provides clear role isolation for judges, and ensures real-world fidelity across all user personas.
+- **Status**: ACCEPTED
+
+
 

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web/`: Dedicated Role Portals Architecture & Mock Knobs Purge (DEC-027):
+  - `web/src/app/portals/owner/page.tsx`: Owner Governance Desk with live vault liquidity custody, T2 pending challenge review queue (approve/reject), dynamic vendor registry with 300s cooldown enforcement, and formal loss claim filing.
+  - `web/src/app/portals/examiner/page.tsx`: AI Safety Examiner Desk with 390-scenario exam runner, Clopper-Pearson 99% exact binomial bounds calculation ($p \le 0.0531$), and EIP-712 attestation generator.
+  - `web/src/app/portals/underwriter/page.tsx`: Underwriting Bond Desk for capital deposits/withdrawals in `BondPool.sol`, real-time free vs locked bond tracking, and Solvency Invariant INV-10 proof.
+  - `web/src/app/portals/adjudicator/page.tsx`: Claims Adjudication Desk for dispute settlement, evidence audit, and 1-click atomic payout with automatic qualification revocation.
+  - `web/src/components/Sidebar.tsx`: Redesigned navigation separating Dedicated Role Portals from System & Verification views.
+  - `web/src/app/page.tsx`: Transformed Protocol Dashboard into a clean institutional Executive HUD with live safety dials and direct navigation into all role portals.
 - `web/`: Full Dynamic Interactive dApp Overhaul (DEC-026):
   - `web/src/context/AuthContext.tsx`: Universal Web3 wallet connector (`window.ethereum` / MetaMask) + 1-click testnet persona switcher (`Owner`, `Examiner`, `Underwriter`, `Adjudicator`, `Agent Key`) with persistent role identity and permissions.
   - `web/src/components/Header.tsx`: Dynamic status bar replacing static "READ-ONLY SHADOW MIRROR" with live Anvil 31337 network badge, role dropdown, connected account pill, and 1-click runtime state reset button.

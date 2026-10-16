@@ -2,9 +2,19 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth, RoleType, PRESET_ROLES } from '@/context/AuthContext';
 
+const ROLE_PORTAL_ROUTES: Record<Exclude<RoleType, 'WALLET'>, string> = {
+  OWNER: '/portals/owner',
+  EXAMINER: '/portals/examiner',
+  UNDERWRITER: '/portals/underwriter',
+  ADJUDICATOR: '/portals/adjudicator',
+  AGENT: '/submit',
+};
+
 export function Header() {
+  const router = useRouter();
   const { user, switchRole, connectWallet, disconnectWallet } = useAuth();
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
@@ -23,6 +33,15 @@ export function Header() {
     }
   };
 
+  const handleSelectRole = (r: Exclude<RoleType, 'WALLET'>) => {
+    switchRole(r);
+    setRoleMenuOpen(false);
+    const targetRoute = ROLE_PORTAL_ROUTES[r];
+    if (targetRoute) {
+      router.push(targetRoute);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 h-16 border-b border-white/[0.08] bg-[#050914]/80 backdrop-blur-3xl px-6 md:px-8 flex items-center justify-between text-xs font-mono shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
       {/* Left: Brand Identity & Active Dynamic Platform Pill */}
@@ -32,9 +51,9 @@ export function Header() {
           <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 relative shadow-[0_0_12px_#06b6d4]" />
         </div>
         <div className="flex items-center gap-2.5">
-          <span className="text-white font-black tracking-wider text-xs uppercase text-gradient-cyan">
+          <Link href="/" className="text-white font-black tracking-wider text-xs uppercase text-gradient-cyan hover:brightness-110">
             UNDERWRITE
-          </span>
+          </Link>
           <span className="text-white/20">|</span>
           <span className="text-emerald-400 text-[11px] font-bold tracking-wide flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
@@ -57,7 +76,7 @@ export function Header() {
         </button>
 
         {/* Chain Pill */}
-        <div className="hidden lg:inline-flex items-center gap-2 text-[11px] bg-white/[0.04] px-3 py-1.5 rounded-full border border-white/[0.1] text-slate-300 backdrop-blur-xl shadow-inner">
+        <div className="hidden lg:inline-flex items-center gap-2 text-[11px] bg-white/[0.04] px-3.5 py-1.5 rounded-full border border-white/[0.1] text-slate-300 backdrop-blur-xl shadow-inner">
           <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]" />
           <span className="font-semibold text-white tracking-wide">ANVIL 31337</span>
         </div>
@@ -68,7 +87,7 @@ export function Header() {
             onClick={() => setRoleMenuOpen(!roleMenuOpen)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/60 border border-white/[0.15] hover:border-cyan-400/50 text-slate-200 transition-all shadow-sm active:scale-95"
           >
-            <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider hidden sm:inline">Role:</span>
+            <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider hidden sm:inline">Portal:</span>
             <span className="font-bold text-white text-[11px] flex items-center gap-1.5">
               <span className={`w-2 h-2 rounded-full ${
                 user.role === 'OWNER' ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]' :
@@ -83,9 +102,9 @@ export function Header() {
           </button>
 
           {roleMenuOpen && (
-            <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#070d1e] border border-white/[0.15] shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-3xl p-2 z-50 space-y-1">
+            <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-[#070d1e] border border-white/[0.15] shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-3xl p-2 z-50 space-y-1">
               <div className="px-3 py-2 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 border-b border-white/[0.08]">
-                Switch Active Persona
+                Switch Persona &amp; Portal
               </div>
               {(Object.keys(PRESET_ROLES) as Exclude<RoleType, 'WALLET'>[]).map((r) => {
                 const p = PRESET_ROLES[r];
@@ -93,10 +112,7 @@ export function Header() {
                 return (
                   <button
                     key={r}
-                    onClick={() => {
-                      switchRole(r);
-                      setRoleMenuOpen(false);
-                    }}
+                    onClick={() => handleSelectRole(r)}
                     className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center justify-between ${
                       isSelected
                         ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
@@ -104,11 +120,14 @@ export function Header() {
                     }`}
                   >
                     <div>
-                      <div className="font-bold text-[11px]">{p.name}</div>
-                      <div className="text-[10px] text-slate-500 truncate">{p.address.slice(0, 10)}...</div>
+                      <div className="font-bold text-[11px] flex items-center gap-1.5">
+                        <span>{p.name}</span>
+                        {isSelected && <span className="text-[10px] text-cyan-400">✓</span>}
+                      </div>
+                      <div className="text-[10px] text-slate-500 truncate">{ROLE_PORTAL_ROUTES[r]}</div>
                     </div>
                     <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-white/[0.08] text-slate-300">
-                      {p.badge.split(' ')[0]}
+                      Enter ↗
                     </span>
                   </button>
                 );
