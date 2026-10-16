@@ -144,6 +144,9 @@ contract UnderwriteVault is VaultErrors {
 
     mapping(bytes32 => uint256) public exposure;
     mapping(bytes32 => bytes32) public ownerInputsHashOf;
+    mapping(bytes32 => uint256[]) public qualPaymentIds;
+    mapping(bytes32 => uint256) public reconcileCursor;
+    mapping(uint256 => bool) public paymentClaimed;
 
     // Sequential IDs
     uint256 public nextPaymentId = 1;
@@ -457,6 +460,7 @@ contract UnderwriteVault is VaultErrors {
 
         // S6: Retrieve paymentId from BondPool claims(claimId) and remove from exposure
         (,, uint256 paymentId,,,) = bondPool.claims(claimId);
+        paymentClaimed[paymentId] = true;
         PaymentRecord storage p = payments[paymentId];
         if (p.qualId == qualId && !p.reconciled && exposure[qualId] >= p.amount) {
             exposure[qualId] -= p.amount;
@@ -540,6 +544,7 @@ contract UnderwriteVault is VaultErrors {
         });
 
         emit PaymentExecuted(paymentId, qualId, recipient, amount, invoiceKey, 1);
+        qualPaymentIds[qualId].push(paymentId);
 
         // --- Token transfer (Interactions) ---
         token.safeTransfer(recipient, amount);
@@ -689,6 +694,85 @@ contract UnderwriteVault is VaultErrors {
         invoiceState[p.invoiceKey] = InvoiceStatus.NONE;
 
         emit PaymentVetoed(id, msg.sender);
+    }
+
+    // --- Reconcile & Claim Inspection (P1-T07) ---
+
+    /**
+     * @notice Checks whether a payment is eligible for claim by BondPool (tier 1, unreconciled, unclaimed).
+     * @param paymentId The payment identifier.
+     * @return claimable True if claimable.
+     */
+    function isClaimable(uint256 paymentId) external view returns (bool) {
+        PaymentRecord storage p = payments[paymentId];
+        if (p.tier != 1) return false;
+        if (p.reconciled) return false;
+        if (paymentClaimed[paymentId]) return false;
+        if (p.amount == 0) return false;
+        return true;
+    }
+
+    /**
+     * @notice Returns array of payment IDs issued under qualId.
+     * @param qualId The qualification identifier.
+     * @return pids Array of payment IDs.
+     */
+    function getQualPaymentIds(bytes32 qualId) external view returns (uint256[] memory) {
+        return qualPaymentIds[qualId];
+    }
+
+    /**
+     * @notice Reconciles accepted Tier 1 payments up to upToPaymentId, decreasing qualification exposure.
+     * @param qualId The qualification identifier.
+     * @param upToPaymentId The maximum payment ID to reconcile in this batch.
+     * @return count Number of payments reconciled.
+     * @return totalAmount Total token amount reconciled.
+     */
+    function reconcile(bytes32 qualId, uint256 upToPaymentId) external returns (uint256 count, uint256 totalAmount) {
+        if (msg.sender != owner) revert NotOwner();
+
+        uint256 cursor = reconcileCursor[qualId];
+        uint256[] storage pids = qualPaymentIds[qualId];
+        uint256 len = pids.length;
+
+        if (cursor >= len) revert AlreadyReconciled();
+
+        uint256 maxBatch = 50;
+        uint256 processed = 0;
+        uint256 exposureReduction = 0;
+
+        while (cursor < len && processed < maxBatch) {
+            uint256 pid = pids[cursor];
+            if (pid > upToPaymentId) {
+                break;
+            }
+
+            PaymentRecord storage p = payments[pid];
+            if (!p.reconciled) {
+                p.reconciled = true;
+                if (!paymentClaimed[pid]) {
+                    exposureReduction += p.amount;
+                }
+                totalAmount += p.amount;
+                processed++;
+            }
+            cursor++;
+        }
+
+        if (processed == 0) {
+            revert AlreadyReconciled();
+        }
+
+        reconcileCursor[qualId] = cursor;
+
+        if (exposure[qualId] >= exposureReduction) {
+            exposure[qualId] -= exposureReduction;
+        } else {
+            exposure[qualId] = 0;
+        }
+
+        count = processed;
+        emit PaymentsReconciled(qualId, upToPaymentId, totalAmount);
     }
 }
 
