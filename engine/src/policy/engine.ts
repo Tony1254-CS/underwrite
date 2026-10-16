@@ -1,6 +1,5 @@
 import {
   type Address,
-  type Hex,
   Proposal,
   ProposalSchema,
   PolicyDecision,

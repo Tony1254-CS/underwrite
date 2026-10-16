@@ -1,4 +1,4 @@
-import { type Address, type Hex } from 'viem';
+import { type Hex } from 'viem';
 import { PurchaseOrder } from '../types/models.js';
 
 export interface RecentPaymentRecord {
