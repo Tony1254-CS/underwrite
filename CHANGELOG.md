@@ -21,3 +21,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `contracts/test/Vault.Pay.t.sol`: 13 unit tests verifying T1 payment happy path and all 12 PV-09 revert error conditions.
 - `UnderwriteVault.sol`: implement T2 flow (`requestPayment`, `executePending`, `veto`) with invoice reservation, challenge period enforcement, post-delay re-validation, and veto release.
 - `contracts/test/Vault.T2.t.sol`: 13 unit tests verifying full T2 lifecycle, owner/guardian veto, invoiceKey release, stranger veto rejection, and all PV-09 revert conditions.
+- `UnderwriteVault.sol`: implement `reconcile` (bounded at 50 payments per transaction per S8), `isClaimable` (tier 1, unreconciled, unclaimed), and sequential per-qual payment tracking with exposure reduction.
+- `contracts/test/Vault.Reconcile.t.sol`: 7 unit tests verifying exposure dynamics, insufficient backing unblocking via reconcile, already reconciled guards, stranger rejection, batch bounding at 50, and claim suspension interaction.

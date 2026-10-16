@@ -307,11 +307,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §5.3, §9.7, §9.8 (INV-8)
   Done when: tests for `NotReady`, `Vetoed`, `NotPending`, execute-after-revoke, execute-after-deactivate, execute-after-pause all pass.
   Evidence: 2026-10-16 13:38 UTC · antigravity-1 · 29af22a · cd contracts && forge test --match-path *T2* passed (13 tests); happy path T2 lifecycle, owner & guardian veto, invoiceKey release, stranger veto rejection, and PV-09 re-validation reverts verified → 0
-- [ ] P1-T07 | A | needs: P1-T05 | reconcile, isClaimable, exposure accounting
+- [x] P1-T07 | A | needs: P1-T05 | reconcile, isClaimable, exposure accounting
   Do: per-qual sequential payment ids with a reconcile cursor; `reconcile(qualId, upToPaymentId)` (owner, max 50 payments per call, S8) lowers `exposure`, marks payments accepted; `isClaimable(paymentId)` = tier 1, not reconciled, not already claimed.
   Files: `contracts/src/UnderwriteVault.sol contracts/test/Vault.Reconcile.t.sol`
   Spec: plan §9.7, §9.8 (INV-10, 14), §5.5
   Done when: tests: exposure rises on pay and falls on reconcile; `InsufficientBacking` until the owner reconciles; reconciled payment is not claimable; `AlreadyReconciled`.
+  Evidence: 2026-10-16 13:42 UTC · antigravity-1 · 5971c82 · cd contracts && forge test --match-path *Reconcile* passed (7 tests); exposure accounting, reconcile unblocking, 50-batch limit, and isClaimable verified → 0
 - [ ] P1-T08 | A | needs: P1-T06,P1-T07 | Test sweep A: every custom error is triggered
   Do: make sure each of the 24 errors is triggered by at least one passing test using `vm.expectRevert`.
   Files: `contracts/test/**`
