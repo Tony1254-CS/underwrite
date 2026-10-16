@@ -23,4 +23,5 @@ interface BondPoolErrors {
     error LossExceedsPaymentAmount();
     error ClaimAlreadyResolved();
     error ClaimNotFound();
+    error NotVaultOwner();
 }
