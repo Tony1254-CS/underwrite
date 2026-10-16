@@ -200,12 +200,12 @@ Scripts: `scripts/dev.sh` (start Anvil + deploy + seed) · `scripts/deploy-testn
 ## P0 — Repository bootstrap (all tracks · Fri 16 Oct night)
 Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATUS.md`, `DECISIONS.md`, `TESTING.md`, `pnpm-workspace.yaml`, `contracts/foundry.toml`, `engine/package.json`.
 
-- [ ] P0-T01 | X | needs: none | Detect environment, install missing tools, git init
+- [x] P0-T01 | X | needs: none | Detect environment, install missing tools, git init
   Do: (1) Record `git --version; node -v; pnpm -v; forge --version; anvil --version; cast --version; python --version` in TESTING.md "Environment" (see D1). (2) Install what is missing: `corepack enable` (or `npm i -g pnpm`); Foundry per https://book.getfoundry.sh/getting-started/installation (on Windows use WSL/Git Bash or release binaries — read the page, do not guess). If an install is blocked, mark `[!]`, tell the human which tool is missing, and keep doing tasks that do not need it. (3) `git init -b main`, add `.gitattributes` containing `* text=auto eol=lf`, then make a first commit of `plan.md PHASES.md AGENT_PROMPT.md scripts/progress.sh .gitattributes`.
   Files: `.gitattributes`, `TESTING.md`
   Spec: plan §13.7
   Done when: `git rev-parse --is-inside-work-tree` prints `true`; `pnpm -v`, `forge --version`, `anvil --version` all print versions; TESTING.md has the real output.
-  Note: 2026-10-16 part (3) done (git init -b main, .gitattributes, first commit, remote `origin` = https://github.com/sakibul-shovon/UNDERWRITE.git, pushed). Parts (1) and (2) NOT done: pnpm, forge, anvil, cast still missing, TESTING.md Environment entry not yet written.
+  Evidence: 2026-10-16 12:26 UTC · antigravity-1 · a9f6329 · git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version → true, 12.8.1, forge 1.8.5, anvil 1.8.5
 - [ ] P0-T02 | X | needs: P0-T01 | Create tracking files (STATUS, DECISIONS, TESTING, CHANGELOG)
   Do: `STATUS.md` = handoff block per plan §13.3, filled with real values, first line "Progress source of truth: PHASES.md". `DECISIONS.md` = headings `## DEC-001 — <title>` … `DEC-017` seeded from plan §13.4 (each: context, options, decision, consequences, status), plus `DEC-018` "Provisional parameters PV-01…PV-23 (PHASES.md §D3)" and `DEC-019` "Spec-conflict resolutions S1…S8 (PHASES.md §D4)", both PROVISIONAL. `TESTING.md` per plan §13.5. `CHANGELOG.md` with an "Unreleased" heading.
   Files: `STATUS.md DECISIONS.md TESTING.md CHANGELOG.md`
