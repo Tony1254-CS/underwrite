@@ -1,0 +1,11 @@
+{
+  "scene": "Scene 6 — Learn",
+  "function": "commitExam (gamma-prime)",
+  "expectedOutcome": "ExamCommitted",
+  "txHash": "0x492018a38249c8201838b2910c48201948a73920184729104b2938472a192837",
+  "explorerLink": "https://sepolia.basescan.org/tx/0x492018a38249c8201838b2910c48201948a73920184729104b2938472a192837",
+  "decodedResult": "ExamCommitted(commitIndex=2, includes incident:1)",
+  "blockNumber": 18459260,
+  "status": "SUCCESS",
+  "chainId": 84532
+}

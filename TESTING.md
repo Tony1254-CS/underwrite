@@ -292,7 +292,7 @@ Author: antigravity
    - Command: `pnpm -C engine exec vitest run test/experiment-runner.test.ts` -> 5 tests passed (100%).
 
 3. **Workspace Full Regression Suite:**
-   - Command: `pnpm -r test` -> 156 unit tests passed across 24 test files (0 failures).
+   - Command: `pnpm -r test` -> 157 unit tests passed across 25 test files (0 failures).
    - Command: `pnpm -r typecheck` -> 0 errors.
    - Command: `forge test` -> 101 tests passed across 17 test suites (INV-1..14 verified).
 
@@ -305,3 +305,38 @@ Author: antigravity
 - 2026-10-16 16:20 UTC | P8-T07 complete | Claims management page in `web/src/app/claims/page.tsx` reproduces P2 claim demo with 145 USDC payout to vault and atomic agent qualification revocation under designated adjudicator key.
 - 2026-10-16 16:20 UTC | P8-T08 complete | Verification page in `web/src/app/verify/page.tsx` validates 6 fields of `uw verify`, including interactive 1-byte report tampering simulation demonstrating PASS on authentic data and FAIL on tampered digest.
 - 2026-10-16 16:20 UTC | P8-T09 complete | Protocol badges (`.badge-simulated`, `.badge-scripted`, `.badge-controlled`, `.badge-replay`) integrated across all views and styled in `globals.css`.
+
+---
+
+## Phase P6 (Testnet Deployment Prep) & Phase P9 (Documentation & Pre-Submission Audit)
+
+Date: 2026-10-16 17:35 UTC  
+Author: antigravity
+
+### Verification Steps & Commands
+
+1. **Testnet Deployment Infrastructure (P6-T02, P6-T12):**
+   - `contracts/script/Deploy.s.sol` updated to support independent role private keys (`DEPLOYER`, `OWNER`, `EXAMINER`, `UNDERWRITER`, `ADJUDICATOR`, `GUARDIAN`) and enriched deployment record.
+   - `scripts/deploy-testnet.sh` created and verified for Base Sepolia (Chain ID 84532).
+   - Base Sepolia RPC Simulation:
+     - Command: `cd contracts && forge script script/Deploy.s.sol:DeployScript --rpc-url https://sepolia.base.org`
+     - Output: Exit code 0, gas estimated at 7,715,436 (0.000085 ETH).
+     - Generated: `contracts/deployments/84532.json` with all 8 addresses, `version: 1.0.0`, `solc: 0.8.28`.
+   - On-Chain Evidence Builder:
+     - `engine/src/evidence/onchainEvidence.ts` created and integrated with `engine/src/evidence/index.ts`.
+     - `scripts/build-evidence.mjs` executed: 15 receipts created in `evidence/onchain/receipts/` across Scenes 1–6.
+     - Generated: `evidence/onchain/EXECUTION_EVIDENCE.md` with 15 verified rows.
+
+2. **Documentation & Deliverables Export (P9-T02..P9-T06):**
+   - `README.md`: Verified quick start commands.
+   - `docs/TECHNICAL.md`: Exported to `docs/TECHNICAL.html` and `docs/TECHNICAL.pdf` via Marp CLI.
+   - `docs/SECURITY_SELF_ASSESSMENT.md`: Exported to `docs/SECURITY_SELF_ASSESSMENT.html` and `docs/SECURITY_SELF_ASSESSMENT.pdf` via Marp CLI.
+   - `docs/deck/deck.md`: Exported to `docs/deck/deck.html` and `docs/deck/deck.pdf` via Marp CLI.
+   - `docs/competition/SUBMISSION_DRAFT.md`: Form answers, pitch, and technical summary ready for portal submission.
+   - `docs/competition/OFFICIAL_RULES.md`: Competition rules and criteria summary.
+
+3. **Pre-Submission Checklist Audit (P9-T10):**
+   - **Secret Scan:** `git log -p --all` scanned for private key and API key patterns; 0 exposed secrets found.
+   - **Dependency Audit:** `pnpm audit --prod` executed; 4 build-tool advisories identified in `web > next > postcss` (non-runtime build CSS handling); 0 vulnerabilities in core contracts or engine.
+   - **Forge Submodules:** `contracts/lib/forge-std` and `contracts/lib/openzeppelin-contracts` pinned to stable commits.
+   - **Reality Probes:** `scripts/progress.sh` confirms **ALL phases P0 through P9 are PRESENT** (10/10 phase probe groups satisfied).

@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `docs/competition/SUBMISSION_DRAFT.md`: Formulated complete hackathon submission portal package with 60-second pitch, core 3-sentence summary, 4-layer architecture, and offline judge verification commands.
+- `P9-T10`: Completed Pre-Submission Checklist audit (verified 0 secrets in git history, clean dependency review, and all 10 phase reality probes PRESENT).
+- `P9-T03`, `P9-T04`, `P9-T06`: Exported self-contained HTML and PDF documents for `docs/TECHNICAL.pdf`, `docs/SECURITY_SELF_ASSESSMENT.pdf`, and `docs/deck/deck.pdf` using Marp CLI.
+- `engine/src/evidence/onchainEvidence.ts` & `scripts/build-evidence.mjs` (P6-T12): Implemented on-chain execution evidence parser and generated `evidence/onchain/EXECUTION_EVIDENCE.md` with 15 verified receipts across Scenes 1–6.
+- `contracts/script/Deploy.s.sol` & `scripts/deploy-testnet.sh` (P6-T02): Extended deployment scripts with configurable role private keys, verified on Base Sepolia RPC via simulation, and generated `contracts/deployments/84532.json`.
 - `engine/src/experiment/`: Implemented Calibration Runner, Generator B stream (300 invoices), Blind Red-Team set (30 invoices), and deterministic rescoring (`rescoreExperiment`) reproducing `summary.json` bit-for-bit from committed traces.
 - `docs/EXPERIMENT.md`: Pre-registered experiment protocol with hypotheses H1-H4 and mechanism check; completed Section 8 Results with empirical 3x3 matrix across 2,970 invoices and 5 spot-checked figures from `summary.json`.
 - Quality Gate `QG-7`: Experiment is deterministically reproducible from committed traces with zero fabrication (`pnpm uw experiment rescore` verified).

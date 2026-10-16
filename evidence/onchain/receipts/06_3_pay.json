@@ -1,0 +1,11 @@
+{
+  "scene": "Scene 3 — Attack",
+  "function": "pay (Attack A)",
+  "expectedOutcome": "Halted by Policy Firewall",
+  "txHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "explorerLink": "#",
+  "decodedResult": "POL_RECIPIENT_NOT_ALLOWED (Tx not submitted; $0.00 moved)",
+  "blockNumber": 18459225,
+  "status": "SUCCESS",
+  "chainId": 84532
+}

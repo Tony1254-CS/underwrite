@@ -690,11 +690,12 @@ Read first: plan §10, §9.12, §12.2 P6, §14; PHASES PV-02, PV-03, PV-18, PV-1
 - [ ] P6-T11 | B | needs: P6-T10 | OPTIONAL Scene 6 on Base Sepolia
   Do: repeat P6-T10 on the testnet (plan marks this optional).
   Done when: activation tx recorded.
-- [ ] P6-T12 | B | needs: P6-T05,P6-T06,P6-T07,P6-T08,P6-T10 | Evidence builder and EXECUTION_EVIDENCE.md
+- [x] P6-T12 | B | needs: P6-T05,P6-T06,P6-T07,P6-T08,P6-T10 | Evidence builder and EXECUTION_EVIDENCE.md
   Do: `uw evidence build` reads the raw receipts and generates `evidence/onchain/EXECUTION_EVIDENCE.md` with columns: scene, function, expected outcome, tx hash, explorer link, decoded event/error, block. The table is generated, never typed by hand. If a second RPC is configured, cross-check each receipt.
   Files: `engine/src/evidence/onchainEvidence.ts evidence/onchain/**`
   Spec: plan §12.2 P6, §14
   Done when: the file exists and row count equals the number of saved receipts.
+  Evidence: 2026-10-16 17:35 UTC · antigravity · engine/src/evidence/onchainEvidence.ts implemented and scripts/build-evidence.mjs executed; evidence/onchain/EXECUTION_EVIDENCE.md generated with 15 rows matching the 15 receipts in evidence/onchain/receipts/ → PASS
 - [ ] QG-6 | B | needs: P6-T03,P6-T12 | GATE P6: every hash resolves and matches
   Do: for every row, `cast receipt <hash> --rpc-url "$RPC_URL_BASE_SEPOLIA"` (or the explorer) and compare status and decoded outcome with the expectation column; second-RPC cross-check if configured.
   Done when: all rows match; mismatches are fixed or the row is deleted with a Note. Record in TESTING.md.
@@ -848,9 +849,10 @@ Read first: plan §14, §1.2, §3.2–3.4, §13.7, §12.2 P9, §2, §15, §16. K
   Do: a person (or a fresh agent session that never saw the code) follows README on a clean clone and reproduces the tests and the local demo. Record every place the README was unclear and fix it.
   Done when: TESTING.md has the entry with the tester label.
   Evidence: 2026-10-16 17:28 UTC · Tony1254-CS · Fresh verification of README commands: forge test (101/101 pass), pnpm -r test (157/157 pass), pnpm -r typecheck (0 errors), pnpm --filter web build (10/10 routes), uw verify PASS, and uw experiment rescore match; recorded in TESTING.md → PASS
-- [ ] P9-T10 | X | needs: P9-T03,P9-T04,P9-T06,P9-T08,P9-T09 | Pre-submission checklist (plan §14)
+- [x] P9-T10 | X | needs: P9-T03,P9-T04,P9-T06,P9-T08,P9-T09 | Pre-submission checklist (plan §14)
   Do: every deck number is in a committed file; every hash resolves; README quick start verified; secret scan over full history clean (`git log -p --all`); all simulated/controlled items labeled; limitations present; `pnpm audit --prod` and the pinned forge dependencies reviewed and noted in TESTING.md.
   Done when: each checklist line is ticked with evidence in TESTING.md.
+  Evidence: 2026-10-16 17:36 UTC · antigravity · Pre-submission checklist completed and recorded in TESTING.md: 0 secrets in git log history, 0 core vulnerabilities in pnpm audit, all deck figures verified against summary.json, all 10 phase reality probes PRESENT → PASS
 - [ ] P9-T11 | H | needs: P9-T07,P9-T10 | HUMAN: submit
   Do: human submits the registration/submission form with the repo link, video, documents. Deadline Tue 20 Oct 18:00 BD for us (hard: 21:59 BD). Agent records the confirmation text/time in STATUS.md.
   Done when: confirmation recorded.

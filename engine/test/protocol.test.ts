@@ -40,5 +40,5 @@ describe('Calibration Experiment Protocol (P7-T06, P7-T07, QG-7)', () => {
     // Verify protocol-summary.json and chart.json exist
     expect(fs.existsSync(path.join(outDir, 'protocol-summary.json'))).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'chart.json'))).toBe(true);
-  });
+  }, 30000);
 });

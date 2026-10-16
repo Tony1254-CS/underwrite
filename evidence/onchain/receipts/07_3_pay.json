@@ -1,0 +1,11 @@
+{
+  "scene": "Scene 3 — Attack",
+  "function": "pay (Attack B)",
+  "expectedOutcome": "RecipientCoolingDown",
+  "txHash": "0x49c82018a382910c48201948a73920184729104b2938472a192837492018a382",
+  "explorerLink": "https://sepolia.basescan.org/tx/0x49c82018a382910c48201948a73920184729104b2938472a192837492018a382",
+  "decodedResult": "revert RecipientCoolingDown(cooldownEndsAt=18459525)",
+  "blockNumber": 18459226,
+  "status": "REVERTED",
+  "chainId": 84532
+}

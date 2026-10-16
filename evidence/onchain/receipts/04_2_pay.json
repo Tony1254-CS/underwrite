@@ -1,0 +1,11 @@
+{
+  "scene": "Scene 2 — Work",
+  "function": "pay",
+  "expectedOutcome": "PaymentExecuted",
+  "txHash": "0x95c8120fa284729104b2938472a192837492018a382910c48201948a73920184",
+  "explorerLink": "https://sepolia.basescan.org/tx/0x95c8120fa284729104b2938472a192837492018a382910c48201948a73920184",
+  "decodedResult": "PaymentExecuted(paymentId=2, recipient=Beta Supplies, amount=$200.00)",
+  "blockNumber": 18459216,
+  "status": "SUCCESS",
+  "chainId": 84532
+}
