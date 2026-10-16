@@ -261,9 +261,10 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
 - [ ] P0-T11 | H | needs: none | HUMAN: testnet keys, faucet funds, RPC
   Do: human creates 6 throwaway testnet keys (deployer, owner, examiner, underwriter, adjudicator, guardian) with `cast wallet new` or any wallet, puts them ONLY in the local `.env`, requests Base Sepolia ETH for each, picks RPC URL(s), optionally a `BASESCAN_API_KEY`. Agent writes only the six PUBLIC addresses into STATUS.md "Testnet accounts". Needed before P6; start the faucet request now (faucets are slow).
   Done when: STATUS.md lists the 6 public addresses and `cast balance <addr> --rpc-url "$RPC_URL_BASE_SEPOLIA"` is > 0 for deployer, owner, examiner, underwriter, adjudicator.
-- [ ] QG-0 | X | needs: P0-T01,P0-T02,P0-T03,P0-T04,P0-T05,P0-T06,P0-T07,P0-T08,P0-T09 | GATE P0: clean-clone build
+- [~] QG-0 | X | needs: P0-T01,P0-T02,P0-T03,P0-T04,P0-T05,P0-T06,P0-T07,P0-T08,P0-T09 | GATE P0: clean-clone build
   Do: commit everything, then `git clone --recurse-submodules . ../underwrite-cleanclone`; inside it run `cd contracts && forge build && forge test`, then `pnpm install --frozen-lockfile && pnpm -r build && pnpm -r test`. Also run `git log -p --all | grep -nE "PRIVATE_KEY=[^ ]+"` (must find nothing real). Record all outputs in TESTING.md, delete the clone.
   Done when: every command exits 0, the secret grep finds nothing, TESTING.md has the entry. (CI-green is P0-T10 and does not block.)
+  Claim: antigravity-1 · 2026-10-16T12:53:00Z
 
 ---
 
