@@ -1,15 +1,15 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 14:56 UTC, antigravity-1
-Last verified working state: P2-T05 complete (Fuzz and invariant tests for INV-10, 11, 14 passing; 100 tests passing across 16 suites)
-Active phase: P2 — BondPool and backing coupling (Track A)
-Next concrete task: P2-T06 | A | needs: P2-T04 | Anvil script: claim → revoke → next payment reverts (Files: contracts/script/ClaimDemo.s.sol scripts/claim-demo.sh)
-Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 20; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified; QG-0 clean-clone build & test passed; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `bash scripts/check_inv.sh` → 0 missing invariants; `cd contracts && forge test --match-path "*invariant*"` → 6 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 100 tests passed across 16 test suites; `forge fmt --check --root contracts` → clean; `slither` static analysis run on UnderwriteVault and MockUSDC (26 findings triaged in TESTING.md); `node scripts/export-abi.mjs && pnpm -r typecheck` → exit 0; P1-T15 independent review passed with APPROVE verdict; QG-1 gate passed; P2-T01 tests passed (4 tests); P2-T02 claims tests passed (4 tests); P2-T03 integration tests passed (2 tests); P2-T04 comprehensive BondPool suite passed (11 tests); P2-T05 invariant (INV-10, 11, 14) and property fuzz (INV-11) passed.
-Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs; 100 targeted tests cover all errors and all 14 invariants).
+## Handoff — 2026-10-16 15:10 UTC, antigravity-1
+Last verified working state: P2 complete, QG-2 passed (All 17 contract test suites pass with 101/101 tests, claim demo verified, ABIs exported for UnderwriteVault, MockUSDC, and BondPool; engine typecheck clean)
+Active phase: P3 — Engine core (Track B)
+Next concrete task: P3-T01 | B | needs: QG-0 | Types (zod) and ReasonCode (Files: engine/src/types/*.ts)
+Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 21; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `bash scripts/check_inv.sh` → 0 missing invariants; `cd contracts && forge test --match-path "*invariant*"` → 6 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 101 tests passed across 17 test suites; `forge fmt --check --root contracts` → clean; `node scripts/export-abi.mjs && pnpm -r typecheck` → exit 0; P1-T15 independent review passed with APPROVE verdict; QG-1 gate passed; P2-T01..P2-T08 complete; QG-2 gate passed.
+Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs; 101 targeted tests cover all errors and all 14 invariants).
 Known failures: None
-Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL), DEC-020 (BondPool custom errors & events)
-Risks of touching current code: Low (All 100 unit, integration, fuzz, and invariant tests pass; proceeding to P2-T06 Anvil claim demo script)
-Phase checklist: P0 [x] P1 [x] P2 [ ] P3 [ ] P4 [ ] P5 [ ] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x]
+Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL), DEC-020 (BondPool custom errors & events), DEC-021 (Cut-line not triggered; real BondPool retained)
+Risks of touching current code: Low (Smart contracts and ABIs sealed and passed QG-2; moving to TypeScript engine core)
+Phase checklist: P0 [x] P1 [x] P2 [x] P3 [ ] P4 [ ] P5 [ ] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x] QG-2 [x]
 
 ## Testnet accounts (Base Sepolia throwaways, generated local .env)
 - DEPLOYER: `0x9126090d4650bD722FD8763d164D325A270A78F2`
