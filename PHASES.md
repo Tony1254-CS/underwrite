@@ -248,11 +248,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §13.7
   Done when: the file exists and every command in it also passes locally (it cannot run here; the green run is checked in P0-T10).
   Evidence: 2026-10-16 12:49 UTC · antigravity-1 · a890c87 · .github/workflows/ci.yml exists and all commands verified locally → 0
-- [ ] P0-T09 | X | needs: P0-T01 | Pre-commit hook with secret scan
+- [x] P0-T09 | X | needs: P0-T01 | Pre-commit hook with secret scan
   Do: `.githooks/pre-commit` (POSIX sh): `forge fmt --check` when contracts are staged; prettier + `tsc --noEmit` when TS is staged; secret scan on the staged diff — gitleaks if installed, else regex for `PRIVATE_KEY\s*=\s*\S+` (ignoring `.env.example`), `sk-ant-`, `sk-[A-Za-z0-9]{20,}` — skipping `evidence/` and `contracts/deployments/`. `scripts/setup-hooks.sh` runs `git config core.hooksPath .githooks`.
   Files: `.githooks/pre-commit scripts/setup-hooks.sh`
   Spec: plan §13.7
   Done when: staging a file containing `OWNER_PRIVATE_KEY=abc123` makes `git commit` fail; unstaging it makes a normal commit pass (clean up after the test).
+  Evidence: 2026-10-16 12:51 UTC · antigravity-1 · 149d46d · secret test file commit blocked with exit 1; cleanup commit passes → 0
 - [ ] P0-T10 | H | needs: P0-T08 | HUMAN: create GitHub repo, push, confirm CI green
   Do: human creates the public repo, adds the remote, pushes `main`, and confirms the CI run is green. Agent records the URL and CI result in STATUS.md. Not blocking other work.
   Done when: STATUS.md has the repo URL and "CI: green" with the run link.
