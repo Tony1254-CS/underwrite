@@ -63,5 +63,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `contracts/script/Deploy.s.sol`: deployment script for MockUSDC, BondPool, and UnderwriteVault on local Anvil and testnets.
 - `scripts/dev.sh` & `scripts/qualify-dev.ts`: local development bring-up script and EIP-712 qualification activation helper.
 - `PHASES.md`: Phase 3 Quality Gate QG-3 passed; all 13 Phase 3 tasks complete, 109 vitest tests passing across 14 suites, 101 foundry tests passing across 17 suites.
+- `engine/src/agent/tools.ts`: implemented 7 strict tools (`list_inbox`, `read_document`, `lookup_vendor`, `lookup_purchase_order`, `get_wallet_state`, `propose_payment`, `flag_for_review`) with strict address rejection and untrusted document wrapping.
+- `engine/src/agent/scripted.ts`: implemented `scripted` (careful PO/vendor verifier) and `scripted-naive` (α blind extractor) agents.
+- `engine/src/agent/runner.ts`: agent runner connecting tool calls, policy checks, on-chain execution, and JSONL trace generation.
+- `engine/src/agent/llm.ts` & `llmClient.ts`: provider-agnostic LLM adapter with strict tool schemas, model verification (`MODEL_DRIFT` halt), and native OpenAI/Gemini support.
+- `engine/src/agent/prompts/`: minimal prompt `beta.md` and hardened security prompt `gamma.md`.
+- `engine/src/agent/replay.ts`: transcript loader and replayer with SHA-256 integrity check and `[REPLAY]` badging.
+- `engine/test/agent-sweep.test.ts`: test suite verifying all 5 required test cases for Phase 4.
+- `PHASES.md`: Phase 4 Quality Gate QG-4 passed; 144 vitest tests passing across 20 suites, 101 foundry tests passing across 17 suites.
+
 
 

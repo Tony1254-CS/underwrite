@@ -13,6 +13,8 @@ import { createRunDirectory, writeTraceLine } from './evidence/store.js';
 import { hashCanonicalJson } from './evidence/canonical.js';
 import { Proposal, Document, VendorSchema, PurchaseOrder } from './types/models.js';
 import { parseAmount } from './types/money.js';
+import { runAgent } from './agent/runner.js';
+import { runReplayAgent } from './agent/replay.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '../../');
@@ -237,122 +239,54 @@ Commands:
       }
     }
 
-    let processedCount = 0;
-    for (const doc of docs) {
-      processedCount++;
-      console.log(`\nProcessing document [${processedCount}/${docs.length}]: ${doc.docId}`);
-
-      // Extract invoice proposal
-      const lines = doc.untrustedText.split('\n');
-      let vendorId = 'vendor-unknown';
-      let invoiceNumber = 'INV-UNKNOWN';
-      let amountStr = '0';
-      let poNumber: string | undefined;
-
-      for (const line of lines) {
-        if (line.toLowerCase().startsWith('vendor:')) {
-          vendorId = line.split(':')[1].trim();
-        } else if (line.toUpperCase().includes('INVOICE #')) {
-          invoiceNumber = line.split('#')[1]?.trim()?.split(' ')[0] || invoiceNumber;
-        } else if (line.toLowerCase().startsWith('amount:')) {
-          amountStr = line.split('$')[1]?.split(' ')[0] || '0';
-        } else if (line.toLowerCase().startsWith('po number:')) {
-          poNumber = line.split(':')[1].trim();
-        }
-      }
-
-      let amount = 0n;
-      try {
-        amount = parseAmount(amountStr);
-      } catch {
-        amount = 0n;
-      }
-
-      const proposal: Proposal = {
-        proposalId: `prop-${doc.docId}`,
-        vendorId,
-        invoiceNumber,
-        amount,
-        poNumber,
-        rationale: 'Processed from inbox document',
-        sourceDocIds: [doc.docId],
+    if (agent.startsWith('replay:')) {
+      const transcriptFile = agent.slice('replay:'.length);
+      const replayPath = path.isAbsolute(transcriptFile) ? transcriptFile : path.resolve(rootDir, transcriptFile);
+      const replayContext = {
+        inbox: docs,
+        vendorRegistry: registry,
+        purchaseOrders: poMap,
+        currentTimestamp: Math.floor(Date.now() / 1000),
       };
-
-      if (!bypassPolicy) {
-        // Normal policy evaluation
-        const snapshot: PolicySnapshot = {
-          currentTimestamp: Math.floor(Date.now() / 1000),
-          paused: false,
-          configDrift: false,
-          vaultBalance: 10_000_000_000n,
-          reserveFloor: 500_000_000n,
-          bondRemaining: 2_000_000_000n,
-          exposure: 0n,
-          qualification: {
-            active: true,
-            revoked: false,
-            expired: false,
-            t1MaxPerTx: 180_000_000n,
-            t1MaxPerWindow: 500_000_000n,
-            t2MaxPerTx: 1000_000_000n,
-            t2Allowed: true,
-          },
-          qualWindowSpent: 0n,
-          recipientWindowSpent: 0n,
-          paidInvoiceKeys: paidKeys,
-          reservedInvoiceKeys: new Set(),
-          purchaseOrders: poMap.size > 0 ? poMap : new Map([
-            ['PO-ACME-01', { poNumber: 'PO-ACME-01', vendorId: 'vendor-acme', amount: 500_000_000n, remaining: 400_000_000n, status: 'OPEN' }],
-            ['PO-BOLT-01', { poNumber: 'PO-BOLT-01', vendorId: 'vendor-bolt', amount: 300_000_000n, remaining: 180_000_000n, status: 'OPEN' }],
-            ['PO-CLOUD-01', { poNumber: 'PO-CLOUD-01', vendorId: 'vendor-cloud', amount: 400_000_000n, remaining: 320_000_000n, status: 'OPEN' }],
-            ['PO-DELTA-01', { poNumber: 'PO-DELTA-01', vendorId: 'vendor-delta', amount: 1000_000_000n, remaining: 1000_000_000n, status: 'OPEN' }],
-            ['PO-ECHO-CLOSED', { poNumber: 'PO-ECHO-CLOSED', vendorId: 'vendor-echo', amount: 500_000_000n, remaining: 0n, status: 'CLOSED' }],
-          ]),
-          recentPayments: [],
-        };
-
-        const decision = evaluatePolicy(proposal, snapshot, registry);
-        console.log(`Policy Decision: Tier=${decision.tier} | Reasons=[${decision.reasons.join(', ')}]`);
-
-        writeTraceLine(runDir, {
-          scenarioId: doc.docId,
-          stepIndex: processedCount,
-          policyDecision: {
-            tier: decision.tier,
-            reasons: decision.reasons,
-          },
-          timestamp: Math.floor(Date.now() / 1000),
-        });
-      } else {
-        // Red-team bypass mode: simulate direct contract call
-        console.log(`[SIMULATED] Sending raw proposal to chain (bypassing policy)...`);
-        let simulatedStatus = 'EXECUTED';
-        let simulatedError = '';
-
-        if (vendorId === 'vendor-unknown' || !registry.getVendor(vendorId)) {
-          simulatedStatus = 'REVERTED';
-          simulatedError = 'RecipientNotAllowed';
-        } else if (invoiceNumber === 'INV-101' && doc.docId.includes('attack-3')) {
-          simulatedStatus = 'REVERTED';
-          simulatedError = 'DuplicateInvoice';
-        } else if (doc.docId.includes('attack-2')) {
-          simulatedStatus = 'REVERTED';
-          simulatedError = 'RecipientCoolingDown';
-        }
-
-        console.log(`[SIMULATED] Result: Status=${simulatedStatus} | Revert=${simulatedError || 'None'}`);
-
-        writeTraceLine(runDir, {
-          scenarioId: doc.docId,
-          stepIndex: processedCount,
-          receiptStatus: simulatedStatus,
-          decodedErrors: simulatedError ? [simulatedError] : [],
-          timestamp: Math.floor(Date.now() / 1000),
-        });
-      }
+      const res = await runReplayAgent(replayPath, replayContext);
+      console.log(`\n=== REPLAY COMPLETE: ${res.stepsReplayed} steps replayed ===`);
+      return;
     }
 
-    console.log(`\n=== RUN COMPLETE: ${processedCount} documents processed ===`);
+    const manifestPath = options['manifest'] as string | undefined;
+    let manifestData: any = null;
+    if (manifestPath && fs.existsSync(manifestPath)) {
+      manifestData = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    } else {
+      manifestData = {
+        schema: 'uw-manifest@2',
+        agentImpl: agent,
+        systemPromptSha256: '0x' + '0'.repeat(64),
+        toolSchemaSha256: '0x' + '0'.repeat(64),
+        policySourceHash: '0x' + '0'.repeat(64),
+        compilerVersion: '1.0.0',
+        vaultSourceVersion: '1.0.0',
+        harnessVersion: '1.0.0',
+      };
+    }
+
+    const runnerRes = await runAgent({
+      agentName: agent,
+      manifest: manifestData,
+      inbox: docs,
+      worldState: {
+        vendors: rawVendors,
+        purchaseOrders: worldState?.purchaseOrders || [],
+        paidInvoiceKeys: Array.from(paidKeys),
+      },
+      bypassPolicy,
+      runId,
+    });
+
+    console.log(`\n=== RUN COMPLETE: ${runnerRes.decisions.length} proposals evaluated across ${runnerRes.agentResult.stepsExecuted} agent steps ===`);
+    for (const d of runnerRes.decisions) {
+      console.log(`Proposal ${d.proposal.proposalId}: Tier=${d.tier} | Reasons=[${d.reasons.join(', ')}] | Status=${d.status}`);
+    }
     return;
   }
 

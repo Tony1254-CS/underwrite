@@ -1,0 +1,5 @@
+{"policyDecision":{"reasons":[],"tier":"T1"},"receiptStatus":"APPROVED_BY_POLICY","scenarioId":"doc-basic-1","stepIndex":1,"timestamp":1792166894}
+{"policyDecision":{"reasons":[],"tier":"T1"},"receiptStatus":"APPROVED_BY_POLICY","scenarioId":"doc-basic-2","stepIndex":2,"timestamp":1792166894}
+{"policyDecision":{"reasons":[],"tier":"T1"},"receiptStatus":"APPROVED_BY_POLICY","scenarioId":"doc-basic-3","stepIndex":3,"timestamp":1792166894}
+{"policyDecision":{"reasons":["EXCEEDS_T1_PER_TX","EXCEEDS_T1_WINDOW"],"tier":"T2"},"receiptStatus":"APPROVED_BY_POLICY","scenarioId":"doc-basic-4","stepIndex":4,"timestamp":1792166894}
+{"policyDecision":{"reasons":["PO_CLOSED","AMOUNT_EXCEEDS_PO_REMAINING"],"tier":"REJECT"},"receiptStatus":"REJECTED","scenarioId":"doc-basic-5","stepIndex":5,"timestamp":1792166894}

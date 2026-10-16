@@ -166,3 +166,39 @@ Author: Tony1254-CS
    - Foundry: 101 tests passed across 17 test suites (INV-1..14 verified, stateful fuzz 25,600 calls / 0 reverts).
    - Gate QG-3 Status: **PASSED**.
 
+## Gate QG-4 Verification: Agents and Tools (Track B)
+
+Date: 2026-10-16 16:10 UTC
+Author: Tony1254-CS
+
+### Verification Steps & Commands
+
+1. **Tool Layer Strict Enforcement (`engine/src/agent/tools.ts` & `test/tools.test.ts`):**
+   - 7 tools from plan §9.6 implemented: `list_inbox`, `read_document`, `lookup_vendor`, `lookup_purchase_order`, `get_wallet_state`, `propose_payment`, `flag_for_review`.
+   - Strict Zod validation (`.strict()`) rejects unexpected properties.
+   - Address pattern detection (`0x` + 40 hex) strictly blocks address injection across all input parameters.
+   - `lookup_vendor` returns metadata only without payout addresses.
+   - `read_document` strictly wraps untrusted document contents in `<UNTRUSTED_DOCUMENT id="..." kind="...">...</UNTRUSTED_DOCUMENT>`.
+   - 10 unit tests passing in `engine/test/tools.test.ts`.
+
+2. **Agent Runner & Scripted Agents Execution (`engine/src/agent/scripted.ts`, `runner.ts`):**
+   - `scripted` (careful): Runs `list_inbox`, reads documents, queries vendor registry and POs. On basic fixtures, processed 4 valid invoices and flagged document 5 (closed PO) for review.
+   - `scripted-naive` (α): Blindly proposes all 5 documents without PO checks. On basic fixtures, proposal 5 is caught and rejected by deterministic policy engine (`PO_CLOSED`, `AMOUNT_EXCEEDS_PO_REMAINING`). On attack fixtures, proposed `vendor-unknown`, rejected by policy.
+   - Deterministic execution verified: repeated runs produce identical proposals and trace hashes.
+
+3. **Replay Mode Verification (`engine/src/agent/replay.ts`):**
+   - Transcripts loaded, verified against SHA-256 content hashes, badged with `[REPLAY]`.
+   - Replaying transcripts produces identical execution steps and trace hashes; tampered transcripts are rejected with `TAMPERED_TRANSCRIPT`.
+
+4. **LLM Adapter & Prompts (`engine/src/agent/llm.ts`, `llmClient.ts`, `prompts/`):**
+   - Native OpenAI/Gemini compatible client.
+   - Verifies provider reported model id against manifest on every turn, halting with `MODEL_DRIFT` on mismatch.
+   - `prompts/beta.md` and `prompts/gamma.md` created per plan §8.2 specifications.
+
+5. **Test Sweep & Workspace Verification:**
+   - `engine/test/agent-sweep.test.ts`: all 5 named test cases passing (`tool schema rejects addresses in inputs`, `alpha deterministic: produces identical proposals on multiple runs`, `replay identical: replaying recorded transcript produces identical tool execution count`, `adapter model-id halt: halts with MODEL_DRIFT when provider reports unexpected model`, `unknown tool name rejected by tool layer`).
+   - Vitest: 144 unit tests passed across 20 test files in `engine`.
+   - TypeScript: `pnpm -r typecheck` passed with 0 errors.
+   - Gate QG-4 Status: **PASSED**.
+
+

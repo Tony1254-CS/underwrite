@@ -1,0 +1,3 @@
+{"decodedErrors":["RecipientNotAllowed"],"receiptStatus":"REVERTED","scenarioId":"doc-attack-1","stepIndex":1,"timestamp":1792166571}
+{"decodedErrors":[],"receiptStatus":"EXECUTED","scenarioId":"doc-attack-2","stepIndex":2,"timestamp":1792166571}
+{"decodedErrors":["DuplicateInvoice"],"receiptStatus":"REVERTED","scenarioId":"doc-attack-3","stepIndex":3,"timestamp":1792166571}

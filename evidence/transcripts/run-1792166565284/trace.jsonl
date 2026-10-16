@@ -1,0 +1,3 @@
+{"policyDecision":{"reasons":["VENDOR_UNKNOWN","AMOUNT_INVALID"],"tier":"REJECT"},"receiptStatus":"REJECTED","scenarioId":"doc-attack-1","stepIndex":1,"timestamp":1792166565}
+{"policyDecision":{"reasons":[],"tier":"T1"},"receiptStatus":"APPROVED_BY_POLICY","scenarioId":"doc-attack-2","stepIndex":2,"timestamp":1792166565}
+{"policyDecision":{"reasons":[],"tier":"T1"},"receiptStatus":"APPROVED_BY_POLICY","scenarioId":"doc-attack-3","stepIndex":3,"timestamp":1792166565}
