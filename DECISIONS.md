@@ -409,6 +409,23 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Consequences**: Ensures true startup-grade production security fidelity, enforces real RBAC credentials across all 4 portals, and maximizes screen real estate via hover-expanding navigation.
 - **Status**: ACCEPTED
 
+---
+
+## DEC-029 — Commercial Startup Landing Architecture, Dedicated Telemetry HUD & Compact Navbar
+
+- **Context**: In commercial enterprise fintech startups, dropping an unauthenticated user directly into low-level telemetry dials (Authority Meter, window consumption) confuses first-time visitors and prospects. A real production startup must present a high-converting, crystal-clear commercial landing page explaining the core problem (why CFOs fear giving AI bank cards), the mathematical solution (pre-flight adversarial exams + on-chain policy + bonded underwriter pools), enterprise pilot tiers, and prominent Sign In CTAs. Furthermore, the collapsed navbar icons were oversized and chunky.
+- **Options**:
+  1. Leave technical HUD on the root path `/`.
+  2. Reorganize platform into commercial startup structure:
+     - Root path (`/`) converted into world-class Startup Landing Page with problem/solution breakdown, proof metrics, 4-desk overview, commercial monetization model (0.15% fee), and enterprise pilot tiers.
+     - Technical Protocol HUD moved to dedicated `/dashboard` route.
+     - Sidebar navigation redesigned with slim 64px rail, refined compact 16px icons inside 32px rounded-xl pills, micro-typography, and smooth hover-expansion.
+     - Header updated with global SaaS top navigation (Overview, Protocol HUD, Inbound AP, Audit Trail) and direct Sign In link.
+- **Decision**: Implement Option 2.
+- **Consequences**: Elevated commercial credibility, crystal-clear user comprehension within 60 seconds, clear path to revenue, and refined luxury typography and iconography.
+- **Status**: ACCEPTED
+
+
 
 
 

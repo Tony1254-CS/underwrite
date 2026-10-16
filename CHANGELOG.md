@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web/`: Commercial Startup Landing Architecture & Compact Navbar (DEC-029):
+  - `web/src/app/page.tsx`: Transformed root landing page into a premier commercial startup landing experience featuring executive value proposition, CFO bottleneck analysis, 4-desk portal tour, on-chain proof metrics, enterprise monetization model (0.15% fee), and enterprise pilot tiers.
+  - `web/src/app/dashboard/page.tsx`: Relocated technical Protocol HUD to dedicated dashboard route featuring live Authority Meter, 24h rolling window consumption bar, and Invariant proofs.
+  - `web/src/components/Sidebar.tsx`: Redesigned navbar with slim 64px rail, delicate 16px icons inside 32px rounded-xl pills, micro-typography, and smooth 288px hover-expansion.
+  - `web/src/components/Header.tsx`: Integrated global SaaS navigation (Overview, Protocol HUD, Inbound AP, Audit Trail) and direct Sign In action.
 - `web/`: Startup-Grade Enterprise Authentication & Hover-Expanding Sidebar (DEC-028):
   - `web/src/context/AuthContext.tsx`: Enterprise RBAC authentication provider with corporate credentials, password verification on role switching, session persistence in localStorage, and custom account registration.
   - `web/src/components/AuthModal.tsx`: Global security challenge modal requiring password verification before switching into Owner, Examiner, Underwriter, or Adjudicator profiles.
