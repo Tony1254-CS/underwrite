@@ -90,6 +90,18 @@ describe('Reproducibility and cross-language EIP-712 check (P5-T13)', () => {
       return;
     }
 
+    try {
+      const ping = await fetch('http://127.0.0.1:8545', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_chainId', params: [] }),
+      });
+      if (!ping.ok) throw new Error();
+    } catch {
+      console.warn('Skipping live chain check: local Anvil not reachable on 8545');
+      return;
+    }
+
     const configHash = hashCanonicalJson(manifest, 'keccak256');
     const fullCorpus = buildDevCorpus('corpus-v1');
     const corpusHash = hashCanonicalJson(fullCorpus, 'keccak256');

@@ -3,8 +3,8 @@ import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "UNDERWRITE | Autonomous Underwriting Enclave",
-  description: "Read-only inspection dashboard for on-chain state and empirical evidence files",
+  title: "UNDERWRITE — Autonomous AI Payment Authority",
+  description: "AI payment wallet whose spending authority is sized by adversarial exam, capped by contracts, and backed by a bond.",
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
           <header className="h-12 border-b border-slate-800 bg-[#0d121c]/70 backdrop-blur px-6 flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-3">
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-slate-300">UNDERWRITE VERIFIER</span>
+              <span className="text-slate-300 font-semibold">UNDERWRITE VERIFIER</span>
               <span className="text-slate-600">|</span>
               <span className="text-slate-400">STATE: READ-ONLY SHADOW</span>
             </div>
@@ -41,6 +41,10 @@ export default function RootLayout({
               {children}
             </div>
           </main>
+
+          <footer className="border-t border-slate-800/80 bg-[#090c13] py-4 text-center text-xs text-slate-500">
+            <p>UNDERWRITE · FinTechathon 2026 Topic F · Collateralized Autonomous Agent Safety</p>
+          </footer>
         </div>
       </body>
     </html>

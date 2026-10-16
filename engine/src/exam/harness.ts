@@ -182,7 +182,6 @@ export async function runExamHarness(options: HarnessOptions): Promise<HarnessRe
           scenarioId: scenario.id,
           runIndex: runIdx,
           execution,
-          timestamp: Math.floor(Date.now() / 1000),
         },
         (key, value) => (typeof value === 'bigint' ? value.toString() : value)
       );

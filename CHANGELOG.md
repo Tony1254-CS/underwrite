@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `engine/src/cli.ts`: Full qualification commands (`commit-exam`, `exam`, `compile`, `attest`, `activate`, `verify`).
 - `engine/test/exam-reproducibility.test.ts`: Verification of bit-identical report generation on multiple runs, and cross-language EIP-712 typed data signing in viem accepted by Solidity `UnderwriteVault.sol`.
 - Quality Gate `QG-5`: Exam is reproducible and on-chain qualification is verifiable with live tamper detection (`Verification: PASS` on genuine artifacts, `Verification: FAIL` on 1-byte tampered reports).
+- `web`: Exam & Policy Card page with verbatim notes, model cards (α, β, γ), and live interactive sensitivity compiler (P8-T04).
+- `web`: Execution run traces visualizer showing proposal to receipt lifecycle with tier filters (P8-T05).
+- `web`: Interactive Attack Lab with 4 preset adversarial vectors, Four Facts assessment, and red-team bypass toggle (P8-T06).
+- `web`: Claims management page reproducing P2 claim demo with 145 USDC payout and atomic qualification revocation (P8-T07).
+- `web`: On-chain evidence and verify page checking 6 fields with live 1-byte simulated tamper failure demo (P8-T08).
+- `web`: Data-origin protocol badges (.badge-simulated, .badge-scripted, .badge-controlled, .badge-replay) across all views (P8-T09).
+- `web`: Interactive Authority Meter, rolling window exposure gauge, live spend simulation, and real-time state refresh on the Dashboard (P8-T03).
+- `web`: Server data layer with viem client, contract ABIs, and dynamic API endpoints `/api/state`, `/api/exams`, `/api/runs`, `/api/claims`, `/api/receipts` (P8-T02).
+- `web`: Next.js and Tailwind CSS scaffold with system fonts, dark UI palette, and views for Dashboard, Policy Card, Traces, Attack Lab, Claims, and Verify (P8-T01).
 - `plan.md`: Authoritative design specification for FinTechathon 2026 Topic F.
 - `PHASES.md`: 124-task phased execution tracker with quality gates QG-0 to QG-9.
 - `AGENT_PROMPT.md`: Universal boot prompt for multi-agent autonomous engineering.
@@ -53,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `engine/src/chain/abi/`: exported `BondPool.json` and `BondPool.ts`.
 - `DECISIONS.md`: recorded DEC-021 confirming BondPool completion ahead of schedule and cut-line not triggered.
 - `PHASES.md`: Phase 2 Quality Gate QG-2 passed; all 9 Phase 2 tasks complete and 101 contract tests passing across 17 suites.
+<<<<<<< HEAD
 - `engine/src/types/`: implemented Zod schemas for models (`Proposal`, `PolicyDecision`, `TxRecord`, `Manifest`, `QualificationAttestation`, `Scenario`, `Claim`, `Mandate`, `Vendor`, `PurchaseOrder`) and `ReasonCode` enum.
 - `engine/src/types/money.ts` & `invoiceKey.ts`: strict 6-decimal USDC bigint parser and RFC-aligned `normalizeInvoiceNumber` / `computeInvoiceKey`.
 - `engine/src/evidence/canonical.ts`: RFC 8785 canonical JSON serialization (JCS), keccak256/sha256 utilities, CRLF-normalizing file hashing.
@@ -100,3 +110,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `experiments/hashes.json`: pre-committed cryptographic hashes for Generator B and the Blind Set (P7-T03).
 - `engine/src/experiment/runner.ts`: implemented experiment runner and deterministic rescore mode (`rescoreExperiment`) (P7-T04, P7-T05).
 - `DECISIONS.md`: recorded DEC-023 documenting fallback for Generator B and blind set.
+=======
+
+>>>>>>> p8-web-ui

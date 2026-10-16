@@ -63,12 +63,22 @@ const NAV_ITEMS: NavItem[] = [
     ),
   },
   {
-    name: "Evidence & Verify",
+    name: "Evidence Explorer",
     href: "/evidence",
     description: "Merkle roots & artifact audit",
     icon: (props) => (
       <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Verify Audit",
+    href: "/verify",
+    description: "6-field check & 1-byte tamper test",
+    icon: (props) => (
+      <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-2.18 2.07l-2.07 2.07m5.25-5.25l2.07-2.07M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
   },

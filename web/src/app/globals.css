@@ -5,6 +5,10 @@
 :root {
   --background: #090c13;
   --foreground: #e2e8f0;
+  --card: #0f172a;
+  --card-hover: #1e293b;
+  --border: #334155;
+  --accent: #38bdf8;
 }
 
 * {
@@ -20,6 +24,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 /* Custom scrollbars for dark theme */
@@ -39,4 +44,28 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
+}
+
+.badge-simulated {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.badge-scripted {
+  background-color: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.badge-controlled {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.badge-replay {
+  background-color: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
 }

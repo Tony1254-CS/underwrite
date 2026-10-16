@@ -1,15 +1,15 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 17:00 UTC, antigravity
-Last verified working state: Phase P5 100% complete (Gate QG-5 PASSED); Phase P8 complete through P8-T04 (Next.js 15.5.28 App Router + Tailwind scaffolded, Viem server data layer, live Dashboard with Authority Meter gauge, Exam / Policy Card page with 3 verbatim notes and sensitivity table); Phase P7 complete through P7-T05 (pre-registration in docs/EXPERIMENT.md, Generator B brief, pre-committed hashes in experiments/hashes.json, R0/R1/R2 experiment runner, and deterministic rescore mode).
-Active phase: P8 Web UI (Track C) & P7 Calibration Experiment (Track B)
-Next concrete task: P8-T05 (Run trace page), P8-T06 (Attack Lab), P7-T06 / P7-T07 (Main experiment execution)
-Tests run this session: `pnpm -r test` → 156 tests passed across 24 test files (0 failures); `pnpm -r typecheck` → 0 errors; `forge test` → 101 tests passed across 17 test suites (256 invariant runs, 25,600 calls, 0 reverts); `pnpm --filter web build` → Next.js 15 production build clean (10/10 routes, 0 type errors); `git grep -in "https://" -- web/src` → clean (0 matches).
-Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs).
+## Handoff — 2026-10-16 17:15 UTC, antigravity
+Last verified working state: Phase P4 & P5 100% complete (Gates QG-4 & QG-5 PASSED); Phase P7 complete through P7-T05 (pre-registration in docs/EXPERIMENT.md, Generator B brief, pre-committed hashes in experiments/hashes.json, R0/R1/R2 experiment runner, deterministic rescore mode); Phase P8 complete through P8-T09 (Next.js App Router + Tailwind, Authority Meter dashboard, Policy Card sensitivity compiler, Run Traces visualizer, Attack Lab with Four Facts assessment, Claims adjudication demo, Evidence & 1-byte Tamper Verification, Badges).
+Active phase: P8 Web UI (P8-T10 demo script), P7 Calibration Experiment, P6 Deployment
+Next concrete task: P8-T10 | C | needs: QG-4,P8-T06,P8-T07,P6-T10 | scripts/demo-local.sh bring-up
+Tests run this session: `pnpm -r test` → 156 tests passed; `forge test --root contracts` → 101/101 tests passed across 17 suites; Next.js web build passes with 0 errors.
+Tests NOT run: Live Base Sepolia execution (P6); full calibration run with real LLMs (P7-T06); Playwright e2e (P8-T11).
 Known failures: None
 Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL), DEC-020 (BondPool custom errors & events), DEC-021 (Cut-line not triggered; real BondPool retained), DEC-022 (P5-T05 fallback: II-HOLDOUT-2 self-authored), DEC-023 (P7-T03 fallback: Generator B self-authored)
-Risks of touching current code: Low (contracts/, engine/src/exam/, compiler/, and experiment/ runner sealed with full regression suite)
-Phase checklist: P0 [x] P1 [x] P2 [x] P3 [x] P4 [x] P5 [x] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x] QG-2 [x] QG-3 [x] QG-4 [x] QG-5 [x]
+Risks of touching current code: Low (contracts, engine, exam, compiler, experiment, and web UI synchronized).
+Phase checklist: P0 [x] P1 [x] P2 [x] P3 [x] P4 [x] P5 [x] P6 [ ] P7 [~] P8 [~] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x] QG-2 [x] QG-3 [x] QG-4 [x] QG-5 [x]
 
 ## Testnet accounts (Base Sepolia throwaways, generated local .env)
 - DEPLOYER: `0x9126090d4650bD722FD8763d164D325A270A78F2`
