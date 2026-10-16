@@ -218,11 +218,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §13.2
   Done when: the 12 numbered rules match plan §13.2 line for line (diff by eye); the three files exist.
   Evidence: 2026-10-16 12:30 UTC · antigravity-1 · d300685 · sed -n '875,888p' plan.md | diff -u - <(head -n 13 AGENTS.md); test -f AGENTS.md && test -f CLAUDE.md && test -f GEMINI.md → 12 rules match line for line, all 3 files exist
-- [ ] P0-T04 | X | needs: P0-T01 | .gitignore and .env.example
+- [x] P0-T04 | X | needs: P0-T01 | .gitignore and .env.example
   Do: `.gitignore`: `.env`, `.env.*` with `!.env.example`, `.keys/`, `node_modules/`, `contracts/out/`, `contracts/cache/`, `contracts/broadcast/`, `.next/`, `coverage/`, `dist/`, `*.log`, `.DS_Store`. `contracts/deployments/` and `evidence/` stay tracked. `.env.example` = plan §13.6 verbatim.
   Files: `.gitignore .env.example`
   Spec: plan §13.6
   Done when: `git check-ignore -v .env .keys/x contracts/broadcast/x` lists all three; `git check-ignore .env.example evidence/onchain/x contracts/deployments/84532.json` prints nothing.
+  Evidence: 2026-10-16 12:31 UTC · antigravity-1 · 0a782e3 · git check-ignore -v .env .keys/x contracts/broadcast/x; git check-ignore .env.example evidence/onchain/x contracts/deployments/84532.json → all three ignored; tracked paths print nothing
 - [ ] P0-T05 | X | needs: P0-T01 | Directory skeleton and README stub
   Do: create every directory of plan §13.1 (empty ones get `.gitkeep`): `contracts/{src,test,script,deployments}`, `engine/src/{types,mandate,policy,agent,exam,compiler,manifest,signer,executor,chain,evidence,experiment}`, `engine/test`, `engine/fixtures`, `web`, `scenarios`, `evidence/{exams,experiments,onchain,transcripts}`, `docs/competition`, `scripts`. `README.md` = title + "work in progress, see STATUS.md".
   Files: as listed
