@@ -313,11 +313,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §9.7, §9.8 (INV-10, 14), §5.5
   Done when: tests: exposure rises on pay and falls on reconcile; `InsufficientBacking` until the owner reconciles; reconciled payment is not claimable; `AlreadyReconciled`.
   Evidence: 2026-10-16 13:42 UTC · antigravity-1 · 5971c82 · cd contracts && forge test --match-path *Reconcile* passed (7 tests); exposure accounting, reconcile unblocking, 50-batch limit, and isClaimable verified → 0
-- [ ] P1-T08 | A | needs: P1-T06,P1-T07 | Test sweep A: every custom error is triggered
+- [x] P1-T08 | A | needs: P1-T06,P1-T07 | Test sweep A: every custom error is triggered
   Do: make sure each of the 24 errors is triggered by at least one passing test using `vm.expectRevert`.
   Files: `contracts/test/**`
   Spec: plan §9.7
   Done when: `cd contracts && for e in NotOwner NotAgent NoActiveQualification QualificationExpired QualificationRevoked AttestationUsed BadSignature WrongVault RecipientNotAllowed RecipientCoolingDown ExceedsPerTx ExceedsWindow ExceedsRecipientWindow InsufficientBacking ReserveBreached DuplicateInvoice T2NotAllowed NotReady NotPending Paused BondLockFailed StaleExamCommit AlreadyReconciled Vetoed; do grep -rqE "$e(\.selector|\(\))" test || echo "MISSING $e"; done` prints nothing and `forge test` passes.
+  Evidence: 2026-10-16 13:45 UTC · antigravity-1 · 03a8b0d · bash scripts/check_errors.sh printed nothing (all 24 errors verified), cd contracts && forge test passed 54 tests across 8 suites → 0
 - [ ] P1-T09 | A | needs: P1-T08 | Test sweep B: edge cases from plan §5.5
   Do: tests for every vault-relevant case: payment exactly at per-tx, window and reserve limits; window rollover; two T1 payments in one block; T2 after revoke / deactivate / pause; pause during pending; owner lowers ceilings mid-window; window-boundary burst bounded by exposure; reconcile then pay again; claim on a reconciled payment rejected; attestation referencing a superseded exam commit.
   Files: `contracts/test/Vault.Edge.t.sol`
