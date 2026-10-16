@@ -102,3 +102,11 @@ None.
 ### Verdict
 **APPROVE for QG-1**. The contract implementation is secure, well-tested, invariant-conforming, and ready for quality gate QG-1.
 
+## Quality Gate QG-1 Verification (2026-10-16 14:20 UTC)
+- `cd contracts && forge test`: 78 tests passed across 12 suites (unit, edge, fuzz, and stateful invariant suites with 25,600 calls, 0 reverts).
+- `forge fmt --check`: Clean (exit 0).
+- `scripts/check_inv.sh`: 0 missing invariants (INV-1..10, 12..14 verified).
+- `engine/src/chain/abi/`: Both `UnderwriteVault` and `MockUSDC` JSON and TypeScript ABIs present and typed.
+- Security verification: No known path where an agent key can move funds outside INV-1.
+- Gate status: **QG-1 PASSED**. Vault is safe to build on.
+

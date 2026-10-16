@@ -360,9 +360,10 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Done when: TESTING.md has the review entry with the reviewer label; all findings resolved or listed as known risks.
   Evidence: 2026-10-16 14:18 UTC · antigravity-reviewer-1 · forge test passed (78 tests across 12 suites), check_errors.sh (24/24), check_inv.sh (13/13); INV-1..10, 12..14 verified; PV-09 revert order verified; review recorded in TESTING.md → APPROVE (QG-1)
 
-- [ ] QG-1 | A | needs: P1-T14,P1-T15 | GATE P1: vault is safe to build on
+- [x] QG-1 | A | needs: P1-T14,P1-T15 | GATE P1: vault is safe to build on
   Do: run `cd contracts && forge test && forge fmt --check && forge coverage --report summary`; confirm the INV matrix command of P1-T12 prints nothing; confirm ABIs exist in `engine/src/chain/abi/`.
   Done when: all green, INV matrix complete, no known path where an agent key moves funds outside INV-1. Record in TESTING.md. Other tracks may now depend on vault ABIs.
+  Evidence: 2026-10-16 14:20 UTC · antigravity-1 · cd contracts && forge test (78/78 passed across 12 suites), forge fmt --check (clean), check_inv.sh (0 missing), ABIs exported to engine/src/chain/abi/ (UnderwriteVault, MockUSDC json + ts), independent review approved → GATE PASSED
 
 ---
 
