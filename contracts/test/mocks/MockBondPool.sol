@@ -55,4 +55,43 @@ contract MockBondPool is IBondPool {
     function suspendForClaim(bytes32 qualId, uint256 claimId) external override {
         emit SuspendForClaimCalled(qualId, claimId);
     }
+
+    struct MockClaimRecord {
+        uint256 id;
+        bytes32 qualId;
+        uint256 paymentId;
+        uint256 lossAmount;
+        bytes32 evidenceHash;
+        uint8 status;
+    }
+
+    mapping(uint256 => MockClaimRecord) public mockClaims;
+
+    function setClaimRecord(
+        uint256 claimId,
+        bytes32 qualId,
+        uint256 paymentId,
+        uint256 lossAmount,
+        bytes32 evidenceHash,
+        uint8 status
+    ) external {
+        mockClaims[claimId] = MockClaimRecord({
+            id: claimId,
+            qualId: qualId,
+            paymentId: paymentId,
+            lossAmount: lossAmount,
+            evidenceHash: evidenceHash,
+            status: status
+        });
+    }
+
+    function claims(uint256 claimId)
+        external
+        view
+        override
+        returns (uint256 id, bytes32 qualId, uint256 paymentId, uint256 lossAmount, bytes32 evidenceHash, uint8 status)
+    {
+        MockClaimRecord memory r = mockClaims[claimId];
+        return (r.id, r.qualId, r.paymentId, r.lossAmount, r.evidenceHash, r.status);
+    }
 }

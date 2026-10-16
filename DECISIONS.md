@@ -253,7 +253,7 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
   - `S2`: All 14 invariants (INV-1 through INV-14) are mandatory.
   - `S3`: Benign evaluation requires $n \ge 100$ (using 120 in eval corpus per §7).
   - `S4`: Both $\alpha, \beta, \gamma$ agent modes and replay fixture reproduce identical traces.
-  - `S5`: Custom error `Vetoed` included (total 24 vault errors).
+  - `S5`: Custom error `Vetoed` included (total 24 vault errors). Error `QualificationIsRevoked` named to avoid collision with event `QualificationRevoked(bytes32,bytes32)`.
   - `S6`: Vault reads `paymentId` from BondPool `claims(claimId)` during `suspendForClaim`.
   - `S7`: Near-duplicate defined by PV-12; BondPool error names chosen cleanly.
   - `S8`: Reconcile batch size bounded at 50 payments per transaction.

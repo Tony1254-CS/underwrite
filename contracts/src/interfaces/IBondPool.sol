@@ -20,4 +20,10 @@ interface IBondPool {
 
     /// @notice BondPool calls vault during claim execution to suspend qualification and update exposure.
     function suspendForClaim(bytes32 qualId, uint256 claimId) external;
+
+    /// @notice Query claim record to retrieve paymentId associated with claim.
+    function claims(uint256 claimId)
+        external
+        view
+        returns (uint256 id, bytes32 qualId, uint256 paymentId, uint256 lossAmount, bytes32 evidenceHash, uint8 status);
 }
