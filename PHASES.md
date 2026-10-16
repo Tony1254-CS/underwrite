@@ -295,11 +295,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §9.7, §9.8 (INV-9, 12, 13), §5.5
   Done when: tests cover happy path, `AttestationUsed`, `BadSignature`, `WrongVault`, wrong chain, expired, stale commit (old commitId and wrong corpusHash), examiner rotated after signing, `BondLockFailed`, min(attested, ceilings), supersede, revoke by owner and by examiner, stranger rejected; all pass.
   Evidence: 2026-10-16 13:27 UTC · antigravity-1 · 70835ab · forge test --match-path *Qualification* passed (9 tests); happy path, bad signature, rotated examiner, wrong vault, expired, stale commit, bond lock failure, ceilings cap, supersede & revoke verified → 0
-- [ ] P1-T05 | A | needs: P1-T03,P1-T04 | pay (T1)
+- [x] P1-T05 | A | needs: P1-T03,P1-T04 | pay (T1)
   Do: all T1 checks in the PV-09 order; update window spend, recipient window spend, exposure; mark invoice PAID; `safeTransfer`; record payment; emit `PaymentExecuted(tier=1)`. The backing check reads `bondPool.remaining(qualId)`.
   Files: `contracts/src/UnderwriteVault.sol contracts/test/Vault.Pay.t.sol`
   Spec: plan §5.3, §9.7, §9.8 (INV-1…7, 10)
   Done when: happy path and one revert test per T1 error pass.
+  Evidence: 2026-10-16 13:33 UTC · antigravity-1 · e397452 · cd contracts && forge test --match-path *Pay* passed (13 tests); happy path T1 and all PV-09 reverts verified → 0
 - [ ] P1-T06 | A | needs: P1-T05 | T2 flow: requestPayment, executePending, veto
   Do: per plan §9.7 and the PV-09 order; `executePending` re-validates everything; invoice RESERVED→PAID or RESERVED→NONE on veto; `veto` by owner or guardian.
   Files: `contracts/src/UnderwriteVault.sol contracts/test/Vault.T2.t.sol`

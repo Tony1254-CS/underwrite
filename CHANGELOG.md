@@ -17,3 +17,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `STATUS.md`: Agent handoff block and live operational status.
 - `DECISIONS.md`: Architectural Decision Records DEC-001 through DEC-019.
 - `CHANGELOG.md`: Change tracking log.
+- `UnderwriteVault.sol`: implement `pay` (T1 execution) with strict PV-09 revert order, exposure tracking, window spend tracking, invoice uniqueness, and `PaymentExecuted` event.
+- `contracts/test/Vault.Pay.t.sol`: 13 unit tests verifying T1 payment happy path and all 12 PV-09 revert error conditions.
