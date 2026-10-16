@@ -301,11 +301,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §5.3, §9.7, §9.8 (INV-1…7, 10)
   Done when: happy path and one revert test per T1 error pass.
   Evidence: 2026-10-16 13:33 UTC · antigravity-1 · e397452 · cd contracts && forge test --match-path *Pay* passed (13 tests); happy path T1 and all PV-09 reverts verified → 0
-- [ ] P1-T06 | A | needs: P1-T05 | T2 flow: requestPayment, executePending, veto
+- [x] P1-T06 | A | needs: P1-T05 | T2 flow: requestPayment, executePending, veto
   Do: per plan §9.7 and the PV-09 order; `executePending` re-validates everything; invoice RESERVED→PAID or RESERVED→NONE on veto; `veto` by owner or guardian.
   Files: `contracts/src/UnderwriteVault.sol contracts/test/Vault.T2.t.sol`
   Spec: plan §5.3, §9.7, §9.8 (INV-8)
   Done when: tests for `NotReady`, `Vetoed`, `NotPending`, execute-after-revoke, execute-after-deactivate, execute-after-pause all pass.
+  Evidence: 2026-10-16 13:38 UTC · antigravity-1 · 29af22a · cd contracts && forge test --match-path *T2* passed (13 tests); happy path T2 lifecycle, owner & guardian veto, invoiceKey release, stranger veto rejection, and PV-09 re-validation reverts verified → 0
 - [ ] P1-T07 | A | needs: P1-T05 | reconcile, isClaimable, exposure accounting
   Do: per-qual sequential payment ids with a reconcile cursor; `reconcile(qualId, upToPaymentId)` (owner, max 50 payments per call, S8) lowers `exposure`, marks payments accepted; `isClaimable(paymentId)` = tier 1, not reconciled, not already claimed.
   Files: `contracts/src/UnderwriteVault.sol contracts/test/Vault.Reconcile.t.sol`

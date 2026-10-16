@@ -19,3 +19,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CHANGELOG.md`: Change tracking log.
 - `UnderwriteVault.sol`: implement `pay` (T1 execution) with strict PV-09 revert order, exposure tracking, window spend tracking, invoice uniqueness, and `PaymentExecuted` event.
 - `contracts/test/Vault.Pay.t.sol`: 13 unit tests verifying T1 payment happy path and all 12 PV-09 revert error conditions.
+- `UnderwriteVault.sol`: implement T2 flow (`requestPayment`, `executePending`, `veto`) with invoice reservation, challenge period enforcement, post-delay re-validation, and veto release.
+- `contracts/test/Vault.T2.t.sol`: 13 unit tests verifying full T2 lifecycle, owner/guardian veto, invoiceKey release, stranger veto rejection, and all PV-09 revert conditions.
