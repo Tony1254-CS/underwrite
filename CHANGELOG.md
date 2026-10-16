@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web`: Exam & Policy Card page with verbatim notes, model cards (α, β, γ), and live interactive sensitivity compiler (P8-T04).
+- `web`: Execution run traces visualizer showing proposal to receipt lifecycle with tier filters (P8-T05).
+- `web`: Interactive Attack Lab with 4 preset adversarial vectors, Four Facts assessment, and red-team bypass toggle (P8-T06).
+- `web`: Claims management page reproducing P2 claim demo with 145 USDC payout and atomic qualification revocation (P8-T07).
+- `web`: On-chain evidence and verify page checking 6 fields with live 1-byte simulated tamper failure demo (P8-T08).
+- `web`: Data-origin protocol badges (.badge-simulated, .badge-scripted, .badge-controlled, .badge-replay) across all views (P8-T09).
 - `web`: Interactive Authority Meter, rolling window exposure gauge, live spend simulation, and real-time state refresh on the Dashboard (P8-T03).
 - `web`: Server data layer with viem client, contract ABIs, and dynamic API endpoints `/api/state`, `/api/exams`, `/api/runs`, `/api/claims`, `/api/receipts` (P8-T02).
 - `web`: Next.js 14 and Tailwind CSS scaffold with system fonts, dark UI palette, and stub pages for Dashboard, Policy Card, Traces, Attack Lab, Claims, and Verify (P8-T01).

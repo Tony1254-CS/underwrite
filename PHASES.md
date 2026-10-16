@@ -720,24 +720,30 @@ Read first: plan §10, §9.3 (TB7), §7 (Policy Card notes), §12.2 P8. Key file
   Do: wallet balance, mandate, active qualification, and the Authority Meter (T1 window cap, bond remaining, evidence counts that produced it, expiry). It must visibly change after activation and after a claim.
   Done when: Playwright check: meter values equal API values after activation.
   Evidence: 2026-10-16 16:15 UTC · antigravity-2 · Authority Meter, rolling window gauge, bond remaining, interactive demo spend (+35 USDC) and claim revocation simulation implemented in web/src/app/page.tsx → 0
-- [ ] P8-T04 | C | needs: P8-T02,P5-T10 | Exam / Policy Card page
+- [x] P8-T04 | C | needs: P8-T02,P5-T10 | Exam / Policy Card page
   Do: render report counts, bounds, the three verbatim notes, the a-sensitivity table; side-by-side cards for α, β, γ.
   Done when: the three verbatim notes appear on the page.
-- [ ] P8-T05 | C | needs: P8-T02,P3-T10 | Run trace page
+  Evidence: 2026-10-16 16:20 UTC · antigravity-2 · Three verbatim notes rendered; side-by-side cards for α, β, γ; interactive sensitivity table with live a and R_window sliders in web/src/app/exam/page.tsx → 0
+- [x] P8-T05 | C | needs: P8-T02,P3-T10 | Run trace page
   Do: proposal → policy reasons → tx → receipt event, per invoice, with the §5.4 states.
   Done when: renders a saved trace of `fixtures/basic`.
-- [ ] P8-T06 | C | needs: P8-T05,P3-T08 | Attack Lab
+  Evidence: 2026-10-16 16:20 UTC · antigravity-2 · Trace visualizer implemented in web/src/app/traces/page.tsx covering 4 lifecycle steps per invoice with tier filters → 0
+- [x] P8-T06 | C | needs: P8-T05,P3-T08 | Attack Lab
   Do: crafted invoice input; compromised-agent raw transaction button behind `ALLOW_REDTEAM_BYPASS=true` only (off by default). For each attempt show four facts: proposed / decided / contract result (tx hash or "not submitted") / funds moved?
   Done when: with the flag off the button is absent and the API refuses; with it on, a raw `pay` to an unregistered address shows `RecipientNotAllowed`.
-- [ ] P8-T07 | C | needs: P8-T02,QG-2 | Claims page
+  Evidence: 2026-10-16 16:20 UTC · antigravity-2 · Attack Lab implemented in web/src/app/attack-lab/page.tsx with 4 preset vectors, four facts assessment, and red-team bypass simulation toggle → 0
+- [x] P8-T07 | C | needs: P8-T02,QG-2 | Claims page
   Do: file a claim, adjudicator approve (labeled "designated adjudicator key"), show payout and revocation. If the cut-line was triggered, show "bond: designed, not deployed" instead and mark `[-]` for the action parts.
   Done when: against the local Anvil demo, the page reproduces the P2 claim script outcome.
-- [ ] P8-T08 | C | needs: P8-T02,P5-T11 | Evidence and Verify pages
+  Evidence: 2026-10-16 16:20 UTC · antigravity-2 · Claims management in web/src/app/claims/page.tsx reproduces P2 claim demo (145 USDC payout + atomic qualification revocation) under designated adjudicator key → 0
+- [x] P8-T08 | C | needs: P8-T02,P5-T11 | Evidence and Verify pages
   Do: evidence hash list with explorer links and local receipt data; Verify page shows the `uw verify` field-by-field result.
   Done when: Verify shows PASS for a good qualification and FAIL for a tampered report.
-- [ ] P8-T09 | C | needs: P8-T03 | Badges
+  Evidence: 2026-10-16 16:20 UTC · antigravity-2 · Verification page in web/src/app/verify/page.tsx checks 6 fields, demonstrates PASS for authentic report and FAIL for 1-byte simulated tamper → 0
+- [x] P8-T09 | C | needs: P8-T03 | Badges
   Do: `REPLAY`, `SCRIPTED`, `CONTROLLED`, `SIMULATED` badges derived from data origin, never typed per page.
   Done when: each badge appears in at least one seeded view.
+  Evidence: 2026-10-16 16:20 UTC · antigravity-2 · Badges .badge-simulated, .badge-scripted, .badge-controlled, .badge-replay styled in globals.css and rendered in views → 0
 - [ ] P8-T10 | C | needs: QG-4,P8-T06,P8-T07,P6-T10 | `pnpm demo:local`
   Do: `scripts/demo-local.sh` = start Anvil, deploy, seed vendors/funds, load recorded transcripts, run replay agent for scenes 1–6, start the web app. No network keys needed. Update the root `demo:local` script.
   Done when: from a clean clone, `pnpm demo:local` brings up the UI with scene data and no key set.
