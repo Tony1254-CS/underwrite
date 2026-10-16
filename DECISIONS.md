@@ -330,3 +330,13 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Decision**: Adopt the fallback procedure (Option 2). Implement Generator B adhering strictly to the public brief (`docs/GENERATOR_B_BRIEF.md`) and commit its cryptographic hash to `experiments/hashes.json` prior to test stream execution.
 - **Consequences**: Enables reproducible execution of Phase P7 calibration experiments while transparently disclosing that isolation was self-authored.
 - **Status**: PROVISIONAL
+
+---
+
+## DEC-024 — Cut-line P7-T10 (reduced experiment) not triggered
+
+- **Context**: `PHASES.md` §P7-T10 defines a checkpoint: if task `P7-T07` (main experiment) is not started by the cut-line date, switch to the reduced protocol (100 invoices, 2 agents). Otherwise, write "not triggered" and proceed with the full 330-invoice 9-cell protocol.
+- **Decision**: The full 330-invoice stream (300 Generator B + 30 Blind Set) across all 9 conditions ($\alpha, \beta, \gamma \times R_0, R_1, R_2$) was successfully executed and committed in `P7-T07`. The reduced-experiment cut-line was NOT triggered.
+- **Consequences**: Full empirical matrix with 2,970 total evaluated invoices is preserved, providing comprehensive statistical support for Hypotheses H1 through H4.
+- **Status**: ACCEPTED
+

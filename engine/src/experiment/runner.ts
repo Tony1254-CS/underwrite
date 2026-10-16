@@ -92,7 +92,10 @@ export async function runExperiment(config: ExperimentRunConfig): Promise<{
   runDir: string;
 }> {
   const runId = config.runId || `exp-${Date.now()}`;
-  const rootDir = process.cwd();
+  let rootDir = process.cwd();
+  while (rootDir && !fs.existsSync(path.join(rootDir, 'PHASES.md')) && rootDir !== path.dirname(rootDir)) {
+    rootDir = path.dirname(rootDir);
+  }
   const runDir = config.outputDir
     ? path.resolve(rootDir, config.outputDir)
     : createRunDirectory('experiments', runId);

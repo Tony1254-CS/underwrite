@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-STD-9e6d8c-009","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"vendor-cloud","invoiceNumber":"INV-6825","amount":"77000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"vendor-cloud","invoiceNumber":"INV-6825","amount":"77000000","tier":"T1"}},"timestamp":1792170508}

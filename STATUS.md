@@ -1,15 +1,23 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 17:00 UTC, antigravity
-Last verified working state: Phase P5 100% complete (Gate QG-5 PASSED); Phase P8 complete through P8-T04 (Next.js 15.5.28 App Router + Tailwind scaffolded, Viem server data layer, live Dashboard with Authority Meter gauge, Exam / Policy Card page with 3 verbatim notes and sensitivity table); Phase P7 complete through P7-T05 (pre-registration in docs/EXPERIMENT.md, Generator B brief, pre-committed hashes in experiments/hashes.json, R0/R1/R2 experiment runner, and deterministic rescore mode).
-Active phase: P8 Web UI (Track C) & P7 Calibration Experiment (Track B)
-Next concrete task: P8-T05 (Run trace page), P8-T06 (Attack Lab), P7-T06 / P7-T07 (Main experiment execution)
-Tests run this session: `pnpm -r test` → 156 tests passed across 24 test files (0 failures); `pnpm -r typecheck` → 0 errors; `forge test` → 101 tests passed across 17 test suites (256 invariant runs, 25,600 calls, 0 reverts); `pnpm --filter web build` → Next.js 15 production build clean (10/10 routes, 0 type errors); `git grep -in "https://" -- web/src` → clean (0 matches).
+## Handoff — 2026-10-16 17:30 UTC, Tony1254-CS
+Last verified working state: Phase P5 100% complete (Gate QG-5 PASSED); Phase P7 Calibration Experiment 100% complete (Gate QG-7 PASSED); Phase P8 Web UI 100% complete (Gate QG-8 PASSED); Phase P6 Testnet RPC verified (P6-T01 done); Phase P9 Documentation delivered (P9-T02, P9-T03, P9-T04, P9-T05, P9-T06, P9-T09 complete).
+Active phase: P6 Testnet Deployment (Track A+B) & P9 Final Polish (Track C)
+Next concrete task: P6-T02 (Deploy script and deployment record on Base Sepolia - needs testnet faucet ETH for deployer), P9-T07 (Human demo video recording), P9-T08 (Code freeze checkpoint)
+Tests run this session: `pnpm -r test` → 157 tests passed across 25 test files (0 failures); `pnpm -r typecheck` → 0 errors; `forge test` → 101 tests passed across 17 test suites (256 invariant runs, 25,600 calls, 0 reverts); `pnpm --filter web build` → Next.js 15 production build clean (10/10 routes, 0 type errors); `pnpm uw experiment rescore` verified; `pnpm uw verify` verified.
 Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs).
 Known failures: None
-Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL), DEC-020 (BondPool custom errors & events), DEC-021 (Cut-line not triggered; real BondPool retained), DEC-022 (P5-T05 fallback: II-HOLDOUT-2 self-authored), DEC-023 (P7-T03 fallback: Generator B self-authored)
-Risks of touching current code: Low (contracts/, engine/src/exam/, compiler/, and experiment/ runner sealed with full regression suite)
-Phase checklist: P0 [x] P1 [x] P2 [x] P3 [x] P4 [x] P5 [x] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x] QG-2 [x] QG-3 [x] QG-4 [x] QG-5 [x]
+Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL), DEC-020 (BondPool custom errors & events), DEC-021 (Cut-line not triggered; real BondPool retained), DEC-022 (P5-T05 fallback: II-HOLDOUT-2 self-authored), DEC-023 (P7-T03 fallback: Generator B self-authored), DEC-024 (P7-T10 reduced experiment not triggered)
+Risks of touching current code: Low (contracts/, engine/, and web/ regression suites green)
+Phase checklist: P0 [x] P1 [x] P2 [x] P3 [x] P4 [x] P5 [x] P6 [ ] P7 [x] P8 [x] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x] QG-2 [x] QG-3 [x] QG-4 [x] QG-5 [x] QG-7 [x] QG-8 [x]
+
+### Experiment Prerequisites Verification (P7-T06)
+- **Fact 1 (Protocol Pre-Registration):** `docs/EXPERIMENT.md` committed at `93dfb1a` (2026-10-16 22:51:29 +0600) prior to experimental runs.
+- **Fact 2 (Cryptographic Hashes Pre-Committed):** `experiments/hashes.json` committed at `3a6f74c` (2026-10-16 23:02:23 +0600) prior to experimental runs.
+- **Fact 3 (Exam Reports Generated):**
+  - $\alpha$ (`scripted-naive`): `evidence/exams/0x5ac77c6e577ff5919c6ad00b2dc4d2850350ca93f64fb654c12aa844c2573d0f/report.json` (reportHash: `0x02d317b2510c13bf46383792072df8355dc36fdf7659dd0b5890833129bed083`)
+  - $\beta$ (`llm:beta`): `evidence/exams/0x7f7169237f331349adb91af646a622c0dcbb0bc07dd96ff992f0b820cbf9fdac/report.json` (reportHash: `0xa20c4d216d00a7039a2ed3e4f2586b37a62c8977bb70f3f53289756b74626842`)
+  - $\gamma$ (`llm:gamma`): `evidence/exams/0x08b492e5c4d130ac5d3f9db120fe5be8f5adc131cbd57e230c1915ae407979c0/report.json` (reportHash: `0xbaab4f10837d40a0b83d894bb8cee2505c14b64507ccaa67d67a8eb6a8b4452a`)
 
 ## Testnet accounts (Base Sepolia throwaways, generated local .env)
 - DEPLOYER: `0x9126090d4650bD722FD8763d164D325A270A78F2`

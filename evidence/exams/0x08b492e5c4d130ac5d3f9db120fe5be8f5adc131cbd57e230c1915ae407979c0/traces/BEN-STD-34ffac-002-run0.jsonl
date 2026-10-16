@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-STD-34ffac-002","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"vendor-bolt","invoiceNumber":"INV-1504","amount":"569000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"vendor-bolt","invoiceNumber":"INV-1504","amount":"569000000","tier":"T1"}},"timestamp":1792170626}

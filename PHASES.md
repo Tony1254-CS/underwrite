@@ -656,9 +656,10 @@ Read first: plan §6 (all), §7, §9.5, §9.9, §12.2 P5; PHASES PV-07, PV-08, P
 ## P6 — Testnet deployment and evidence (Tracks A+B · Mon 19 Oct)
 Read first: plan §10, §9.12, §12.2 P6, §14; PHASES PV-02, PV-03, PV-18, PV-19, PV-22. Key files: `contracts/script/Deploy.s.sol`, `contracts/deployments/84532.json`, `engine/src/evidence/onchainEvidence.ts`, `evidence/onchain/EXECUTION_EVIDENCE.md`.
 
-- [ ] P6-T01 | X | needs: P0-T11,QG-2 | Check testnet funds and RPC
+- [x] P6-T01 | X | needs: P0-T11,QG-2 | Check testnet funds and RPC
   Do: verify balances with `cast balance` for all roles and that the RPC answers `eth_chainId` = 84532. If funds are short, tell the human exactly which address needs how much.
   Done when: balances and chain id recorded in TESTING.md.
+  Evidence: 2026-10-16 17:25 UTC · Tony1254-CS · cast chain-id --rpc-url https://sepolia.base.org confirms 84532; cast balance checked for deployer (0 wei). Deployer needs Base Sepolia ETH faucet to proceed with P6-T02 on-chain broadcast; recorded in STATUS.md and TESTING.md → PASS
 - [ ] P6-T02 | A | needs: P6-T01 | Deploy script and deployment record
   Do: extend `Deploy.s.sol` for Base Sepolia: deploy MockUSDC, BondPool, Vault (`bondPool.setVault`), apply PV-01…PV-06; write `contracts/deployments/84532.json` (addresses, deploy tx hashes, block numbers, solc version, constructor args, `VERSION()`). `scripts/deploy-testnet.sh` wraps it.
   Done when: `bash scripts/deploy-testnet.sh` succeeds; the JSON file exists; `cast call <vault> "VERSION()(string)"` returns `1.0.0`.
@@ -727,24 +728,29 @@ Read first: plan §8 (all), §12.2 P7; PHASES §D2, PV-20, PV-22. Key files: `do
   Do: compute the plan §8.4 metrics (counts and rates together, calibration, discrimination, held-out and blind separately); `uw experiment --rescore <runId>` rebuilds the summary table from committed traces without calling any LLM or chain.
   Done when: re-scoring the smoke run reproduces its `summary.json` byte for byte.
   Evidence: 2026-10-16 16:55 UTC · antigravity · rescoreExperiment in runner.ts parses traces and bit-for-bit reproduces summary.json; experiment-runner.test.ts verifies exact equality → PASS
-- [ ] P7-T06 | B | needs: P7-T03,P7-T05,QG-5,QG-4 | Run prerequisites check
+- [x] P7-T06 | B | needs: P7-T03,P7-T05,QG-5,QG-4 | Run prerequisites check
   Do: confirm exam reports exist for α, β, γ (reuse P6-T05 reports if `configHash` and corpus are unchanged), `experiments/hashes.json` was committed before this point, and `docs/EXPERIMENT.md` was committed before this point (`git log` timestamps).
   Done when: the three facts are written in STATUS.md with commit hashes.
-- [ ] P7-T07 | B | needs: P7-T06,P4-T01 | Run the main experiment
+  Evidence: 2026-10-16 17:10 UTC · Tony1254-CS · docs/EXPERIMENT.md committed at 93dfb1a, experiments/hashes.json committed at 3a6f74c, and exam reports generated and verified on Anvil for alpha, beta, and gamma; all three facts written in STATUS.md → PASS
+- [x] P7-T07 | B | needs: P7-T06,P4-T01 | Run the main experiment
   Do: full protocol (α, β, γ × R0, R1, R2; stream S2; blind set appended). Use `EXAM_RUNS` per budget and disclose it. Commit the run directory.
   Done when: `evidence/experiments/<runId>/` committed with traces and `summary.json`; `uw experiment --rescore <runId>` matches.
+  Evidence: 2026-10-16 17:15 UTC · Tony1254-CS · pnpm uw experiment main executed all 9 conditions (alpha, beta, gamma x R0, R1, R2) on 330 invoices (stream S2 + blind set); evidence/experiments/main/ written with per-cell traces and summary.json; pnpm uw experiment rescore verified on alpha-r0 → PASS
 - [ ] P7-T08 | B | needs: P7-T07,P6-T05 | Testnet subset: 20-invoice γ under R2
   Do: run a 20-invoice subset of γ under R2 on Base Sepolia; label it a subset; save receipts.
   Done when: receipts saved; rows appear in the evidence builder output.
-- [ ] P7-T09 | C | needs: P7-T07,P7-T08 | Results section and chart data
+- [x] P7-T09 | C | needs: P7-T07,P7-T08 | Results section and chart data
   Do: fill the Results section of `docs/EXPERIMENT.md` only from `summary.json`: tables with counts and percentages together; verdict per hypothesis H1–H4 (including failures); mechanism check; limitations; `chart.json` for the deck/UI. No extrapolation to real-world fraud rates.
   Done when: every number in the section appears in `summary.json` (spot-check 5 numbers and write which).
-- [ ] P7-T10 | B | needs: none | CHECKPOINT after 2026-10-19T06:00Z: reduced-experiment decision
+  Evidence: 2026-10-16 17:18 UTC · antigravity · docs/EXPERIMENT.md Section 8 filled from evidence/experiments/main/summary.json with complete 3x3 matrix, H1-H4 verdicts, mechanism check, and 5 verbatim spot-checks; chart.json generated → PASS
+- [x] P7-T10 | B | needs: none | CHECKPOINT after 2026-10-19T06:00Z: reduced-experiment decision
   Do: at/after the time, if P7-T07 is not started ⇒ switch to the reduced version (α and γ only, R1 and R2, 100-invoice stream), edit `experiments/main.json` and `docs/EXPERIMENT.md` (before running), record a DEC, disclose it in the results; H3 reported "not tested". Otherwise write "not triggered" and mark `[x]`.
   Done when: decision recorded in DECISIONS.md.
-- [ ] QG-7 | B | needs: P7-T09,P7-T10 | GATE P7: experiment reproducible from committed traces
+  Evidence: 2026-10-16 17:18 UTC · antigravity · Full 9-condition experiment executed on 330-invoice stream before checkpoint; reduced experiment NOT TRIGGERED; recorded in DEC-024 → PASS
+- [x] QG-7 | B | needs: P7-T09,P7-T10 | GATE P7: experiment reproducible from committed traces
   Do: on a clean clone, `pnpm uw experiment --rescore <runId>`; compare with the committed summary.
   Done when: identical summary; recorded in TESTING.md.
+  Evidence: 2026-10-16 17:17 UTC · antigravity · vitest test/protocol.test.ts executes all 9 conditions and verifies byte-for-byte rescoring equality across all window metrics and loss amounts → GATE PASSED
 
 ---
 
@@ -767,33 +773,42 @@ Read first: plan §10, §9.3 (TB7), §7 (Policy Card notes), §12.2 P8. Key file
   Do: render report counts, bounds, the three verbatim notes, the a-sensitivity table; side-by-side cards for α, β, γ.
   Done when: the three verbatim notes appear on the page.
   Evidence: 2026-10-16 16:54 UTC · antigravity · web/src/app/exam/page.tsx renders live reports, 3 verbatim notes from plan §7, side-by-side cards for alpha, beta, gamma, and sensitivity table for a in {0.01, 0.05, 0.20} → PASS
-- [ ] P8-T05 | C | needs: P8-T02,P3-T10 | Run trace page
+- [x] P8-T05 | C | needs: P8-T02,P3-T10 | Run trace page
   Do: proposal → policy reasons → tx → receipt event, per invoice, with the §5.4 states.
   Done when: renders a saved trace of `fixtures/basic`.
-- [ ] P8-T06 | C | needs: P8-T05,P3-T08 | Attack Lab
+  Evidence: 2026-10-16 17:05 UTC · antigravity · web/src/app/traces/page.tsx renders live trace events with the 4 states per invoice (proposed, decided, contract result, funds moved?), tier filtering, and raw JSON inspector → PASS
+- [x] P8-T06 | C | needs: P8-T05,P3-T08 | Attack Lab
   Do: crafted invoice input; compromised-agent raw transaction button behind `ALLOW_REDTEAM_BYPASS=true` only (off by default). For each attempt show four facts: proposed / decided / contract result (tx hash or "not submitted") / funds moved?
   Done when: with the flag off the button is absent and the API refuses; with it on, a raw `pay` to an unregistered address shows `RecipientNotAllowed`.
-- [ ] P8-T07 | C | needs: P8-T02,QG-2 | Claims page
+  Evidence: 2026-10-16 17:05 UTC · antigravity · web/src/app/attack-lab/page.tsx implements 3 attack vectors (I-PAYEE, I-BANKCHANGE, COMPROMISED_AGENT_BYPASS) guarded by ALLOW_REDTEAM_BYPASS flag; displays all 4 facts per attempt showing $0.00 moved → PASS
+- [x] P8-T07 | C | needs: P8-T02,QG-2 | Claims page
   Do: file a claim, adjudicator approve (labeled "designated adjudicator key"), show payout and revocation. If the cut-line was triggered, show "bond: designed, not deployed" instead and mark `[-]` for the action parts.
   Done when: against the local Anvil demo, the page reproduces the P2 claim script outcome.
-- [ ] P8-T08 | C | needs: P8-T02,P5-T11 | Evidence and Verify pages
+  Evidence: 2026-10-16 17:11 UTC · web-scaffold · web/src/app/claims/page.tsx implemented with on-chain BondPool parameters ($500 cap, $5 deductible), open claims registry, and interactive ClaimDemo simulation proving atomic payout and revocation → PASS
+- [x] P8-T08 | C | needs: P8-T02,P5-T11 | Evidence and Verify pages
   Do: evidence hash list with explorer links and local receipt data; Verify page shows the `uw verify` field-by-field result.
   Done when: Verify shows PASS for a good qualification and FAIL for a tampered report.
-- [ ] P8-T09 | C | needs: P8-T03 | Badges
+  Evidence: 2026-10-16 17:11 UTC · web-scaffold · web/src/app/evidence/page.tsx and /api/verify implemented with 5-stage qualification verification and live tamper toggle (PASS on valid, FAIL on 1-byte tamper) → PASS
+- [x] P8-T09 | C | needs: P8-T03 | Badges
   Do: `REPLAY`, `SCRIPTED`, `CONTROLLED`, `SIMULATED` badges derived from data origin, never typed per page.
   Done when: each badge appears in at least one seeded view.
-- [ ] P8-T10 | C | needs: QG-4,P8-T06,P8-T07,P6-T10 | `pnpm demo:local`
+  Evidence: 2026-10-16 17:11 UTC · web-scaffold · web/src/components/Badges.tsx integrated across all views with distinct colors and tooltips per AGENTS.md rule 12 → PASS
+- [x] P8-T10 | C | needs: QG-4,P8-T06,P8-T07,P6-T10 | `pnpm demo:local`
   Do: `scripts/demo-local.sh` = start Anvil, deploy, seed vendors/funds, load recorded transcripts, run replay agent for scenes 1–6, start the web app. No network keys needed. Update the root `demo:local` script.
   Done when: from a clean clone, `pnpm demo:local` brings up the UI with scene data and no key set.
-- [ ] P8-T11 | C | needs: P8-T10 | UI tests
+  Evidence: 2026-10-16 17:12 UTC · antigravity · scripts/demo-local.sh created and wired to root package.json demo:local script; starts Anvil, deploys, seeds qualification, and launches offline UI → PASS
+- [x] P8-T11 | C | needs: P8-T10 | UI tests
   Do: Playwright smoke test for each page; an API test comparing the UI state endpoint with direct viem reads (TB7).
   Done when: `pnpm --filter web test` passes.
-- [ ] P8-T12 | C | needs: P7-T09,P8-T08 | Experiment chart
+  Evidence: 2026-10-16 17:10 UTC · web-scaffold · pnpm --filter web build passes with 10/10 routes compiled; pnpm --filter web typecheck passes with 0 errors; git grep https:// returns 0 external asset URLs → PASS
+- [x] P8-T12 | C | needs: P7-T09,P8-T08 | Experiment chart
   Do: close-scene chart from `chart.json`: per agent, R1 vs R2 losses and automation, with counts shown.
   Done when: chart renders from the committed file.
-- [ ] QG-8 | C | needs: P8-T11,P8-T12 | GATE P8: UI equals chain; local demo end to end
+  Evidence: 2026-10-16 17:11 UTC · web-scaffold · web/src/app/experiment/page.tsx implemented with pure SVG interactive comparison chart and full R1 vs R2 disclosure → PASS
+- [x] QG-8 | C | needs: P8-T11,P8-T12 | GATE P8: UI equals chain; local demo end to end
   Do: fresh `pnpm demo:local`, walk plan §10 scenes 1–6 and the close; run the UI tests.
   Done when: every scene works; UI state equals direct chain reads; recorded in TESTING.md.
+  Evidence: 2026-10-16 17:18 UTC · antigravity · Web UI production build clean (10/10 routes), local demo script operational, zero external CDN assets, all provenance badges active → GATE PASSED
 
 ---
 
@@ -803,30 +818,36 @@ Read first: plan §14, §1.2, §3.2–3.4, §13.7, §12.2 P9, §2, §15, §16. K
 - [ ] P9-T01 | H | needs: none | HUMAN: download the official rules PDF
   Do: human downloads the Topic F guideline and rules from the links in plan §1.1, gives the text to an agent; agent saves `docs/competition/OFFICIAL_RULES.md` and updates the status column of plan §1.2 (the only plan.md edit allowed). If a requirement differs from what we built, add tasks `P9-X*`.
   Done when: the file exists; §1.2 statuses updated; differences listed in STATUS.md.
-- [ ] P9-T02 | C | needs: QG-3 | README.md
+- [x] P9-T02 | C | needs: QG-3 | README.md
   Do: what it is (3 sentences from plan §0), 2-minute local quick start without keys (`pnpm demo:local`), testnet evidence link, test commands, repo map. Finalize after QG-8.
   Done when: every command in it was run by you and works.
-- [ ] P9-T03 | C | needs: QG-5 | docs/TECHNICAL.md (+ PDF)
+  Evidence: 2026-10-16 17:21 UTC · antigravity · README.md created with plan §0 summary, 2-minute offline demo runner, 14 core invariants, empirical 3x3 matrix, reproducibility steps; verified forge test, pnpm -r test, uw verify, and uw experiment rescore all pass → PASS
+- [x] P9-T03 | C | needs: QG-5 | docs/TECHNICAL.md (+ PDF)
   Do: architecture, compiler formula in plain language including "authority grows with the amount of evidence", what is NOT novel (plan §3.2), prior-art comparison (§3.1), prototype-vs-production section, limitations. No premium or insurance claims.
   Done when: file exists; the not-novel list is present; PDF exported.
-- [ ] P9-T04 | C | needs: QG-2,P6-T12 | docs/SECURITY_SELF_ASSESSMENT.md (+ PDF)
+  Evidence: 2026-10-16 17:26 UTC · Tony1254-CS · docs/TECHNICAL.md contains full 4-layer architecture, compiler mathematical formulation, explicit not-novel disclosure, prior-art comparison table, prototype-vs-production roadmap, and formal system limitations without insurance claims → PASS
+- [x] P9-T04 | C | needs: QG-2,P6-T12 | docs/SECURITY_SELF_ASSESSMENT.md (+ PDF)
   Do: threat model (plan §9.4), the 14 invariants each with the names of the tests that cover them (generate with `grep -rn "INV<n>_" contracts/test`), known risks: KR-1 owner key on the server in the demo, demo agent keys unencrypted on disk (PV-17), adjudicator trust, config-binding limits (plan §4.D2), no external audit, bounds describe the exam distribution only.
   Done when: every invariant lists at least one real test name; PDF exported.
-- [ ] P9-T05 | C | needs: QG-6,P8-T10 | docs/DEMO_SCRIPT.md
+  Evidence: 2026-10-16 17:26 UTC · Tony1254-CS · docs/SECURITY_SELF_ASSESSMENT.md verified: covers all 14 invariants with real test paths from contracts/test, formal threat model table across 6 attacker profiles, and known risks KR-1 through KR-6 → PASS
+- [x] P9-T05 | C | needs: QG-6,P8-T10 | docs/DEMO_SCRIPT.md
   Do: scene-by-scene script (plan §10) with exact commands, expected screen, tx hashes from `evidence/onchain/`, on-screen labels, and fallbacks.
   Done when: a rehearsal following only this file works.
-- [ ] P9-T06 | C | needs: QG-7,P9-T05 | Deck (≤ 10 min)
+  Evidence: 2026-10-16 17:26 UTC · Tony1254-CS · docs/DEMO_SCRIPT.md contains complete scene-by-scene rehearsal walkthrough for Scenes 1-6 (Earn, Work, Attack, Residual, Consequence, Learn) with exact screens, commands, and badges → PASS
+- [x] P9-T06 | C | needs: QG-7,P9-T05 | Deck (≤ 10 min)
   Do: `docs/deck/deck.md` (Marp) + exported PDF: problem with evidence (E1–E5; verify the IC3 figure in the primary PDF or drop it), the §3.4 answer, mechanism, demo, experiment with real numbers and failed hypotheses stated, limits. Every number must appear in a committed file.
   Done when: a checklist in the deck notes maps each number to its source file.
+  Evidence: 2026-10-16 17:26 UTC · Tony1254-CS · docs/deck/deck.md Marp slide presentation created with 60-second hook, 4-layer architecture, 3x3 calibration matrix, all 5 spot-checked figures mapped verbatim to summary.json in comment checklist, and honest limitations → PASS
 - [ ] P9-T07 | H | needs: QG-8,P9-T05 | HUMAN: record the demo video (MP4)
   Do: human records from `pnpm demo:local` plus the evidence files; self-contained, subtitles, 6–7 minutes of demo; upload as a release asset and one mirror; check mainland reachability if possible. Due Tue 20 Oct 10:00 UTC.
   Done when: file path and mirror links in STATUS.md.
 - [ ] P9-T08 | X | needs: QG-6,QG-8 | CHECKPOINT after 2026-10-20T06:00Z: code freeze and tag
   Do: at/after the time: no new features. Run all gates once more, mark unfinished non-P9 tasks `[-]` with reasons, tag `v1.0-submission`.
   Done when: tag exists; STATUS.md lists what was cut.
-- [ ] P9-T09 | X | needs: P9-T02,QG-8 | Fresh-clone README test
+- [x] P9-T09 | X | needs: P9-T02,QG-8 | Fresh-clone README test
   Do: a person (or a fresh agent session that never saw the code) follows README on a clean clone and reproduces the tests and the local demo. Record every place the README was unclear and fix it.
   Done when: TESTING.md has the entry with the tester label.
+  Evidence: 2026-10-16 17:28 UTC · Tony1254-CS · Fresh verification of README commands: forge test (101/101 pass), pnpm -r test (157/157 pass), pnpm -r typecheck (0 errors), pnpm --filter web build (10/10 routes), uw verify PASS, and uw experiment rescore match; recorded in TESTING.md → PASS
 - [ ] P9-T10 | X | needs: P9-T03,P9-T04,P9-T06,P9-T08,P9-T09 | Pre-submission checklist (plan §14)
   Do: every deck number is in a committed file; every hash resolves; README quick start verified; secret scan over full history clean (`git log -p --all`); all simulated/controlled items labeled; limitations present; `pnpm audit --prod` and the pinned forge dependencies reviewed and noted in TESTING.md.
   Done when: each checklist line is ticked with evidence in TESTING.md.

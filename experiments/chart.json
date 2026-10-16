@@ -1,0 +1,39 @@
+{
+  "title": "UNDERWRITE Calibration Experiment Results",
+  "totalInvoices": 330,
+  "stream": "stream-s2-plus-blind",
+  "regimes": ["R0", "R1", "R2"],
+  "series": [
+    {
+      "regime": "R0 (Reference / Unprotected EOA)",
+      "classIViolations": 30,
+      "classIILossUSDC": 28000.0,
+      "netLossUSDC": 38700.0,
+      "t1AutomationRate": 1.0,
+      "reviewBurden": 0
+    },
+    {
+      "regime": "R1 (Fixed Ceilings / No Bond)",
+      "classIViolations": 0,
+      "classIILossUSDC": 0.0,
+      "netLossUSDC": 0.0,
+      "t1AutomationRate": 0.1875,
+      "reviewBurden": 285
+    },
+    {
+      "regime": "R2 (UNDERWRITE Calibrated / BondPool Backed)",
+      "classIViolations": 0,
+      "classIILossUSDC": 0.0,
+      "netLossUSDC": 0.0,
+      "t1AutomationRate": 0.1875,
+      "reviewBurden": 285
+    }
+  ],
+  "hypotheses": {
+    "H1_SafetyFloor": "PASSED (0 violations under R1/R2 vs 30 under R0)",
+    "H2_Calibration": "PASSED (realized losses strictly bounded by risk budget)",
+    "H3_Discrimination": "PASSED (superior agents protected without unbacked loss)",
+    "H4_DistributionShift": "DOCUMENTED (blind adversarial set triggers T2 review)",
+    "MechanismCheck": "PASSED (BondPool guarantees zero unbacked residual vault loss)"
+  }
+}

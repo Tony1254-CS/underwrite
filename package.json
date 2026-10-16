@@ -9,6 +9,6 @@
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "uw": "pnpm --filter engine uw",
-    "demo:local": "echo demo:local not implemented until P8 && exit 1"
+    "demo:local": "bash scripts/demo-local.sh"
   }
 }

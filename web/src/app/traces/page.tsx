@@ -135,27 +135,7 @@ function TracesContent() {
   const selectedRun = runs.find((r) => r.runId === selectedRunId);
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-            Execution Traces
-            <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-              AUDIT TRAILS
-            </span>
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Step-by-step invoice evaluations, deterministic policy enforcement, and on-chain contract settlement facts.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <ReplayBadge />
-          <ScriptedBadge />
-        </div>
-      </div>
-
+    <div className="space-y-6">
       {/* Main Layout: Run Selector & Steps Viewer */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left: Runs Sidebar */}
@@ -455,14 +435,36 @@ function TracesContent() {
 
 export default function TracesPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="p-12 text-center text-xs font-mono text-slate-500 animate-pulse">
-          Loading traces workspace...
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+            Execution Traces
+            <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+              AUDIT TRAILS
+            </span>
+          </h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Step-by-step invoice evaluations, deterministic policy enforcement, and on-chain contract settlement facts.
+          </p>
         </div>
-      }
-    >
-      <TracesContent />
-    </Suspense>
+
+        <div className="flex items-center gap-2">
+          <ReplayBadge />
+          <ScriptedBadge />
+        </div>
+      </div>
+
+      <Suspense
+        fallback={
+          <div className="p-12 text-center text-xs font-mono text-slate-500 animate-pulse">
+            Loading traces workspace...
+          </div>
+        }
+      >
+        <TracesContent />
+      </Suspense>
+    </div>
   );
 }
