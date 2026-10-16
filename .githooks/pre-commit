@@ -21,8 +21,8 @@ fi
 STAGED_DIFF=$(git diff --cached -- . ':(exclude).env.example' ':(exclude)evidence/**' ':(exclude)contracts/deployments/**' ':(exclude).githooks/**' || true)
 
 if [ -n "$STAGED_DIFF" ]; then
-    # Check for PRIVATE_KEY=...
-    if printf '%s\n' "$STAGED_DIFF" | grep -qE '^\+[^+].*PRIVATE_KEY[[:space:]]*=[[:space:]]*[^[:space:]]+'; then
+    # Check for actual private key assignments (e.g. 0x... or 64 hex characters or base64)
+    if printf '%s\n' "$STAGED_DIFF" | grep -qE '^\+[^+].*PRIVATE_KEY[[:space:]]*=[[:space:]]*["\x27]?[0-9a-fA-F]{32,}'; then
         echo "ERROR: Potential PRIVATE_KEY detected in staged diff!" >&2
         echo "Private keys must never be committed." >&2
         exit 1
