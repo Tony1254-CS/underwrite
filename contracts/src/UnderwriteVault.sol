@@ -125,6 +125,7 @@ contract UnderwriteVault is VaultErrors {
     mapping(address => Recipient) public recipients;
     mapping(bytes32 => StoredQualification) public quals;
     mapping(address => bytes32) public activeQualOf;
+    bytes32[] public activeQualList;
     mapping(bytes32 => bool) public usedAttestation;
 
     mapping(bytes32 => InvoiceStatus) public invoiceState;
@@ -212,6 +213,18 @@ contract UnderwriteVault is VaultErrors {
         recipientCooldown = _recipientCooldown;
     }
 
+    // --- Modifiers ---
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner();
+        _;
+    }
+
+    modifier onlyGuardianOrOwner() {
+        if (msg.sender != owner && msg.sender != guardian) revert NotGuardianOrOwner();
+        _;
+    }
+
     // --- Version and Domain Separator ---
 
     function VERSION() external pure returns (string memory) {
@@ -222,5 +235,95 @@ contract UnderwriteVault is VaultErrors {
         return keccak256(
             abi.encode(EIP712_DOMAIN_TYPEHASH, DOMAIN_NAME_HASH, DOMAIN_VERSION_HASH, block.chainid, address(this))
         );
+    }
+
+    // --- Admin Functions (P1-T03) ---
+
+    function addRecipient(address addr, uint256 perWindowCap) external onlyOwner {
+        if (addr == address(0)) revert InvalidAddress();
+        uint256 activatesAt = block.timestamp + recipientCooldown;
+        recipients[addr] = Recipient({ active: true, activatesAt: activatesAt, perWindowCap: perWindowCap });
+        emit RecipientAdded(addr, perWindowCap, activatesAt);
+    }
+
+    function deactivateRecipient(address addr) external onlyOwner {
+        recipients[addr].active = false;
+        emit RecipientDeactivated(addr);
+    }
+
+    function setCeilings(Ceilings calldata newCeilings) external onlyOwner {
+        ceilings = newCeilings;
+
+        // Re-evaluate limits for all active qualifications:
+        // Lowering takes effect immediately; raising never lifts above attested limits.
+        uint256 len = activeQualList.length;
+        for (uint256 i = 0; i < len; i++) {
+            bytes32 qualId = activeQualList[i];
+            StoredQualification storage q = quals[qualId];
+            if (q.active && !q.revoked) {
+                if (newCeilings.perTx < q.attestation.t1MaxPerTx) {
+                    q.effectiveT1MaxPerTx = newCeilings.perTx;
+                } else {
+                    q.effectiveT1MaxPerTx = q.attestation.t1MaxPerTx;
+                }
+
+                if (newCeilings.perWindow < q.attestation.t1MaxPerWindow) {
+                    q.effectiveT1MaxPerWindow = newCeilings.perWindow;
+                } else {
+                    q.effectiveT1MaxPerWindow = q.attestation.t1MaxPerWindow;
+                }
+
+                if (newCeilings.t2PerTx < q.attestation.t2MaxPerTx) {
+                    q.effectiveT2MaxPerTx = newCeilings.t2PerTx;
+                } else {
+                    q.effectiveT2MaxPerTx = q.attestation.t2MaxPerTx;
+                }
+            }
+        }
+
+        emit CeilingsUpdated(newCeilings.perTx, newCeilings.perWindow, newCeilings.t2PerTx);
+    }
+
+    function setReserve(uint256 _reserveFloor) external onlyOwner {
+        reserveFloor = _reserveFloor;
+        emit ReserveUpdated(_reserveFloor);
+    }
+
+    function setChallengePeriod(uint256 _challengePeriod) external onlyOwner {
+        challengePeriod = _challengePeriod;
+        emit ChallengePeriodUpdated(_challengePeriod);
+    }
+
+    function setCooldown(uint256 _recipientCooldown) external onlyOwner {
+        recipientCooldown = _recipientCooldown;
+        emit RecipientCooldownUpdated(_recipientCooldown);
+    }
+
+    function setExaminer(address _examiner) external onlyOwner {
+        if (_examiner == address(0)) revert InvalidAddress();
+        examiner = _examiner;
+        emit ExaminerUpdated(_examiner);
+    }
+
+    function setGuardian(address _guardian) external onlyOwner {
+        if (_guardian == address(0)) revert InvalidAddress();
+        guardian = _guardian;
+        emit GuardianUpdated(_guardian);
+    }
+
+    function pause() external onlyGuardianOrOwner {
+        paused = true;
+        emit PausedStateChanged(true);
+    }
+
+    function unpause() external onlyOwner {
+        paused = false;
+        emit PausedStateChanged(false);
+    }
+
+    function ownerTransfer(address to, uint256 amount) external onlyOwner {
+        if (to == address(0)) revert InvalidAddress();
+        token.transfer(to, amount);
+        emit OwnerTransferExecuted(to, amount);
     }
 }

@@ -30,4 +30,5 @@ None.
 - 2026-10-16 12:51 UTC | commit: 149d46d | `.githooks/pre-commit and scripts/setup-hooks.sh verified; staging mock private key blocked commit with ERROR exit 1; normal commit passes after cleanup.`
 - 2026-10-16 12:53 UTC | commit: 8cdb3bc | `QG-0 clean-clone build`: cloned to `../underwrite-cleanclone`; contracts built and passed (1 test); pnpm install --frozen-lockfile, build, test passed (1 test); `git log -p --all | grep -nE "PRIVATE_KEY=[^ ]+"` found no real secrets. All commands exited 0. Clone removed.
 - 2026-10-16 13:12 UTC | commit: 11df926 | `cd contracts && forge build && forge test` -> MockUSDC decimals()==6, mint works, MockBondPool controls work; 4 tests passed.
-- 2026-10-16 13:17 UTC | commit: pending | `cd contracts && forge build && forge test` -> UnderwriteVault skeleton compiles; VERSION() == "1.0.0", domainSeparator changes with chainId, immutables verified; 7 tests passed.
+- 2026-10-16 13:17 UTC | commit: a8b0199 | `cd contracts && forge build && forge test` -> UnderwriteVault skeleton compiles; VERSION() == "1.0.0", domainSeparator changes with chainId, immutables verified; 7 tests passed.
+- 2026-10-16 13:21 UTC | commit: pending | `cd contracts && forge test --match-path "*Admin*"` -> 5 tests passed: add/deactivate recipient, pause/unpause, ceilings/params updates, ownerTransfer, NotOwner/NotGuardianOrOwner revert checks.
