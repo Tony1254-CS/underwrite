@@ -242,11 +242,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §9.1
   Done when: `cd contracts && forge build && forge test && forge fmt --check` exit 0.
   Evidence: 2026-10-16 12:47 UTC · antigravity-1 · e0c43a5 · cd contracts && forge build && forge test && forge fmt --check → all exit 0, 1 test passed, formatted
-- [ ] P0-T08 | X | needs: P0-T06,P0-T07 | CI workflow
+- [x] P0-T08 | X | needs: P0-T06,P0-T07 | CI workflow
   Do: `.github/workflows/ci.yml`, on push and pull request: checkout with submodules; Foundry toolchain; `forge fmt --check`, `forge build`, `forge test`; Node 22 + pnpm; `pnpm install --frozen-lockfile`; `pnpm -r lint`, `pnpm -r typecheck`, `pnpm -r test`.
   Files: `.github/workflows/ci.yml`
   Spec: plan §13.7
   Done when: the file exists and every command in it also passes locally (it cannot run here; the green run is checked in P0-T10).
+  Evidence: 2026-10-16 12:49 UTC · antigravity-1 · a890c87 · .github/workflows/ci.yml exists and all commands verified locally → 0
 - [ ] P0-T09 | X | needs: P0-T01 | Pre-commit hook with secret scan
   Do: `.githooks/pre-commit` (POSIX sh): `forge fmt --check` when contracts are staged; prettier + `tsc --noEmit` when TS is staged; secret scan on the staged diff — gitleaks if installed, else regex for `PRIVATE_KEY\s*=\s*\S+` (ignoring `.env.example`), `sk-ant-`, `sk-[A-Za-z0-9]{20,}` — skipping `evidence/` and `contracts/deployments/`. `scripts/setup-hooks.sh` runs `git config core.hooksPath .githooks`.
   Files: `.githooks/pre-commit scripts/setup-hooks.sh`
