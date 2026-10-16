@@ -32,3 +32,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/export-abi.mjs`: node script to export contract JSON and typed TypeScript ABIs from Foundry build artifacts to `engine/src/chain/abi/`.
 - `engine/src/chain/abi/`: generated `UnderwriteVault.json`, `UnderwriteVault.ts`, `MockUSDC.json`, and `MockUSDC.ts`.
 - `scripts/check_inv.sh`: automated check verifying all mandatory invariants INV-1..10, 12..14 are present in test suites.
+- `TESTING.md`: independent review of `UnderwriteVault.sol` for task P1-T15 by `antigravity-reviewer-1` approving vault implementation for quality gate QG-1.
+
