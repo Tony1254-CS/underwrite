@@ -43,4 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `contracts/test/BondPool.t.sol`: comprehensive test suite with 11 tests verifying all plan §12.2 P2 requirements (lock failure, payout caps, duplicate claim rejection, T2/owner/reconciled claim rejection, atomic claim approve + revoke, insufficient backing drain, exhausted bond claim, release rules).
 - `contracts/test/invariant/`: stateful invariant suite with live BondPool executing 25,600 calls across 256 runs, validating INV-1, INV-2, INV-5, INV-10, INV-11, and INV-14 with interleaved pay, reconcile, claim filing, approval, rejection, and time warps; added property fuzz `testFuzz_INV11_payout_bounded_and_transferred_to_vault` (512 runs) to `contracts/test/BondPool.t.sol`.
 - `contracts/script/ClaimDemo.s.sol` and `scripts/claim-demo.sh`: implemented and executed Anvil demonstration showing T1 payment, claim filing, atomic payout and revocation in a single transaction, followed by reversion on subsequent payment attempts.
+- `contracts/test/BondPool.Fuzz.t.sol`: property-based fuzz test `testFuzz_INV11_payout_bounds_and_single_payout` (512 runs) verifying exact min-cap payouts, locked ceiling, vault credit, and duplicate resolution rejection.
+- `scripts/export-abi.mjs`: extended to export `BondPool.json` and `BondPool.ts` to `engine/src/chain/abi/`.
+- `engine/src/chain/abi/`: exported `BondPool.json` and `BondPool.ts`.
+- `DECISIONS.md`: recorded DEC-021 confirming BondPool completion ahead of schedule and cut-line not triggered.
+- `PHASES.md`: Phase 2 Quality Gate QG-2 passed; all 9 Phase 2 tasks complete and 101 contract tests passing across 17 suites.
 
