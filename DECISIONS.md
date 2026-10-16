@@ -424,7 +424,17 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
      - Interactive 5-Stage AP Lifecycle visualizer (`Ingestion` $\to$ `Semantic Inspection` $\to$ `Policy Engine` $\to$ `Smart Contract` $\to$ `Settlement Receipt`).
      - Real-time Invoices Ledger with 2.5s live polling and direct two-way synchronization with CFO approvals on `/portals/owner`.
 - **Decision**: Implement Option 2.
-- **Consequences**: Completely unifies the end-to-end financial lifecycle from supplier submission to autonomous on-chain settlement or human challenge review, providing judges with a production-grade AP automation experience.
+## DEC-031 — Target Owner Whitelisting & Owner's Inbound System Agent Audit Architecture
+
+- **Context**: In real-world enterprise accounts payable, a supplier does not broadcast an invoice into a vacuum; an invoice is submitted to a **specific Business Owner** (e.g. Sarah Chen / Acme Corp Treasury Vault `0x7099...`), who has previously whitelisted this vendor in their on-chain allowlist. Upon receipt, the **Owner's Autonomous System Agent** ingests the invoice, checks compliance (Owner's registry allowlist, 300s security cooldown, PO matching, prompt injection filtering, and single-use key uniqueness), and deterministically assigns the policy tier ($T_0$ observe, $T_1$ autonomous execution $\le \$180$ USDC, $T_2$ CFO escalation queue $> \$180$ up to $\$500$ USDC, $T_3$ prohibited/reverted).
+- **Options**:
+  1. Treat vendor invoices as generic submissions without identifying the recipient owner or displaying the owner agent's inspection audit breakdown.
+  2. Implement an explicit Owner-Targeted AP Pipeline:
+     - **Vendor Portal (`/portals/vendor`)**: Direct targeting of Sarah Chen / Acme Corp Treasury Vault, live dynamic allowlist status badge against that specific Owner, cooldown timer display, interactive 4-step AP lifecycle diagram (`Vendor` $\to$ `Owner Agent` $\to$ `Policy Tiering` $\to$ `UnderwriteVault`), and audit breakdown displaying the Owner Agent's checklist.
+     - **Owner Portal (`/portals/owner`)**: Live Owner's Inbound Agent Audit Ledger displaying all incoming invoices, the Agent's decision ($T_0, T_1, T_2, T_3$), and real-time vendor allowlist toggle buttons (`Revoke ✕` / `Reactivate ✓`) that immediately cause subsequent invoices to be rejected on-chain (`INV-1: RecipientNotAllowed / RecipientInactive`).
+     - **Runtime State Engine (`runtimeState.ts`)**: `targetOwnerAddress`, `targetOwnerName`, `agentEvaluatedBy`, and full `agentDecisionDetails` recorded across every evaluated invoice and exposed via `/api/invoices/evaluate` and `/api/vendors` (PATCH).
+- **Decision**: Implement Option 2.
+- **Consequences**: Perfectly matches the real-world B2B procurement workflow, establishes explicit economic accountability between specific business owners and suppliers, and provides judges with transparent audit visibility into the autonomous agent's decision-making process.
 - **Status**: ACCEPTED
 
 

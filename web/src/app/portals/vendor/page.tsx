@@ -47,6 +47,10 @@ function VendorPortalContent() {
   const [lastResult, setLastResult] = useState<any>(null);
   const [pipelineLogs, setPipelineLogs] = useState<string[]>([]);
 
+  // Target Owner & Customer Selection (Sarah Chen / Acme Corp)
+  const defaultOwnerVault = state?.owner?.vaultAddress || '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
+  const [targetOwnerAddress, setTargetOwnerAddress] = useState<string>(defaultOwnerVault);
+
   const fetchState = async () => {
     try {
       const res = await fetch('/api/state');
@@ -55,6 +59,9 @@ function VendorPortalContent() {
         setState(json.data);
         if (json.vendors) setVendors(json.vendors);
         if (json.invoices) setInvoices(json.invoices);
+        if (json.data?.owner?.vaultAddress && !targetOwnerAddress) {
+          setTargetOwnerAddress(json.data.owner.vaultAddress);
+        }
       }
     } catch {
       // ignore
@@ -73,8 +80,21 @@ function VendorPortalContent() {
     vendorId: customVendorId || selectedVendorId,
     name: user?.name || 'CloudCorp Global Logistics',
     payoutAddress: user?.address || '0xDC062a66c9E400f7EAcdE3E1b049E664337538d0',
-    active: true,
+    active: false,
+    activatesAt: 0,
   };
+
+  const isCurrentVendorInOwnerList = vendors.some(
+    (v) => v.vendorId === (selectedVendorId === 'custom' ? customVendorId : selectedVendorId) && v.active
+  );
+  const now = Date.now();
+  const currentVendorRecord = vendors.find(
+    (v) => v.vendorId === (selectedVendorId === 'custom' ? customVendorId : selectedVendorId)
+  );
+  const isVendorCoolingDown = currentVendorRecord ? now < currentVendorRecord.activatesAt : false;
+  const cooldownRemainingSecs = currentVendorRecord
+    ? Math.max(0, Math.ceil((currentVendorRecord.activatesAt - now) / 1000))
+    : 0;
 
   // 1-Click Operational Test Scenarios
   const loadScenario = (type: 'T1' | 'T2' | 'T3_UNKNOWN' | 'T3_INJECTION' | 'T3_DUP') => {
@@ -198,6 +218,7 @@ function VendorPortalContent() {
           vendorId: effectiveVendorId,
           invoiceNumber,
           amount,
+          targetOwnerAddress,
           poNumber,
           description,
           notes,
@@ -261,26 +282,91 @@ function VendorPortalContent() {
             </p>
           </div>
 
-          {/* Supplier Live On-Chain Badge */}
-          <div className="p-4 rounded-2xl bg-black/60 border border-white/[0.1] font-mono space-y-2.5 text-xs min-w-[280px]">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">Authenticated Supplier:</span>
-              <span className="text-white font-bold">{user?.name || 'CloudCorp Global'}</span>
+          {/* Target Customer & Allowlist Status Cards */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Target Owner Customer Card */}
+            <div className="p-4 rounded-2xl bg-black/60 border border-emerald-500/30 font-mono space-y-2 text-xs min-w-[280px] shadow-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 text-[10px] uppercase font-bold">Target Customer / Vault:</span>
+                <span className="text-emerald-400 font-bold">Acme Corp</span>
+              </div>
+              <div className="text-white font-bold text-sm">
+                Sarah Chen <span className="text-slate-400 text-xs font-normal">(CFO &amp; Custodian)</span>
+              </div>
+              <div className="text-[11px] text-slate-300 font-mono truncate max-w-[260px]">
+                Vault: <span className="text-emerald-300 font-semibold">{truncateHash(targetOwnerAddress, 10, 8)}</span>
+              </div>
+              <div className="text-[10px] text-slate-400 pt-1 border-t border-white/[0.08] flex items-center justify-between">
+                <span>Enforcement:</span>
+                <span className="text-emerald-400 font-bold">UnderwriteVault.sol</span>
+              </div>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">Payout Address:</span>
-              <span className="text-cyan-400 font-bold">{truncateHash(activeVendor.payoutAddress)}</span>
+
+            {/* Supplier Live On-Chain Allowlist Badge with THIS Owner */}
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/[0.1] font-mono space-y-2 text-xs min-w-[280px]">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">Selected Supplier:</span>
+                <span className="text-white font-bold truncate max-w-[150px]">{activeVendor.name}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">Payout Address:</span>
+                <span className="text-cyan-400 font-bold">{truncateHash(activeVendor.payoutAddress)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">Acme Allowlist:</span>
+                {isCurrentVendorInOwnerList ? (
+                  <span className="text-emerald-400 font-bold flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>WHITELISTED (INV-1)</span>
+                  </span>
+                ) : (
+                  <span className="text-rose-400 font-bold flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-rose-500" />
+                    <span>NOT WHITELISTED (T3)</span>
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-between border-t border-white/[0.08] pt-1.5">
+                <span className="text-slate-400">Cooldown State:</span>
+                {isVendorCoolingDown ? (
+                  <span className="text-amber-300 font-bold">
+                    COOLDOWN ({cooldownRemainingSecs}s) → T2
+                  </span>
+                ) : isCurrentVendorInOwnerList ? (
+                  <span className="text-emerald-300 font-bold">CLEARED (T1 READY)</span>
+                ) : (
+                  <span className="text-rose-400 font-bold">REJECTED BY OWNER</span>
+                )}
+              </div>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">Vault Allowlist:</span>
-              <span className="text-emerald-400 font-bold flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>REGISTERED (PV-01)</span>
-              </span>
+          </div>
+        </div>
+
+        {/* 4-Step Architecture Workflow Callout */}
+        <div className="mt-6 pt-5 border-t border-white/[0.08]">
+          <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-3 flex items-center gap-2">
+            <span>🔄 Real-World Multi-Stakeholder Execution Lifecycle:</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-mono text-xs">
+            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] space-y-1">
+              <span className="text-rose-400 font-bold text-[10px] block">STEP 1: VENDOR</span>
+              <div className="text-white font-bold text-xs">Submits Invoice to Owner</div>
+              <div className="text-slate-400 text-[10px]">Vendor addresses Sarah Chen / Acme Corp Treasury Vault directly.</div>
             </div>
-            <div className="flex items-center justify-between border-t border-white/[0.08] pt-2">
-              <span className="text-slate-400">Security Cooldown:</span>
-              <span className="text-emerald-300 font-bold">ACTIVE (0s Remaining)</span>
+            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] space-y-1">
+              <span className="text-purple-400 font-bold text-[10px] block">STEP 2: OWNER AGENT</span>
+              <div className="text-white font-bold text-xs">Ingests &amp; Audits Invoice</div>
+              <div className="text-slate-400 text-[10px]">Owner&apos;s AI agent scans PO, prompt injection firewall &amp; Owner whitelist.</div>
+            </div>
+            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] space-y-1">
+              <span className="text-amber-400 font-bold text-[10px] block">STEP 3: POLICY TIERING</span>
+              <div className="text-white font-bold text-xs">Decides T0 / T1 / T2 / T3</div>
+              <div className="text-slate-400 text-[10px]">T1: Auto (&le;$180) &bull; T2: CFO Challenge (&le;$500) &bull; T3: Reverted.</div>
+            </div>
+            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] space-y-1">
+              <span className="text-emerald-400 font-bold text-[10px] block">STEP 4: VAULT EXECUTION</span>
+              <div className="text-white font-bold text-xs">UnderwriteVault.sol Settles</div>
+              <div className="text-slate-400 text-[10px]">Wallet checks invariants, transfers USDC directly or queues for review.</div>
             </div>
           </div>
         </div>
@@ -405,6 +491,26 @@ function VendorPortalContent() {
               <span className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-mono text-[11px] font-bold">
                 EIP-712 COMPLIANT
               </span>
+            </div>
+
+            {/* Target Customer Selection (Who receives this invoice) */}
+            <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-emerald-500/30 space-y-2 font-mono text-xs">
+              <div className="flex items-center justify-between">
+                <label className="font-semibold text-emerald-300 flex items-center gap-2">
+                  <span>🏢 Target Customer / Vault Recipient:</span>
+                </label>
+                <span className="text-[10px] text-slate-400">Owner Whitelist Verified</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-2.5 rounded-xl bg-black/60 border border-white/[0.1] text-white">
+                  <div className="text-[10px] text-slate-400">Company &amp; Custodian</div>
+                  <div className="font-bold text-emerald-400">Acme Corp &bull; Sarah Chen (CFO)</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/60 border border-white/[0.1] text-white">
+                  <div className="text-[10px] text-slate-400">Vault Contract Address</div>
+                  <div className="font-bold text-cyan-300 truncate">{targetOwnerAddress}</div>
+                </div>
+              </div>
             </div>
 
             {/* Vendor Selector */}
@@ -714,6 +820,42 @@ function VendorPortalContent() {
                   <span className="text-white font-semibold break-all">{lastResult.contractResult}</span>
                 </div>
 
+                {/* Owner's System Agent Decision Matrix */}
+                {lastResult.agentDecisionDetails && (
+                  <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] space-y-1.5 text-[10px]">
+                    <div className="text-emerald-400 font-bold flex items-center justify-between">
+                      <span>Owner Agent Audit:</span>
+                      <span className="text-[9px] text-slate-400">{lastResult.agentEvaluatedBy}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 text-[10px]">
+                      <div className="flex items-center gap-1">
+                        <span>{lastResult.agentDecisionDetails.vendorAllowedByOwner ? '🟢' : '🔴'}</span>
+                        <span className={lastResult.agentDecisionDetails.vendorAllowedByOwner ? 'text-slate-300' : 'text-rose-400'}>
+                          Allowed by Owner
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span>{lastResult.agentDecisionDetails.cooldownCleared ? '🟢' : '🟡'}</span>
+                        <span className={lastResult.agentDecisionDetails.cooldownCleared ? 'text-slate-300' : 'text-amber-300'}>
+                          Cooldown Cleared
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span>{lastResult.agentDecisionDetails.promptInjectionFree ? '🟢' : '🔴'}</span>
+                        <span className={lastResult.agentDecisionDetails.promptInjectionFree ? 'text-slate-300' : 'text-rose-400'}>
+                          Prompt-Injection Clean
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span>{lastResult.agentDecisionDetails.withinT1Cap ? '🟢' : '🟡'}</span>
+                        <span className={lastResult.agentDecisionDetails.withinT1Cap ? 'text-slate-300' : 'text-amber-300'}>
+                          Under $180 T1 Cap
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {lastResult.txHash && (
                   <div className="text-[11px] pt-1">
                     <span className="text-slate-400 block">Transaction Hash:</span>
@@ -773,6 +915,7 @@ function VendorPortalContent() {
               <tr className="border-b border-white/[0.08] text-slate-400 uppercase text-[10px]">
                 <th className="py-3 px-3">Invoice #</th>
                 <th className="py-3 px-3">Supplier</th>
+                <th className="py-3 px-3">Target Customer</th>
                 <th className="py-3 px-3">PO #</th>
                 <th className="py-3 px-3">Amount</th>
                 <th className="py-3 px-3">Policy Tier</th>
@@ -785,6 +928,12 @@ function VendorPortalContent() {
                 <tr key={inv.id} className="hover:bg-white/[0.02] transition-colors">
                   <td className="py-3 px-3 font-bold text-white">{inv.invoiceNumber}</td>
                   <td className="py-3 px-3 text-slate-300">{inv.vendorName || inv.vendorId}</td>
+                  <td className="py-3 px-3 text-slate-400">
+                    <span className="text-emerald-400 font-bold">{inv.targetOwnerName ? 'Acme Corp' : 'Acme Corp'}</span>
+                    <span className="text-[10px] text-slate-500 block font-mono">
+                      {truncateHash(inv.targetOwnerAddress || defaultOwnerVault, 8, 6)}
+                    </span>
+                  </td>
                   <td className="py-3 px-3 text-slate-400">{inv.poNumber || '—'}</td>
                   <td className="py-3 px-3 font-black text-white">${inv.amountUSDC.toFixed(2)}</td>
                   <td className="py-3 px-3">

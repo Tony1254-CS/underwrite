@@ -62,6 +62,46 @@ export interface LineItem {
   subtotal: number;
 }
 
+export interface OwnerProfile {
+  address: string;
+  name: string;
+  title: string;
+  company: string;
+  vaultAddress: string;
+  vaultVersion: string;
+  t1CapUSDC: number;
+  t2CeilingUSDC: number;
+  reserveFloorUSDC: number;
+  challengePeriodSeconds: number;
+  recipientCooldownSeconds: number;
+}
+
+export const DEFAULT_OWNER: OwnerProfile = {
+  address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+  name: 'Sarah Chen',
+  title: 'Chief Financial Officer & Vault Custodian',
+  company: 'Acme Corp Treasury & Governance',
+  vaultAddress: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+  vaultVersion: 'UnderwriteVault v1.0.0 (Base Sepolia / Anvil)',
+  t1CapUSDC: 180.0,
+  t2CeilingUSDC: 500.0,
+  reserveFloorUSDC: 500.0,
+  challengePeriodSeconds: 300,
+  recipientCooldownSeconds: 300,
+};
+
+export interface AgentDecisionDetails {
+  vendorAllowedByOwner: boolean;
+  cooldownCleared: boolean;
+  poMatched: boolean;
+  promptInjectionFree: boolean;
+  singleUseUnique: boolean;
+  withinT1Cap: boolean;
+  withinWindowVelocity: boolean;
+  reserveProtected: boolean;
+  bondedCollateralSufficient: boolean;
+}
+
 export interface InvoiceRecord {
   id: string;
   vendorId: string;
@@ -72,6 +112,13 @@ export interface InvoiceRecord {
   description?: string;
   notes?: string;
   lineItems?: LineItem[];
+  // Target Owner & Customer Relationship
+  targetOwnerAddress: string;
+  targetOwnerName: string;
+  // Owner Agent Evaluation Breakdown
+  agentEvaluatedBy: string;
+  agentDecidedTier: 'T0' | 'T1' | 'T2' | 'T3';
+  agentDecisionDetails: AgentDecisionDetails;
   tier: 'T0' | 'T1' | 'T2' | 'T3';
   status: 'EXECUTED_T1' | 'PENDING_T2' | 'REJECTED_T3' | 'APPROVED_T2' | 'REJECTED_T2';
   reasonCodes: string[];
@@ -83,6 +130,7 @@ export interface InvoiceRecord {
 }
 
 export interface LiveRuntimeState {
+  owner: OwnerProfile;
   vaultBalanceUSDC: number;
   reserveFloorUSDC: number;
   currentExposureUSDC: number;
@@ -102,6 +150,7 @@ export interface LiveRuntimeState {
 
 // Global in-memory singleton that persists during the server runtime
 const globalState: LiveRuntimeState = {
+  owner: DEFAULT_OWNER,
   vaultBalanceUSDC: 5000.0,
   reserveFloorUSDC: 500.0,
   currentExposureUSDC: 42.5,
@@ -225,6 +274,21 @@ const globalState: LiveRuntimeState = {
       amountUSDC: 42.5,
       poNumber: 'PO-101',
       description: 'Factory Automation Precision Tooling (Q1 Maintenance)',
+      targetOwnerAddress: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+      targetOwnerName: 'Acme Corp Treasury & Governance',
+      agentEvaluatedBy: 'Acme Autonomous System Agent (gamma: gemini-2.5-pro / policy v1.0.0)',
+      agentDecidedTier: 'T1',
+      agentDecisionDetails: {
+        vendorAllowedByOwner: true,
+        cooldownCleared: true,
+        poMatched: true,
+        promptInjectionFree: true,
+        singleUseUnique: true,
+        withinT1Cap: true,
+        withinWindowVelocity: true,
+        reserveProtected: true,
+        bondedCollateralSufficient: true,
+      },
       tier: 'T1',
       status: 'EXECUTED_T1',
       reasonCodes: ['VALID_MANDATE_MATCH', 'IN_WINDOW_CAP', 'REGISTERED_VENDOR'],
@@ -242,6 +306,21 @@ const globalState: LiveRuntimeState = {
       amountUSDC: 240.0,
       poNumber: 'PO-103',
       description: 'Enterprise ERP Multi-Seat Cloud Subscription Renewal',
+      targetOwnerAddress: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+      targetOwnerName: 'Acme Corp Treasury & Governance',
+      agentEvaluatedBy: 'Acme Autonomous System Agent (gamma: gemini-2.5-pro / policy v1.0.0)',
+      agentDecidedTier: 'T2',
+      agentDecisionDetails: {
+        vendorAllowedByOwner: true,
+        cooldownCleared: true,
+        poMatched: true,
+        promptInjectionFree: true,
+        singleUseUnique: true,
+        withinT1Cap: false, // $240 > $180
+        withinWindowVelocity: true,
+        reserveProtected: true,
+        bondedCollateralSufficient: true,
+      },
       tier: 'T2',
       status: 'PENDING_T2',
       reasonCodes: ['EXCEEDS_T1_PER_TX'],
@@ -268,12 +347,23 @@ export interface EvaluationResult {
   txHash?: string;
   newVaultBalance?: number;
   newExposure?: number;
+  agentEvaluatedBy?: string;
+  agentDecidedTier?: 'T0' | 'T1' | 'T2' | 'T3';
+  agentDecisionDetails?: AgentDecisionDetails;
+}
+
+export function toggleVendorStatus(vendorId: string, active: boolean): VendorRecord | null {
+  const vendor = globalState.vendors.find((v) => v.vendorId.toLowerCase() === vendorId.trim().toLowerCase());
+  if (!vendor) return null;
+  vendor.active = active;
+  return vendor;
 }
 
 export function evaluateAndExecuteInvoice(payload: {
   vendorId: string;
   invoiceNumber: string;
   amount: string;
+  targetOwnerAddress?: string;
   poNumber?: string;
   agentModel?: string;
   notes?: string;
@@ -287,11 +377,30 @@ export function evaluateAndExecuteInvoice(payload: {
   const invoiceKey = `${cleanVendor}:${cleanInvoice}`;
   const now = Date.now();
   const rawText = `${payload.notes || ''} ${payload.description || ''} ${payload.poNumber || ''}`;
+  const targetOwnerAddress = payload.targetOwnerAddress || globalState.owner.vaultAddress;
+  const targetOwnerName = targetOwnerAddress.toLowerCase() === globalState.owner.vaultAddress.toLowerCase()
+    ? globalState.owner.company
+    : 'Enterprise Treasury Vault';
+  const agentEvaluatedBy = `Acme Autonomous System Agent (gamma: gemini-2.5-pro / policy v1.0.0)`;
 
   // Gate 0: Adversarial Prompt Injection Defense (Topic F firewall)
   const injectionPattern = /(?:ignore.*(?:previous|rule|instruction|policy|limit)|bypass.*(?:guard|vault|firewall)|transfer.*all|0xattacker|grant.*root|override.*system)/i;
-  if (injectionPattern.test(rawText)) {
+  const promptInjectionDetected = injectionPattern.test(rawText);
+
+  if (promptInjectionDetected) {
     const invId = `inv_${Date.now()}`;
+    const decisionDetails: AgentDecisionDetails = {
+      vendorAllowedByOwner: true,
+      cooldownCleared: true,
+      poMatched: false,
+      promptInjectionFree: false,
+      singleUseUnique: true,
+      withinT1Cap: numAmount <= globalState.t1CapUSDC,
+      withinWindowVelocity: globalState.currentExposureUSDC + numAmount <= globalState.t1CapUSDC,
+      reserveProtected: globalState.vaultBalanceUSDC - numAmount >= globalState.reserveFloorUSDC,
+      bondedCollateralSufficient: globalState.bondRemainingUSDC > 0,
+    };
+
     globalState.invoices.unshift({
       id: invId,
       vendorId: cleanVendor,
@@ -302,6 +411,11 @@ export function evaluateAndExecuteInvoice(payload: {
       description: payload.description || 'Hostile Payload Injected',
       notes: payload.notes,
       lineItems: payload.lineItems,
+      targetOwnerAddress,
+      targetOwnerName,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
       tier: 'T3',
       status: 'REJECTED_T3',
       reasonCodes: ['PROMPT_INJECTION_DETECTED', 'POLICY_FIREWALL_BLOCK'],
@@ -317,11 +431,26 @@ export function evaluateAndExecuteInvoice(payload: {
       contractResult: 'Blocked by Policy Firewall: Adversarial Prompt Injection detected in invoice payload',
       fundsMoved: false,
       executed: false,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
     };
   }
 
   // Gate 1: Qualification check
   if (!globalState.qualificationActive) {
+    const decisionDetails: AgentDecisionDetails = {
+      vendorAllowedByOwner: false,
+      cooldownCleared: false,
+      poMatched: false,
+      promptInjectionFree: true,
+      singleUseUnique: true,
+      withinT1Cap: false,
+      withinWindowVelocity: false,
+      reserveProtected: false,
+      bondedCollateralSufficient: false,
+    };
+
     globalState.invoices.unshift({
       id: `inv_${Date.now()}`,
       vendorId: cleanVendor,
@@ -332,6 +461,11 @@ export function evaluateAndExecuteInvoice(payload: {
       description: payload.description,
       notes: payload.notes,
       lineItems: payload.lineItems,
+      targetOwnerAddress,
+      targetOwnerName,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
       tier: 'T3',
       status: 'REJECTED_T3',
       reasonCodes: ['QUALIFICATION_REVOKED'],
@@ -347,37 +481,66 @@ export function evaluateAndExecuteInvoice(payload: {
       contractResult: 'Reverted: QualificationRevoked() - Agent authority zeroed by prior adjudication',
       fundsMoved: false,
       executed: false,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
     };
   }
 
-  // Gate 2: Vendor Registry Check (INV-1)
+  // Gate 2: Vendor Registry Check in Owner's Allowlist (INV-1)
   const vendor = globalState.vendors.find((v) => v.vendorId.toLowerCase() === cleanVendor);
-  if (!vendor) {
+  const isVendorActive = vendor && vendor.active;
+  if (!vendor || !isVendorActive) {
+    const decisionDetails: AgentDecisionDetails = {
+      vendorAllowedByOwner: false,
+      cooldownCleared: false,
+      poMatched: true,
+      promptInjectionFree: true,
+      singleUseUnique: true,
+      withinT1Cap: numAmount <= globalState.t1CapUSDC,
+      withinWindowVelocity: true,
+      reserveProtected: true,
+      bondedCollateralSufficient: true,
+    };
+
+    const reason = !vendor ? 'VENDOR_UNKNOWN' : 'VENDOR_DEACTIVATED_BY_OWNER';
+    const contractRes = !vendor
+      ? 'Reverted: RecipientNotAllowed() - Destination address not in Owner registry mirror'
+      : 'Reverted: RecipientInactive() - Supplier deactivated by Owner in Vault registry';
+
     globalState.invoices.unshift({
       id: `inv_${Date.now()}`,
       vendorId: cleanVendor,
-      vendorName: payload.vendorId,
+      vendorName: vendor?.name || payload.vendorId,
       invoiceNumber: cleanInvoice,
       amountUSDC: numAmount,
       poNumber: payload.poNumber,
       description: payload.description,
       notes: payload.notes,
       lineItems: payload.lineItems,
+      targetOwnerAddress,
+      targetOwnerName,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
       tier: 'T3',
       status: 'REJECTED_T3',
-      reasonCodes: ['VENDOR_UNKNOWN', 'RECIPIENT_NOT_ALLOWED'],
-      contractResult: 'Reverted: RecipientNotAllowed() - Destination address not in Owner registry mirror',
+      reasonCodes: [reason, 'RECIPIENT_NOT_ALLOWED'],
+      contractResult: contractRes,
       timestamp: now,
-      proposedRecipient: payload.proposedRecipient,
+      proposedRecipient: vendor?.payoutAddress || payload.proposedRecipient,
     });
 
     return {
       proposed: `${payload.vendorId} ($${numAmount.toFixed(2)} USDC)`,
       decided: 'REJECT',
-      reasonCodes: ['VENDOR_UNKNOWN', 'RECIPIENT_NOT_ALLOWED'],
-      contractResult: 'Reverted: RecipientNotAllowed() - Destination address not in Owner registry mirror',
+      reasonCodes: [reason, 'RECIPIENT_NOT_ALLOWED'],
+      contractResult: contractRes,
       fundsMoved: false,
       executed: false,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
     };
   }
 
@@ -385,6 +548,18 @@ export function evaluateAndExecuteInvoice(payload: {
   if (now < vendor.activatesAt) {
     const remainingSecs = Math.ceil((vendor.activatesAt - now) / 1000);
     const paymentId = globalState.pendingT2Payments.length + globalState.executedPayments.length + 100;
+    const decisionDetails: AgentDecisionDetails = {
+      vendorAllowedByOwner: true,
+      cooldownCleared: false,
+      poMatched: true,
+      promptInjectionFree: true,
+      singleUseUnique: true,
+      withinT1Cap: numAmount <= globalState.t1CapUSDC,
+      withinWindowVelocity: true,
+      reserveProtected: true,
+      bondedCollateralSufficient: true,
+    };
+
     globalState.pendingT2Payments.push({
       paymentId,
       vendorId: vendor.vendorId,
@@ -408,6 +583,11 @@ export function evaluateAndExecuteInvoice(payload: {
       description: payload.description,
       notes: payload.notes,
       lineItems: payload.lineItems,
+      targetOwnerAddress,
+      targetOwnerName,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T2',
+      agentDecisionDetails: decisionDetails,
       tier: 'T2',
       status: 'PENDING_T2',
       reasonCodes: ['VENDOR_COOLING_DOWN'],
@@ -425,11 +605,26 @@ export function evaluateAndExecuteInvoice(payload: {
       fundsMoved: false,
       executed: false,
       paymentId,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T2',
+      agentDecisionDetails: decisionDetails,
     };
   }
 
   // Gate 4: Duplicate Invoice Check (INV-3 Single Use)
   if (globalState.knownInvoiceKeys.includes(invoiceKey)) {
+    const decisionDetails: AgentDecisionDetails = {
+      vendorAllowedByOwner: true,
+      cooldownCleared: true,
+      poMatched: true,
+      promptInjectionFree: true,
+      singleUseUnique: false,
+      withinT1Cap: numAmount <= globalState.t1CapUSDC,
+      withinWindowVelocity: true,
+      reserveProtected: true,
+      bondedCollateralSufficient: true,
+    };
+
     globalState.invoices.unshift({
       id: `inv_${Date.now()}`,
       vendorId: vendor.vendorId,
@@ -440,6 +635,11 @@ export function evaluateAndExecuteInvoice(payload: {
       description: payload.description,
       notes: payload.notes,
       lineItems: payload.lineItems,
+      targetOwnerAddress,
+      targetOwnerName,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
       tier: 'T3',
       status: 'REJECTED_T3',
       reasonCodes: ['DUPLICATE_INVOICE'],
@@ -455,6 +655,9 @@ export function evaluateAndExecuteInvoice(payload: {
       contractResult: 'Reverted: DuplicateInvoice() - On-chain single-use invoice key collision',
       fundsMoved: false,
       executed: false,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
     };
   }
 
@@ -464,6 +667,18 @@ export function evaluateAndExecuteInvoice(payload: {
   );
   if (isNearDup) {
     const paymentId = globalState.pendingT2Payments.length + globalState.executedPayments.length + 100;
+    const decisionDetails: AgentDecisionDetails = {
+      vendorAllowedByOwner: true,
+      cooldownCleared: true,
+      poMatched: false,
+      promptInjectionFree: true,
+      singleUseUnique: true,
+      withinT1Cap: numAmount <= globalState.t1CapUSDC,
+      withinWindowVelocity: true,
+      reserveProtected: true,
+      bondedCollateralSufficient: true,
+    };
+
     globalState.pendingT2Payments.push({
       paymentId,
       vendorId: vendor.vendorId,
@@ -487,6 +702,11 @@ export function evaluateAndExecuteInvoice(payload: {
       description: payload.description,
       notes: payload.notes,
       lineItems: payload.lineItems,
+      targetOwnerAddress,
+      targetOwnerName,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T2',
+      agentDecisionDetails: decisionDetails,
       tier: 'T2',
       status: 'PENDING_T2',
       reasonCodes: ['NEAR_DUPLICATE'],
@@ -504,12 +724,27 @@ export function evaluateAndExecuteInvoice(payload: {
       fundsMoved: false,
       executed: false,
       paymentId,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T2',
+      agentDecisionDetails: decisionDetails,
     };
   }
 
   // Gate 6: Spending Ceilings Check (INV-2)
   if (numAmount > globalState.t1CapUSDC) {
     const paymentId = globalState.pendingT2Payments.length + globalState.executedPayments.length + 100;
+    const decisionDetails: AgentDecisionDetails = {
+      vendorAllowedByOwner: true,
+      cooldownCleared: true,
+      poMatched: true,
+      promptInjectionFree: true,
+      singleUseUnique: true,
+      withinT1Cap: false, // Exceeds $180
+      withinWindowVelocity: true,
+      reserveProtected: true,
+      bondedCollateralSufficient: true,
+    };
+
     globalState.pendingT2Payments.push({
       paymentId,
       vendorId: vendor.vendorId,
@@ -533,6 +768,11 @@ export function evaluateAndExecuteInvoice(payload: {
       description: payload.description,
       notes: payload.notes,
       lineItems: payload.lineItems,
+      targetOwnerAddress,
+      targetOwnerName,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T2',
+      agentDecisionDetails: decisionDetails,
       tier: 'T2',
       status: 'PENDING_T2',
       reasonCodes: ['EXCEEDS_T1_PER_TX'],
@@ -550,11 +790,26 @@ export function evaluateAndExecuteInvoice(payload: {
       fundsMoved: false,
       executed: false,
       paymentId,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T2',
+      agentDecisionDetails: decisionDetails,
     };
   }
 
   // Gate 7: Window Exposure Check
   if (globalState.currentExposureUSDC + numAmount > globalState.t1CapUSDC) {
+    const decisionDetails: AgentDecisionDetails = {
+      vendorAllowedByOwner: true,
+      cooldownCleared: true,
+      poMatched: true,
+      promptInjectionFree: true,
+      singleUseUnique: true,
+      withinT1Cap: true,
+      withinWindowVelocity: false,
+      reserveProtected: true,
+      bondedCollateralSufficient: true,
+    };
+
     globalState.invoices.unshift({
       id: `inv_${Date.now()}`,
       vendorId: vendor.vendorId,
@@ -565,6 +820,11 @@ export function evaluateAndExecuteInvoice(payload: {
       description: payload.description,
       notes: payload.notes,
       lineItems: payload.lineItems,
+      targetOwnerAddress,
+      targetOwnerName,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
       tier: 'T3',
       status: 'REJECTED_T3',
       reasonCodes: ['WINDOW_CEILING_EXCEEDED'],
@@ -580,6 +840,9 @@ export function evaluateAndExecuteInvoice(payload: {
       contractResult: 'Reverted: WindowCeilingExceeded() - Rolling 24h exposure would exceed authorized cap',
       fundsMoved: false,
       executed: false,
+      agentEvaluatedBy,
+      agentDecidedTier: 'T3',
+      agentDecisionDetails: decisionDetails,
     };
   }
 
@@ -591,6 +854,18 @@ export function evaluateAndExecuteInvoice(payload: {
   globalState.currentExposureUSDC += numAmount;
   globalState.windowSpendUSDC += numAmount;
   globalState.knownInvoiceKeys.push(invoiceKey);
+
+  const decisionDetails: AgentDecisionDetails = {
+    vendorAllowedByOwner: true,
+    cooldownCleared: true,
+    poMatched: true,
+    promptInjectionFree: true,
+    singleUseUnique: true,
+    withinT1Cap: true,
+    withinWindowVelocity: true,
+    reserveProtected: true,
+    bondedCollateralSufficient: true,
+  };
 
   const execRecord: ExecutedPayment = {
     paymentId: newPaymentId,
@@ -618,6 +893,11 @@ export function evaluateAndExecuteInvoice(payload: {
     description: payload.description || 'Verified Autonomous Supply Payment',
     notes: payload.notes,
     lineItems: payload.lineItems,
+    targetOwnerAddress,
+    targetOwnerName,
+    agentEvaluatedBy,
+    agentDecidedTier: 'T1',
+    agentDecisionDetails: decisionDetails,
     tier: 'T1',
     status: 'EXECUTED_T1',
     reasonCodes: ['VALID_MANDATE_MATCH', 'IN_WINDOW_CAP', 'REGISTERED_VENDOR'],
@@ -639,6 +919,9 @@ export function evaluateAndExecuteInvoice(payload: {
     txHash: simulatedTxHash,
     newVaultBalance: globalState.vaultBalanceUSDC,
     newExposure: globalState.currentExposureUSDC,
+    agentEvaluatedBy,
+    agentDecidedTier: 'T1',
+    agentDecisionDetails: decisionDetails,
   };
 }
 

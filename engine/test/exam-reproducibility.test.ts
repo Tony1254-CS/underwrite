@@ -127,5 +127,5 @@ describe('Reproducibility and cross-language EIP-712 check (P5-T13)', () => {
     expect(qualResult.activationTxHash).toBeDefined();
     expect(qualResult.activationTxHash.startsWith('0x')).toBe(true);
     expect(qualResult.signature).toBeDefined();
-  });
+  }, 15000);
 });

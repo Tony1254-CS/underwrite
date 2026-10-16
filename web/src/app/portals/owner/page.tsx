@@ -20,6 +20,7 @@ function OwnerPortalContent() {
   const [vendors, setVendors] = useState<any[]>([]);
   const [pendingT2, setPendingT2] = useState<any[]>([]);
   const [executed, setExecuted] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionMsg, setActionMsg] = useState<string | null>(null);
 
@@ -48,6 +49,7 @@ function OwnerPortalContent() {
         if (json.vendors) setVendors(json.vendors);
         if (json.pendingT2Payments) setPendingT2(json.pendingT2Payments);
         if (json.executedPayments) setExecuted(json.executedPayments);
+        if (json.invoices) setInvoices(json.invoices);
       }
     } catch {
       // ignore
@@ -58,7 +60,7 @@ function OwnerPortalContent() {
 
   useEffect(() => {
     fetchPortalData();
-    const interval = setInterval(fetchPortalData, 3000);
+    const interval = setInterval(fetchPortalData, 2500);
     return () => clearInterval(interval);
   }, []);
 
@@ -69,6 +71,25 @@ function OwnerPortalContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ paymentId, action }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error);
+      setActionMsg(json.message);
+      await fetchPortalData();
+      setTimeout(() => setActionMsg(null), 4000);
+    } catch (err: any) {
+      setActionMsg(`Error: ${err.message}`);
+    }
+  };
+
+  const handleToggleVendor = async (vId: string, currentStatus: boolean) => {
+    try {
+      const newStatus = !currentStatus;
+      setActionMsg(`Updating ${vId} status to ${newStatus ? 'ACTIVE' : 'DEACTIVATED'}...`);
+      const res = await fetch('/api/vendors', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vendorId: vId, active: newStatus }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) throw new Error(json.error);
@@ -314,16 +335,33 @@ function OwnerPortalContent() {
                     <div className="font-bold text-white">{v.name}</div>
                     <div className="text-[10px] text-slate-500">{truncateHash(v.payoutAddress, 10, 8)}</div>
                   </div>
-                  <div>
+                  <div className="flex items-center gap-2">
                     {isCooldown ? (
                       <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">
                         Cooldown: {remaining}s
                       </span>
-                    ) : (
+                    ) : v.active ? (
                       <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
                         Active T1
                       </span>
+                    ) : (
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">
+                        Deactivated
+                      </span>
                     )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggleVendor(v.vendorId, v.active)}
+                      className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition-all ${
+                        v.active
+                          ? 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border-rose-500/30'
+                          : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                      }`}
+                      title={v.active ? 'Click to revoke vendor allowlist permission' : 'Click to re-activate vendor'}
+                    >
+                      {v.active ? 'Revoke ✕' : 'Reactivate ✓'}
+                    </button>
                   </div>
                 </div>
               );
@@ -429,6 +467,115 @@ function OwnerPortalContent() {
           </form>
         </div>
       </div>
+
+      {/* SECTION 3: OWNER'S INBOUND AGENT AUDIT QUEUE */}
+      <section className="glass-panel specular-cyan rounded-[32px] p-8 md:p-10 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/[0.08]">
+          <div>
+            <h2 className="text-2xl font-black text-white flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#06b6d4]" />
+              <span>Owner&apos;s Inbound Agent Audit Ledger (Topic F)</span>
+            </h2>
+            <p className="text-xs text-slate-300 font-mono mt-1">
+              All vendor invoices addressed to this Owner Vault. Your Autonomous System Agent inspects each invoice, verifies whitelist membership, assigns T0&ndash;T3 tiers, and executes or escalates to you.
+            </p>
+          </div>
+          <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-bold">
+            {invoices.length} Inbound Invoices
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left font-mono text-xs">
+            <thead>
+              <tr className="border-b border-white/[0.08] text-slate-400 uppercase text-[10px]">
+                <th className="py-3 px-3">Invoice #</th>
+                <th className="py-3 px-3">Supplier Name</th>
+                <th className="py-3 px-3">Amount</th>
+                <th className="py-3 px-3">Agent Policy Tier</th>
+                <th className="py-3 px-3">Owner Agent Audit Checklist</th>
+                <th className="py-3 px-3">Wallet Execution Result</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.05]">
+              {invoices.map((inv) => (
+                <tr key={inv.id} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="py-3.5 px-3 font-bold text-white">
+                    <div>{inv.invoiceNumber}</div>
+                    <div className="text-[10px] text-slate-500">{inv.poNumber || 'No PO'}</div>
+                  </td>
+                  <td className="py-3.5 px-3">
+                    <div className="font-semibold text-slate-200">{inv.vendorName || inv.vendorId}</div>
+                    <div className="text-[10px] text-slate-400 font-mono">{truncateHash(inv.proposedRecipient || '0x00...')}</div>
+                  </td>
+                  <td className="py-3.5 px-3 font-black text-white num-tabular">
+                    ${inv.amountUSDC.toFixed(2)} <span className="text-[10px] text-slate-400 font-normal">USDC</span>
+                  </td>
+                  <td className="py-3.5 px-3">
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                        inv.tier === 'T1'
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          : inv.tier === 'T2'
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                      }`}
+                    >
+                      {inv.tier === 'T1' ? 'T1: AUTONOMOUS' : inv.tier === 'T2' ? 'T2: ESCALATED' : 'T3: BLOCKED'}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-3">
+                    {inv.agentDecisionDetails ? (
+                      <div className="space-y-1 text-[10px]">
+                        <div className="flex items-center gap-1.5">
+                          <span>{inv.agentDecisionDetails.vendorAllowedByOwner ? '🟢' : '🔴'}</span>
+                          <span className={inv.agentDecisionDetails.vendorAllowedByOwner ? 'text-slate-300' : 'text-rose-400 font-bold'}>
+                            {inv.agentDecisionDetails.vendorAllowedByOwner ? 'Allowed in Owner Registry' : 'NOT in Owner Registry (INV-1)'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span>{inv.agentDecisionDetails.promptInjectionFree ? '🟢' : '🔴'}</span>
+                          <span className={inv.agentDecisionDetails.promptInjectionFree ? 'text-slate-300' : 'text-rose-400 font-bold'}>
+                            {inv.agentDecisionDetails.promptInjectionFree ? 'Prompt Injection Clean' : 'Hostile Injection Detected'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span>{inv.agentDecisionDetails.withinT1Cap ? '🟢' : '🟡'}</span>
+                          <span className={inv.agentDecisionDetails.withinT1Cap ? 'text-slate-300' : 'text-amber-300 font-bold'}>
+                            {inv.agentDecisionDetails.withinT1Cap ? 'Under $180 T1 Limit' : 'Exceeds T1 ($180) → Queued'}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-slate-500 text-[10px]">Verified against mandate</span>
+                    )}
+                  </td>
+                  <td className="py-3.5 px-3 text-slate-300 max-w-xs">
+                    {inv.txHash ? (
+                      <div>
+                        <span className="text-emerald-400 font-bold block text-[11px]">Paid On-Chain</span>
+                        <span className="text-cyan-400 text-[10px] underline font-mono cursor-pointer">
+                          {truncateHash(inv.txHash, 10, 8)}
+                        </span>
+                      </div>
+                    ) : inv.status === 'PENDING_T2' ? (
+                      <div>
+                        <span className="text-amber-300 font-bold block text-[11px]">Awaiting Your Decision</span>
+                        <span className="text-[10px] text-slate-400">See Review Queue above</span>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-rose-400 font-bold block text-[11px]">Reverted / Prohibited</span>
+                        <span className="text-[10px] text-slate-400">{inv.contractResult}</span>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
 }

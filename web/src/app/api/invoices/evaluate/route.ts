@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { vendorId, invoiceNumber, amount, poNumber, agentModel, notes, description, lineItems, proposedRecipient } = body;
+    const { vendorId, invoiceNumber, amount, targetOwnerAddress, poNumber, agentModel, notes, description, lineItems, proposedRecipient } = body;
 
     if (!vendorId || !invoiceNumber || !amount) {
       return NextResponse.json(
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
       vendorId: String(vendorId),
       invoiceNumber: String(invoiceNumber),
       amount: String(amount),
+      targetOwnerAddress: targetOwnerAddress ? String(targetOwnerAddress) : undefined,
       poNumber: poNumber ? String(poNumber) : undefined,
       agentModel: agentModel ? String(agentModel) : undefined,
       notes: notes ? String(notes) : undefined,

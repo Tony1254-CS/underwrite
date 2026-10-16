@@ -8,7 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `web/`: Dedicated Enterprise Vendor & Supplier Invoicing Portal & 5-Stage AP Pipeline (DEC-030):
+- `web/`: Target Owner Whitelisting & Owner's Inbound System Agent Audit Architecture (DEC-031):
+  - `web/src/app/portals/vendor/page.tsx`: Explicitly targets Business Owner Sarah Chen / Acme Corp Treasury Vault (`0x70997970C51812dc3A010C7d01b50e0d17dc79C8`). Added dynamic allowlist status badge against that specific Owner, 300s security cooldown calculator, interactive 4-step AP lifecycle diagram (`Vendor` $\to$ `Owner Agent` $\to$ `Policy Tiering` $\to$ `UnderwriteVault`), and Owner Agent audit breakdown checklist. Added Target Customer column to Enterprise Invoices Ledger.
+  - `web/src/app/portals/owner/page.tsx`: Added **Owner's Inbound Agent Audit Ledger** displaying incoming vendor invoices, Owner agent decisions ($T_0, T_1, T_2, T_3$), and audit checklist. Added real-time vendor allowlist toggle buttons (`Revoke ✕` / `Reactivate ✓`) in the Whitelist Registry.
+  - `web/src/lib/runtimeState.ts`: Extended `evaluateAndExecuteInvoice` to accept `targetOwnerAddress`, evaluate against Owner's registry, record `agentEvaluatedBy` and `AgentDecisionDetails` (allowed by Owner, cooldown cleared, PO matched, prompt injection free, single use, within T1 cap, velocity protected), and export `toggleVendorStatus(vendorId, active)`.
+  - `web/src/app/api/vendors/route.ts`: Added `PATCH` method allowing the Owner to activate/deactivate vendors in real time with immediate on-chain rejection (`INV-1: RecipientNotAllowed / RecipientInactive`).
+  - `web/src/app/api/invoices/evaluate/route.ts`: Supported `targetOwnerAddress` parameter in the evaluation pipeline.
   - `web/src/app/portals/vendor/page.tsx`: Built dedicated Enterprise Vendor Portal protected by `PortalGuard` under `AGENT` role (`vendor@cloudcorp.com` / `VendorPassword2026!`). Features active supplier on-chain identity verification, allowlist status, 300s cooldown monitoring, and live vault parameter limits.
   - Interactive 5-Stage AP Lifecycle Visualizer: Real-time animated pipeline displaying Inbound Ingestion $\to$ AI Agent Semantic Inspection & Prompt Injection Filter $\to$ Deterministic Policy Engine Tiering ($T_0-T_3$) $\to$ Smart Contract Execution $\to$ Cryptographic Settlement Receipt.
   - 5 One-Click Operational Presets: Instant testing for $T_1$ Autonomous Settlement (Cloud compute $35 USDC), $T_2$ CFO Challenge Escalation (GPU upgrade $250 USDC), $T_3$ Unknown Vendor Rejection (INV-1), $T_3$ Adversarial Prompt Injection Defense, and $T_3$ Duplicate Replay Rejection (INV-3).
