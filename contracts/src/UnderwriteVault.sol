@@ -2,6 +2,8 @@
 pragma solidity 0.8.28;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import { IBondPool } from "./interfaces/IBondPool.sol";
 import { VaultErrors } from "./interfaces/VaultErrors.sol";
 
@@ -11,6 +13,8 @@ import { VaultErrors } from "./interfaces/VaultErrors.sol";
  *         exposure caps, and challenge periods for accounts payable.
  */
 contract UnderwriteVault is VaultErrors {
+    using SafeERC20 for IERC20;
+
     // --- Data structures ---
 
     struct Ceilings {
@@ -237,6 +241,10 @@ contract UnderwriteVault is VaultErrors {
         );
     }
 
+    function getQualification(bytes32 qualId) external view returns (StoredQualification memory) {
+        return quals[qualId];
+    }
+
     // --- Admin Functions (P1-T03) ---
 
     function addRecipient(address addr, uint256 perWindowCap) external onlyOwner {
@@ -323,7 +331,134 @@ contract UnderwriteVault is VaultErrors {
 
     function ownerTransfer(address to, uint256 amount) external onlyOwner {
         if (to == address(0)) revert InvalidAddress();
-        token.transfer(to, amount);
         emit OwnerTransferExecuted(to, amount);
+        token.safeTransfer(to, amount);
+    }
+
+    // --- Qualification Lifecycle Functions (P1-T04) ---
+
+    function commitExam(bytes32 configHash, bytes32 corpusHash) external returns (uint256 commitId) {
+        if (msg.sender != examiner) revert NotExaminer();
+        commitId = examCommits[configHash].commitId + 1;
+        examCommits[configHash] =
+            ExamCommit({ commitId: commitId, corpusHash: corpusHash, committedAt: block.timestamp });
+        emit ExamCommitted(configHash, corpusHash, commitId);
+    }
+
+    function hashAttestation(QualificationAttestation calldata a) public pure returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                ATTESTATION_TYPEHASH,
+                a.qualId,
+                a.vault,
+                a.agentKey,
+                a.configHash,
+                a.reportHash,
+                a.corpusHash,
+                a.examCommitId,
+                a.ownerInputsHash,
+                a.t1MaxPerTx,
+                a.t1MaxPerWindow,
+                a.t2MaxPerTx,
+                a.t2Allowed,
+                a.issuedAt,
+                a.expiresAt,
+                a.examiner
+            )
+        );
+    }
+
+    function activateQualification(QualificationAttestation calldata a, bytes calldata sig) external onlyOwner {
+        // Vault binding check
+        if (a.vault != address(this)) revert WrongVault();
+
+        // Single-use attestation check
+        if (usedAttestation[a.qualId]) revert AttestationUsed();
+
+        // Expiration check
+        if (a.expiresAt <= block.timestamp) revert QualificationExpired();
+
+        // Latest exam commit check
+        ExamCommit storage latest = examCommits[a.configHash];
+        if (latest.commitId != a.examCommitId || latest.corpusHash != a.corpusHash || latest.commitId == 0) {
+            revert StaleExamCommit();
+        }
+
+        // Examiner consistency check
+        if (a.examiner != examiner) revert BadSignature();
+
+        // EIP-712 signature verification against current examiner
+        bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator(), hashAttestation(a)));
+        address recovered = ECDSA.recover(digest, sig);
+        if (recovered != examiner) revert BadSignature();
+
+        // Effective limits: min(attested, ceilings)
+        uint256 effT1PerTx = a.t1MaxPerTx < ceilings.perTx ? a.t1MaxPerTx : ceilings.perTx;
+        uint256 effT1PerWindow = a.t1MaxPerWindow < ceilings.perWindow ? a.t1MaxPerWindow : ceilings.perWindow;
+        uint256 effT2PerTx = a.t2MaxPerTx < ceilings.t2PerTx ? a.t2MaxPerTx : ceilings.t2PerTx;
+
+        // Effects: Update state before external calls (Checks-Effects-Interactions)
+        usedAttestation[a.qualId] = true;
+        ownerInputsHashOf[a.qualId] = a.ownerInputsHash;
+        bytes32 prevQualId = activeQualOf[a.agentKey];
+        if (prevQualId != bytes32(0)) {
+            quals[prevQualId].active = false;
+        }
+        activeQualOf[a.agentKey] = a.qualId;
+        activeQualList.push(a.qualId);
+
+        quals[a.qualId] = StoredQualification({
+            attestation: a,
+            active: true,
+            revoked: false,
+            activatedAt: block.timestamp,
+            effectiveT1MaxPerTx: effT1PerTx,
+            effectiveT1MaxPerWindow: effT1PerWindow,
+            effectiveT2MaxPerTx: effT2PerTx
+        });
+
+        emit QualificationActivated(a.qualId, a.agentKey, effT1PerTx, effT1PerWindow, effT2PerTx, a.expiresAt);
+
+        // Interactions: Lock required bond backing in BondPool
+        try bondPool.lock(a.qualId, effT1PerWindow) { }
+        catch {
+            revert BondLockFailed();
+        }
+
+        // Release bond backing for superseded qualification if any
+        if (prevQualId != bytes32(0)) {
+            try bondPool.release(prevQualId) { } catch { }
+        }
+    }
+
+    function revokeQualification(bytes32 qualId, bytes32 reasonHash) external {
+        if (msg.sender != owner && msg.sender != examiner) revert NotOwner();
+        StoredQualification storage q = quals[qualId];
+        q.active = false;
+        q.revoked = true;
+        if (activeQualOf[q.attestation.agentKey] == qualId) {
+            delete activeQualOf[q.attestation.agentKey];
+        }
+        emit QualificationRevoked(qualId, reasonHash);
+        try bondPool.release(qualId) { } catch { }
+    }
+
+    function suspendForClaim(bytes32 qualId, uint256 claimId) external {
+        if (msg.sender != address(bondPool)) revert NotBondPool();
+        StoredQualification storage q = quals[qualId];
+        q.active = false;
+        q.revoked = true;
+        if (activeQualOf[q.attestation.agentKey] == qualId) {
+            delete activeQualOf[q.attestation.agentKey];
+        }
+
+        // S6: Retrieve paymentId from BondPool claims(claimId) and remove from exposure
+        (,, uint256 paymentId,,,) = bondPool.claims(claimId);
+        PaymentRecord storage p = payments[paymentId];
+        if (p.qualId == qualId && !p.reconciled && exposure[qualId] >= p.amount) {
+            exposure[qualId] -= p.amount;
+        }
+
+        emit QualificationRevoked(qualId, keccak256("CLAIM"));
     }
 }
