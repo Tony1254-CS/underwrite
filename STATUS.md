@@ -1,12 +1,12 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 12:52 UTC, antigravity-1
-Last verified working state: a890c87 — P0-T08 verified with .github/workflows/ci.yml and local passes
-Active phase: P0 — Repository bootstrap
-Next concrete task: QG-0 | X | needs: P0-T01..P0-T09 | GATE P0: clean-clone build
-Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 19; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified (blocked mock key commit). Note: web/package.json is stubbed for P8.
+## Handoff — 2026-10-16 12:54 UTC, antigravity-1
+Last verified working state: 149d46d — P0-T09 verified with pre-commit hook and secret scan
+Active phase: P1 — UnderwriteVault + MockUSDC (Track A)
+Next concrete task: P1-T01 | A | needs: QG-0 | MockUSDC, IBondPool, MockBondPool (Files: contracts/src/MockUSDC.sol contracts/src/interfaces/IBondPool.sol contracts/test/mocks/MockBondPool.sol)
+Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 19; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified; QG-0 clean-clone build & test passed with 0 exit code. Note: web/package.json is stubbed for P8.
 Tests NOT run: Full invariant suites (to be added in P1/P2)
 Known failures: None
 Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL)
-Risks of touching current code: Low (initial repository bootstrap in progress)
-Phase checklist: P0 [~] P1 [ ] P2 [ ] P3 [ ] P4 [ ] P5 [ ] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [ ]
+Risks of touching current code: Low (contracts/src empty, ready for P1 implementation)
+Phase checklist: P0 [x] P1 [ ] P2 [ ] P3 [ ] P4 [ ] P5 [ ] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x]
