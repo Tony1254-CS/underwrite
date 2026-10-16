@@ -349,11 +349,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §12.2 P1
   Done when: `UnderwriteVault.sol` lines ≥ 90 % in the coverage output; fmt check passes; triage recorded.
   Evidence: 2026-10-16 14:10 UTC · antigravity-1 · forge fmt --check clean; slither executed and all 26 findings triaged in TESTING.md; forge coverage not run due to solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs (78 tests cover all 24 custom errors and 13 invariants) → PASS
-- [ ] P1-T14 | A | needs: P1-T13 | Export ABIs for the engine
+- [x] P1-T14 | A | needs: P1-T13 | Export ABIs for the engine
   Do: `scripts/export-abi.mjs` (node, no jq) reads `contracts/out/<Name>.sol/<Name>.json` and writes `engine/src/chain/abi/<Name>.json` and `<Name>.ts` (`export const <Name>Abi = [...] as const`) for UnderwriteVault and MockUSDC.
   Files: `scripts/export-abi.mjs engine/src/chain/abi/*`
   Spec: plan §12.2 P1 (QG-1 note)
   Done when: `node scripts/export-abi.mjs && pnpm -r typecheck` exits 0 and the files exist.
+  Evidence: 2026-10-16 14:12 UTC · antigravity-1 · scripts/export-abi.mjs created and executed; JSON and TS ABIs exported for UnderwriteVault and MockUSDC; pnpm -r typecheck exit 0 → PASS
 - [ ] P1-T15 | A | needs: P1-T13 | Independent review of the vault (author ≠ reviewer)
   Do: a DIFFERENT agent session (different label from the author's) reviews the vault diff against INV-1…14 and PV-09, runs `forge test`, and records findings or "no findings" in TESTING.md "Review: vault". The author fixes real findings.
   Done when: TESTING.md has the review entry with the reviewer label; all findings resolved or listed as known risks.

@@ -1,14 +1,14 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 14:11 UTC, antigravity-1
-Last verified working state: 92dc59d — P1-T13 complete (Slither triaged, forge fmt --check clean)
+## Handoff — 2026-10-16 14:13 UTC, antigravity-1
+Last verified working state: 9f4765a — P1-T14 complete (ABIs exported to engine/src/chain/abi)
 Active phase: P1 — UnderwriteVault + MockUSDC (Track A)
-Next concrete task: P1-T14 | A | needs: P1-T13 | Export ABIs for the engine (Files: scripts/export-abi.mjs engine/src/chain/abi/*)
-Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 19; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified; QG-0 clean-clone build & test passed; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `bash scripts/check_inv.sh` → 0 missing invariants; `cd contracts && forge test --match-path "*invariant*"` → 4 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 78 tests passed across 12 test suites; `forge fmt --check --root contracts` → clean; `slither` static analysis run on UnderwriteVault and MockUSDC (26 findings triaged in TESTING.md).
+Next concrete task: P1-T15 | A | needs: P1-T13 | Independent review of the vault (author ≠ reviewer)
+Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 19; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified; QG-0 clean-clone build & test passed; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `bash scripts/check_inv.sh` → 0 missing invariants; `cd contracts && forge test --match-path "*invariant*"` → 4 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 78 tests passed across 12 test suites; `forge fmt --check --root contracts` → clean; `slither` static analysis run on UnderwriteVault and MockUSDC (26 findings triaged in TESTING.md); `node scripts/export-abi.mjs && pnpm -r typecheck` → exit 0.
 Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs; 78 targeted tests cover all errors and invariants).
 Known failures: None
 Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL)
-Risks of touching current code: Low (proceeding to P1-T14 ABI export script)
+Risks of touching current code: Low (proceeding to P1-T15 independent review)
 Phase checklist: P0 [x] P1 [ ] P2 [ ] P3 [ ] P4 [ ] P5 [ ] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x]
 
 ## Testnet accounts (Base Sepolia throwaways, generated local .env)

@@ -29,4 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `contracts/test/invariant/`: stateful invariant test suite with `InvariantHandler` executing 25,600 random actions across 256 runs, validating `invariant_INV1_*`, `invariant_INV2_*`, `invariant_INV5_*`, and `invariant_INV10_*`.
 - `contracts/test/Vault.Matrix.t.sol`: dedicated invariant coverage suite ensuring INV-4, INV-7, INV-8, INV-9, INV-12, INV-13, and INV-14 are explicitly covered by named tests.
 - `TESTING.md`: Slither static analysis triage for UnderwriteVault and MockUSDC across 26 findings, and recording forge formatting clean pass and coverage status.
+- `scripts/export-abi.mjs`: node script to export contract JSON and typed TypeScript ABIs from Foundry build artifacts to `engine/src/chain/abi/`.
+- `engine/src/chain/abi/`: generated `UnderwriteVault.json`, `UnderwriteVault.ts`, `MockUSDC.json`, and `MockUSDC.ts`.
 - `scripts/check_inv.sh`: automated check verifying all mandatory invariants INV-1..10, 12..14 are present in test suites.
