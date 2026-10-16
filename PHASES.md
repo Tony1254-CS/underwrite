@@ -271,11 +271,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
 ## P1 — UnderwriteVault + MockUSDC (Track A · Sat 17 Oct)
 Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault table + errors), §9.8, §12.2 P1; PHASES PV-02, PV-03, PV-07, PV-09. Key files: `contracts/src/UnderwriteVault.sol`, `MockUSDC.sol`, `interfaces/IBondPool.sol`, `engine/src/chain/abi/UnderwriteVault.json`.
 
-- [ ] P1-T01 | A | needs: QG-0 | MockUSDC, IBondPool, MockBondPool
+- [x] P1-T01 | A | needs: QG-0 | MockUSDC, IBondPool, MockBondPool
   Do: `MockUSDC.sol` = OpenZeppelin ERC20, 6 decimals, public `mint(address,uint256)` (testnet only; comment it). `interfaces/IBondPool.sol` = the calls the vault makes (`lock(bytes32 qualId,uint256 amount)`, `remaining(bytes32) view`, `release(bytes32)`) plus the vault-side interface the pool calls (`isClaimable(uint256 paymentId) view`, `suspendForClaim(bytes32 qualId,uint256 claimId)`). `test/mocks/MockBondPool.sol` with settable `remaining` and settable lock success/failure.
   Files: `contracts/src/MockUSDC.sol contracts/src/interfaces/IBondPool.sol contracts/test/mocks/MockBondPool.sol`
   Spec: plan §9.7
   Done when: `forge build` passes; a test shows `decimals()==6` and `mint` works.
+  Evidence: 2026-10-16 13:12 UTC · antigravity-1 · 11df926 · forge build and test pass; decimals()==6, mint works, MockBondPool controls verified → 0
 - [ ] P1-T02 | A | needs: P1-T01 | Vault skeleton: state, constructor, EIP-712, errors, events
   Do: all state from plan §9.7; constructor takes owner, examiner, guardian, bondPool (immutable), token (immutable), ceilings, windowSeconds, reserveFloor, challengePeriod, recipientCooldown. EIP-712 domain per PV-07. All 24 custom errors (23 in plan §9.7 + `Vetoed`, see S5). All events named in §9.7. `VERSION()`.
   Files: `contracts/src/UnderwriteVault.sol`
