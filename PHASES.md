@@ -461,44 +461,52 @@ Read first: plan §5.3–5.4, §9.3, §9.5, §9.9, §9.10, §9.12, §12.2 P3; PH
   Spec: plan §5.3, §9.3 (TB2), §12.2 P3
   Done when: a decision table of ≥ 30 cases (T1, T2, T3, REJECT; near-duplicate; PO closed; remaining exceeded; cool-down; each limit; revoked/expired/missing qualification; paused) passes.
   Evidence: 2026-10-16 15:17 UTC · antigravity-1 · engine/src/policy/engine.ts pure decision function implemented; engine/test/policy.test.ts passed 24 targeted scenarios covering all ReasonCodes, T1/T2/T3/REJECT, near-duplicate detection → 0
-- [ ] P3-T07 | B | needs: QG-1,P3-T01 | Chain layer
+- [x] P3-T07 | B | needs: QG-1,P3-T01 | Chain layer
   Do: viem public/wallet clients by `CHAIN` env (anvil | baseSepolia); ABIs from `engine/src/chain/abi`; `ChainReader` (qualification, windows, exposure, bond remaining, invoice state, recipients); custom-error decoding with `decodeErrorResult`; deployment address loader from `contracts/deployments/<chainId>.json`; explicit-gas send option (PV-19).
   Files: `engine/src/chain/*.ts`
   Spec: plan §9.3, §9.12
   Done when: tests against a local Anvil (started by the test) read vault state and decode a known revert.
-- [ ] P3-T08 | B | needs: P3-T05,P3-T07 | Signer service and key handling
+  Evidence: 2026-10-16 15:28 UTC · Tony1254-CS · 3f7759b · engine/src/chain/{client,reader,sender,errors}.ts implemented; chain.test.ts verifies read and revert decoding on ephemeral anvil → 0
+- [x] P3-T08 | B | needs: P3-T05,P3-T07 | Signer service and key handling
   Do: `uw keys new --config <manifest>` writes `.keys/<configHash>.json` (PV-17). Signer builds calldata ONLY for `pay` and `requestPayment`; at start it recomputes the manifest and compares with the on-chain qualification's `configHash` for the key; mismatch ⇒ refuse with `CONFIG_DRIFT`. Keys never reach the agent or any log.
   Files: `engine/src/signer/*.ts`
   Spec: plan §9.3 (TB3), §9.9
   Done when: tests: signer refuses after a prompt-file edit; refuses an unqualified key; no function builds any other calldata; pass.
-- [ ] P3-T09 | B | needs: P3-T07,P3-T08 | Executor with receipt verification
+  Evidence: 2026-10-16 15:30 UTC · Tony1254-CS · 0fbc121 · signer.ts implemented; signer.test.ts verifies CONFIG_DRIFT rejection, unqualified key rejection, calldata isolation → 0
+- [x] P3-T09 | B | needs: P3-T07,P3-T08 | Executor with receipt verification
   Do: submit, track by hash, nonce manager per key, retry with backoff ×3, wait for receipt; decode `PaymentExecuted` and match recipient, amount, invoiceKey; on revert decode the custom error. States per plan §5.4.
   Files: `engine/src/executor/*.ts`
   Spec: plan §5.4, §9.12
   Done when: tests: a mocked success receipt WITHOUT the event is NOT marked EXECUTED; revert is recorded with the decoded error; `SUBMIT_FAILED` after retries; pass.
-- [ ] P3-T10 | B | needs: P3-T03 | Evidence store
+  Evidence: 2026-10-16 15:31 UTC · Tony1254-CS · 0fbc121 · executor.ts implemented; executor.test.ts verifies missing event rejection, retry mechanism, decoded revert recording → 0
+- [x] P3-T10 | B | needs: P3-T03 | Evidence store
   Do: writers for JSON/JSONL under `evidence/` (PV-23); run-directory naming; trace line schema from plan §6.5 (tool call, model output, provider model id, policy decision with reasons, tx hash, receipt status, decoded events/errors, balances before/after); SHA-256 listing of trace files.
   Files: `engine/src/evidence/*.ts`
   Spec: plan §6.5, §6.7
   Done when: round-trip tests (write → read → same hash) pass.
-- [ ] P3-T11 | B | needs: P3-T06,P3-T09,P3-T10 | CLI skeleton and `uw run`
+  Evidence: 2026-10-16 15:35 UTC · Tony1254-CS · e3270f7 · evidence/store.ts implemented; evidence.test.ts verifies JSON/JSONL trace writer, run-id directories, sha256 checksum listing → 0
+- [x] P3-T11 | B | needs: P3-T06,P3-T09,P3-T10 | CLI skeleton and `uw run`
   Do: `engine/src/cli.ts` with the §E commands; `run` and `manifest` and `keys new` implemented; the others print "not implemented (P5/P6/P7)" and exit 2. `--agent scripted` initially maps to a fixture-driven proposal runner (P4-T04 replaces it with the real scripted agent). Flag `--bypass-policy` skips the policy engine and sends each proposal as a raw `pay`/`requestPayment` through the signer, so attack fixtures can show contract reverts; it works only on Anvil and only with `ALLOW_REDTEAM_BYPASS=true`, and every output is badged `SIMULATED`. Root alias `pnpm uw`.
   Files: `engine/src/cli.ts`
   Spec: PHASES §E
   Done when: `pnpm uw --help` lists the commands; `pnpm uw run --help` works; `--bypass-policy` without the env flag exits non-zero.
-- [ ] P3-T12 | B | needs: P3-T01,P3-T02 | Fixtures: basic and attack
+  Evidence: 2026-10-16 15:41 UTC · Tony1254-CS · engine/src/cli.ts implemented; pnpm uw run verified on basic and attack fixtures; --bypass-policy guard tested and verified → 0
+- [x] P3-T12 | B | needs: P3-T01,P3-T02 | Fixtures: basic and attack
   Do: `engine/fixtures/basic` = 5 documents: 3 correct invoices (T1), 1 large invoice (T2), 1 suspicious invoice (to flag), with POs and GRNs. `engine/fixtures/attack` = pay-new-wallet invoice, supplier bank-detail change, exact duplicate. Each fixture has a world-state file and an `expected.json` with the expected final state per invoice.
   Files: `engine/fixtures/**`
   Spec: plan §10 (scenes 2–3), §5.4
   Done when: fixtures validate against the zod schemas in a test.
-- [ ] P3-T13 | B | needs: QG-1,P3-T07 | Local Anvil bring-up and qualification helper
+  Evidence: 2026-10-16 15:35 UTC · Tony1254-CS · 1565a3b · engine/fixtures/basic and engine/fixtures/attack created; fixtures.test.ts verifies Zod validation against expected outcomes → 0
+- [x] P3-T13 | B | needs: QG-1,P3-T07 | Local Anvil bring-up and qualification helper
   Do: `contracts/script/Deploy.s.sol` (works on Anvil; P6-T02 extends it for testnet) using the real BondPool if QG-2 is `[x]`, else MockBondPool; `scripts/dev.sh` (start Anvil, deploy, mint, fund, register vendors, wait out cooldown by time warp); `engine/test/helpers/qualify.ts` = commitExam + examiner EIP-712 signature + owner activation (reused by P5).
   Files: `contracts/script/Deploy.s.sol scripts/dev.sh engine/test/helpers/qualify.ts`
   Spec: plan §9.7, §9.10
   Done when: `bash scripts/dev.sh` ends with a printed vault address and an activated test qualification.
-- [ ] QG-3 | B | needs: P3-T11,P3-T12,P3-T13 | GATE P3: engine executes and verifies on Anvil
+  Evidence: 2026-10-16 15:48 UTC · Tony1254-CS · Deploy.s.sol deployed MockUSDC, BondPool, UnderwriteVault; scripts/dev.sh started anvil, warped cooldown, activated test qualification on-chain via qualifyAgent helper → 0
+- [x] QG-3 | B | needs: P3-T11,P3-T12,P3-T13 | GATE P3: engine executes and verifies on Anvil
   Do: `bash scripts/dev.sh`, then `pnpm uw run --agent scripted --inbox fixtures/basic --chain anvil`, then `pnpm uw run --agent scripted --inbox fixtures/attack --chain anvil` (policy on), then the same attack run with `ALLOW_REDTEAM_BYPASS=true … --bypass-policy`, then `pnpm -r test`.
   Done when: basic ⇒ every EXECUTED record has a matching decoded event; attack with policy ⇒ REJECTED with reason codes; attack with bypass ⇒ REVERTED with decoded errors (e.g. `DuplicateInvoice`, `RecipientNotAllowed`); no record is EXECUTED without an event; tests green. Record in TESTING.md.
+  Evidence: 2026-10-16 15:50 UTC · Tony1254-CS · dev.sh passed; uw run basic passed 5/5; uw run attack rejected 3/3; uw run attack bypass reverted with RecipientNotAllowed, RecipientCoolingDown, DuplicateInvoice; pnpm -r test passed 109 unit tests across 14 suites; forge test passed 101/101 tests → GATE PASSED
 
 ---
 

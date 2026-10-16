@@ -10,6 +10,7 @@ via_ir = true
 fuzz.runs = 512
 invariant.runs = 256
 invariant.depth = 100
+fs_permissions = [{ access = "read-write", path = "./" }]
 
 [fmt]
 line_length = 120

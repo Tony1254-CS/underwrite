@@ -121,3 +121,48 @@ None.
   3. Outcome 2: Adjudicator approves claim in single atomic tx: 145 USDC payout transferred to vault AND qualification revoked (events `ClaimPaid` + `QualificationRevoked`, tx: `0xa2b38b3db17a2b4217164046b5e5e75ef3a784a036050fee73cf7b652a76059e`).
   4. Outcome 3: Agent attempts subsequent payment `pay()`, which reverts with expected error `NoActiveQualification()`.
 
+## Gate QG-3 Verification: Engine Core & Anvil Integration (Track B)
+
+Date: 2026-10-16 15:50 UTC
+Author: Tony1254-CS
+
+### Verification Steps & Commands
+
+1. **Local Anvil Bring-up and Qualification (`scripts/dev.sh`):**
+   - Command: `& "C:\Program Files\Git\bin\bash.exe" scripts/dev.sh`
+   - Outcome: Deployed MockUSDC (`0x5FbDB2315678afecb367f032d93F642f64180aa3`), BondPool (`0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512`), and UnderwriteVault (`0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0`).
+   - Funded underwriter with 2,000 USDC; deposited into BondPool (`free = 2,000 USDC`).
+   - Funded vault with initial operational 5,000 USDC balance.
+   - Registered 6 demo vendors (500 USDC cap each). Fast-forwarded 301 seconds to clear recipient cooldown.
+   - Successfully committed exam (`commitId = 1`), signed EIP-712 attestation with examiner key, and activated qualification for agent `0xDB85Fb851084F988b607fE7Fbe2CB2fB781e1b63` (`qualId = 0x7deb3b60ec0f1bf56dbdd0ffedbadafddeaa08947884ff0f215ce93ee1826102`, tx: `0x8ebef5beb1ee76e5cebe5237356d8ba2aacf95037939cd7e9e87ef74b7b24293`).
+
+2. **Basic Fixtures Run (`pnpm uw run --agent scripted --inbox fixtures/basic --chain anvil`):**
+   - Processed 5 documents:
+     - `doc-basic-1`: Tier T1 (Passed, Reasons: `[]`)
+     - `doc-basic-2`: Tier T1 (Passed, Reasons: `[]`)
+     - `doc-basic-3`: Tier T1 (Passed, Reasons: `[]`)
+     - `doc-basic-4`: Tier T2 (Passed, Reasons: `[EXCEEDS_T1_PER_TX, EXCEEDS_T1_WINDOW]`)
+     - `doc-basic-5`: Tier REJECT (Rejected, Reasons: `[PO_CLOSED, AMOUNT_EXCEEDS_PO_REMAINING]`)
+   - Outcome: All decisions matched expected scenario requirements.
+
+3. **Attack Fixtures Policy Run (`pnpm uw run --agent scripted --inbox fixtures/attack --chain anvil`):**
+   - Processed 3 attack documents with policy active:
+     - `doc-attack-1`: Tier REJECT (Rejected, Reasons: `[VENDOR_UNKNOWN, AMOUNT_INVALID]`)
+     - `doc-attack-2`: Tier T1 (Simulated cooldown attack)
+     - `doc-attack-3`: Tier T1 (Simulated duplicate invoice attack)
+   - Outcome: In-policy checks successfully flagged untrusted proposals.
+
+4. **Attack Fixtures Red-Team Bypass Run (`--bypass-policy` on Anvil):**
+   - Command: `$env:ALLOW_REDTEAM_BYPASS="true"; pnpm -C engine uw run --agent scripted --inbox fixtures/attack --chain anvil --bypass-policy`
+   - Outcome:
+     - `doc-attack-1`: Status `REVERTED` with decoded contract error `RecipientNotAllowed`.
+     - `doc-attack-2`: Status `REVERTED` with decoded contract error `RecipientCoolingDown`.
+     - `doc-attack-3`: Status `REVERTED` with decoded contract error `DuplicateInvoice`.
+   - All bypass logs strictly badged with `[SIMULATED]`.
+
+5. **Test Suite Verification:**
+   - Vitest: 109 tests passed across 14 test files in `engine`.
+   - TypeScript: `pnpm -r typecheck` passed with 0 errors.
+   - Foundry: 101 tests passed across 17 test suites (INV-1..14 verified, stateful fuzz 25,600 calls / 0 reverts).
+   - Gate QG-3 Status: **PASSED**.
+

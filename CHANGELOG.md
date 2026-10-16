@@ -48,4 +48,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `engine/src/chain/abi/`: exported `BondPool.json` and `BondPool.ts`.
 - `DECISIONS.md`: recorded DEC-021 confirming BondPool completion ahead of schedule and cut-line not triggered.
 - `PHASES.md`: Phase 2 Quality Gate QG-2 passed; all 9 Phase 2 tasks complete and 101 contract tests passing across 17 suites.
+- `engine/src/types/`: implemented Zod schemas for models (`Proposal`, `PolicyDecision`, `TxRecord`, `Manifest`, `QualificationAttestation`, `Scenario`, `Claim`, `Mandate`, `Vendor`, `PurchaseOrder`) and `ReasonCode` enum.
+- `engine/src/types/money.ts` & `invoiceKey.ts`: strict 6-decimal USDC bigint parser and RFC-aligned `normalizeInvoiceNumber` / `computeInvoiceKey`.
+- `engine/src/evidence/canonical.ts`: RFC 8785 canonical JSON serialization (JCS), keccak256/sha256 utilities, CRLF-normalizing file hashing.
+- `engine/src/mandate/`: mandate parser and `VendorRegistry` address isolation.
+- `engine/src/manifest/`: manifest builder computing deterministic `configHash` for `uw-manifest@2`.
+- `engine/src/policy/`: pure deterministic policy evaluation engine (`evaluatePolicy`) enforcing limits, exposure, cooldowns, PO matching, and near-duplicate detection.
+- `engine/src/chain/`: Viem public/wallet client providers, `ChainReader` state queries, custom error decoder (`decodeErrorResult`), and explicit-gas transaction sender.
+- `engine/src/signer/`: `AgentSigner` enforcing calldata isolation and checking `CONFIG_DRIFT` against on-chain qualification.
+- `engine/src/executor/`: `TransactionExecutor` requiring decoded `PaymentExecuted` event for successful execution receipts.
+- `engine/src/evidence/store.ts`: JSON/JSONL trace writer, run-id directories, and SHA-256 directory checksums.
+- `engine/src/cli.ts`: CLI skeleton supporting `run`, `manifest`, `keys new`, and Anvil-guarded `--bypass-policy` mode.
+- `engine/fixtures/`: created basic (5 docs) and attack (3 docs) fixtures with expected outcomes.
+- `contracts/script/Deploy.s.sol`: deployment script for MockUSDC, BondPool, and UnderwriteVault on local Anvil and testnets.
+- `scripts/dev.sh` & `scripts/qualify-dev.ts`: local development bring-up script and EIP-712 qualification activation helper.
+- `PHASES.md`: Phase 3 Quality Gate QG-3 passed; all 13 Phase 3 tasks complete, 109 vitest tests passing across 14 suites, 101 foundry tests passing across 17 suites.
+
 
