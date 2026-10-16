@@ -230,11 +230,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §13.1
   Done when: `git ls-files | grep -c gitkeep` ≥ 10 and every path above exists.
   Evidence: 2026-10-16 12:33 UTC · antigravity-1 · 71ec0e8 · git ls-files | grep -c gitkeep → 25 gitkeep files present, all skeleton directories exist
-- [ ] P0-T06 | B | needs: P0-T04,P0-T05 | pnpm workspace and engine package
+- [x] P0-T06 | B | needs: P0-T04,P0-T05 | pnpm workspace and engine package
   Do: root `package.json` (private; `packageManager` = installed pnpm version; scripts `build test lint typecheck` → `pnpm -r …`; `"uw": "pnpm --filter engine uw"`; `"demo:local": "echo demo:local not implemented until P8 && exit 1"`), `pnpm-workspace.yaml` (`packages: [engine, web]`). `engine/`: TypeScript strict, ESM, `tsx`, vitest, eslint, prettier, deps `viem` (v2) and `zod`, script `"uw": "tsx src/cli.ts"`, one trivial passing test. `web/package.json` = stub whose scripts print "web stub (P8)" and exit 0; say so in STATUS.md.
   Files: `package.json pnpm-workspace.yaml engine/** web/package.json`
   Spec: plan §9.1
   Done when: `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` all exit 0.
+  Evidence: 2026-10-16 12:38 UTC · antigravity-1 · 835f50b · pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test → all exit 0 across workspace, 1 passing test
 - [ ] P0-T07 | A | needs: P0-T04,P0-T05 | Foundry project with pinned dependencies
   Do: make the first commit before installing. `contracts/foundry.toml`: pinned exact `solc_version` (≥ 0.8.24, record in DECISIONS), optimizer on, fuzz runs ≥ 512, invariant runs ≥ 256 and depth ≥ 100; pick an `evm_version` that Base Sepolia supports (confirmed again by the deploy in P6-T02). Install `forge-std` and OpenZeppelin Contracts v5 at pinned release tags (check `forge install --help` for current flags), `remappings.txt`, and one placeholder test.
   Files: `contracts/foundry.toml contracts/remappings.txt contracts/lib/** contracts/test/Smoke.t.sol`
