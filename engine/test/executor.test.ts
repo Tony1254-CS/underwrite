@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+import { generatePrivateKey } from 'viem/accounts';
 import {
   type Address,
   type Hex,
@@ -63,8 +65,8 @@ describe('TransactionExecutor with receipt verification (P3-T09)', () => {
     };
 
     const executor = new TransactionExecutor(
-      mockPublicClient as any,
-      mockWalletClient as any,
+      mockPublicClient as unknown as PublicClient,
+      mockWalletClient as unknown as WalletClient<Transport, Chain, Account>,
       vaultAddress
     );
 
@@ -89,12 +91,12 @@ describe('TransactionExecutor with receipt verification (P3-T09)', () => {
 
     const mockWalletClient = {
       chain: { id: 31337 },
-      writeContract: async () => '0x' + '88'.repeat(32) as Hex,
+      writeContract: async () => ('0x' + '88'.repeat(32)) as Hex,
     };
 
     const executor = new TransactionExecutor(
-      mockPublicClient as any,
-      mockWalletClient as any,
+      mockPublicClient as unknown as PublicClient,
+      mockWalletClient as unknown as WalletClient<Transport, Chain, Account>,
       vaultAddress
     );
 
@@ -116,12 +118,12 @@ describe('TransactionExecutor with receipt verification (P3-T09)', () => {
 
     const mockWalletClient = {
       chain: { id: 31337 },
-      writeContract: async () => '0x' + '77'.repeat(32) as Hex,
+      writeContract: async () => ('0x' + '77'.repeat(32)) as Hex,
     };
 
     const executor = new TransactionExecutor(
-      mockPublicClient as any,
-      mockWalletClient as any,
+      mockPublicClient as unknown as PublicClient,
+      mockWalletClient as unknown as WalletClient<Transport, Chain, Account>,
       vaultAddress
     );
 
@@ -141,8 +143,8 @@ describe('TransactionExecutor with receipt verification (P3-T09)', () => {
     };
 
     const executor = new TransactionExecutor(
-      {} as any,
-      mockWalletClient as any,
+      {} as unknown as PublicClient,
+      mockWalletClient as unknown as WalletClient<Transport, Chain, Account>,
       vaultAddress,
       { maxRetries: 3, initialBackoffMs: 10 }
     );
