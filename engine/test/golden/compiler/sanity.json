@@ -1,0 +1,11 @@
+{
+  "_description": "Sanity vector independently verified with Python scipy and exact formula per PHASES §D2 and plan §7",
+  "_method": "pb = 1 - (1 - 0.95)**(1/120) = 0.0246554, pf = 1 - (1 - 0.99)**(1/30) = 0.1423041, pa = pf (uniform weights), p = pb + 0.20*pa = 0.0531162, rawCap = 10 / p = 188.266 USDC, floorTo10 = 180 USDC",
+  "expected": {
+    "status": "T1_ENABLED",
+    "t1MaxPerTx": "180000000",
+    "t1MaxPerWindow": "180000000",
+    "t2MaxPerTx": "2000000000",
+    "t2Allowed": true
+  }
+}
