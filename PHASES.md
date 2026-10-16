@@ -355,9 +355,11 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §12.2 P1 (QG-1 note)
   Done when: `node scripts/export-abi.mjs && pnpm -r typecheck` exits 0 and the files exist.
   Evidence: 2026-10-16 14:12 UTC · antigravity-1 · scripts/export-abi.mjs created and executed; JSON and TS ABIs exported for UnderwriteVault and MockUSDC; pnpm -r typecheck exit 0 → PASS
-- [ ] P1-T15 | A | needs: P1-T13 | Independent review of the vault (author ≠ reviewer)
+- [x] P1-T15 | A | needs: P1-T13 | Independent review of the vault (author ≠ reviewer)
   Do: a DIFFERENT agent session (different label from the author's) reviews the vault diff against INV-1…14 and PV-09, runs `forge test`, and records findings or "no findings" in TESTING.md "Review: vault". The author fixes real findings.
   Done when: TESTING.md has the review entry with the reviewer label; all findings resolved or listed as known risks.
+  Evidence: 2026-10-16 14:18 UTC · antigravity-reviewer-1 · forge test passed (78 tests across 12 suites), check_errors.sh (24/24), check_inv.sh (13/13); INV-1..10, 12..14 verified; PV-09 revert order verified; review recorded in TESTING.md → APPROVE (QG-1)
+
 - [ ] QG-1 | A | needs: P1-T14,P1-T15 | GATE P1: vault is safe to build on
   Do: run `cd contracts && forge test && forge fmt --check && forge coverage --report summary`; confirm the INV matrix command of P1-T12 prints nothing; confirm ABIs exist in `engine/src/chain/abi/`.
   Done when: all green, INV matrix complete, no known path where an agent key moves funds outside INV-1. Record in TESTING.md. Other tracks may now depend on vault ABIs.

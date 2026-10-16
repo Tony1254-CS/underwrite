@@ -57,3 +57,48 @@ None.
 | `pragma` & `solc-version` | OZ (`^0.8.20`) vs Vault (`0.8.28`) | Mixed pragma versions | **Benign**: Contracts use exact pinned version `0.8.28` via foundry.toml; OZ library uses standard floating pragma `^0.8.20`. Pinned solc 0.8.28 avoids all reported legacy solc bugs. |
 | `naming-convention` | `VERSION()`, `_reserveFloor`, etc. | Function uppercase / underscore param | **Benign**: `VERSION()` is public constant accessor; leading underscore indicates constructor/setter parameters. |
 | `immutable-states` | `owner`, `windowSeconds` | Suggested immutable | **Benign / Invalid**: `owner` is transferable via `ownerTransfer`; `windowSeconds` is initialized via constructor and kept configurable or consistent with admin struct. |
+
+## Review: vault (P1-T15) — Independent Review
+
+- **Reviewer**: `antigravity-reviewer-1`
+- **Date**: 2026-10-16 14:18 UTC
+- **Scope**: Security, invariant conformance (INV-1..10, INV-12..14), PV-09 revert priority ordering in `UnderwriteVault.sol`.
+
+### Execution Receipt
+- `forge test --root contracts`: 78 tests passed across 12 suites (including 4 stateful invariant suites with 256 runs and 25,600 calls, 0 failures, 0 discards; 4 fuzz test suites with 512 runs each; 0 failed).
+- `bash scripts/check_errors.sh`: All 24 custom errors present and checked in test suites (0 missing).
+- `bash scripts/check_inv.sh`: All 13 P1 invariants (INV-1..10, INV-12..14) present in test suites (0 missing).
+
+### Invariant Evaluation
+- **INV-1 (Token Movement Bounded)**: SATISFIED. Vault tokens can only leave via `ownerTransfer` (onlyOwner), `pay` (T1 rules), and `executePending` (T2 rules). No arbitrary calldata, transfer, or approval functions exist.
+- **INV-2 (Window Caps)**: SATISFIED. `qualWindowSpent + amount <= min(effT1PerWindow, ceilings.perWindow)` strictly enforced; verified by fuzz and invariant tests.
+- **INV-3 (Per-Tx Caps)**: SATISFIED. T1 and T2 per-tx caps enforced against attested and dynamic owner ceilings.
+- **INV-4 (Recipient Lifecycle & Cooldown)**: SATISFIED. Active status required for T1 and T2; recipient cooldown enforced for T1.
+- **INV-5 (Invoice Uniqueness)**: SATISFIED. State transitions `NONE -> RESERVED -> PAID` or `NONE -> PAID`; reuse blocked by `DuplicateInvoice`; veto releases `RESERVED -> NONE`.
+- **INV-6 (Reserve Floor)**: SATISFIED. Vault balance after payment must be `>= reserveFloor`.
+- **INV-7 (Paused & Qualification Preconditions)**: SATISFIED. Paused state, unassigned agent, inactive/revoked/expired qualifications cleanly block execution.
+- **INV-8 (T2 Delay & Revalidation)**: SATISFIED. Challenge period enforced; veto supported; full qualification and recipient checks re-evaluated at execution.
+- **INV-9 (Two-Key Activation & Revocation)**: SATISFIED. Activation requires examiner EIP-712 signature AND owner transaction; revocation supported by owner, examiner, and BondPool.
+- **INV-10 (Exposure Bounded by Bond Remaining)**: SATISFIED. `exposure[qualId] + amount <= bondPool.remaining(qualId)` enforced at payment time; decremented on reconciliation and claim.
+- **INV-11 (BondPool Payout Limits)**: DEFERRED to P2 (BondPool implementation).
+- **INV-12 (Attestation Domain & Single-Use)**: SATISFIED. Bound to `chainId` and `address(this)`; single-use enforced by `usedAttestation`.
+- **INV-13 (Latest Exam Commit Binding)**: SATISFIED. Requires `latest.commitId == a.examCommitId` and matching `corpusHash`.
+- **INV-14 (Reconciled Unclaimable)**: SATISFIED. `reconciled` payments and already-claimed payments return false in `isClaimable()`.
+
+### PV-09 Revert Priority Ordering
+- `pay()`: Revert order exactly follows `Paused` -> `NotAgent` -> `NoActiveQualification` -> `QualificationIsRevoked` -> `QualificationExpired` -> `RecipientNotAllowed` -> `RecipientCoolingDown` -> `ExceedsPerTx` -> `ExceedsWindow` -> `ExceedsRecipientWindow` -> `DuplicateInvoice` -> `InsufficientBacking` -> `ReserveBreached`.
+- `requestPayment()`: Exactly follows `Paused` -> `NotAgent` -> `NoActiveQualification` -> `QualificationIsRevoked` -> `QualificationExpired` -> `T2NotAllowed` -> `RecipientNotAllowed` -> `ExceedsPerTx` -> `DuplicateInvoice`.
+- `executePending()`: Exactly follows `NotPending` -> `Vetoed` -> `NotReady` -> `Paused` -> `QualificationIsRevoked` -> `QualificationExpired` -> `NoActiveQualification` -> `RecipientNotAllowed` -> `ExceedsPerTx` -> `ReserveBreached`.
+
+### Findings
+1. **[Informational / Spec-nuance] Revoked agent error code in `pay()` vs Scene 5 narrative**:
+   - In `pay()`, PV-09 specifies `NoActiveQualification` before `QualificationRevoked`.
+   - When a qualification is revoked, `UnderwriteVault.sol` deletes `activeQualOf[agentKey]`. Consequently, calling `pay()` reverts with `NoActiveQualification()` at step 3 instead of reaching step 4 (`QualificationIsRevoked()`).
+   - Security impact: None. The payment is deterministically prevented and funds cannot move.
+   - Conformance: Perfectly conforms to PV-09's definition of `NoActiveQualification` ("key had one but none is active now"). `executePending()` correctly reverts with `QualificationIsRevoked()` since it retains `qualId` on the pending struct and evaluates revocation first.
+2. **[Informational] Error naming `QualificationIsRevoked`**:
+   - Pinned by DEC-019 / S5 to prevent Solidity identifier collisions with `event QualificationRevoked`. Conformance verified.
+
+### Verdict
+**APPROVE for QG-1**. The contract implementation is secure, well-tested, invariant-conforming, and ready for quality gate QG-1.
+
