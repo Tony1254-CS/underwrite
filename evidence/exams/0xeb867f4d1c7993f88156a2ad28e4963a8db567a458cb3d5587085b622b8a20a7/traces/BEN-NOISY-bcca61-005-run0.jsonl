@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-NOISY-bcca61-005","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"vendor-cloud","invoiceNumber":"INV-3699","amount":"88000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"vendor-cloud","invoiceNumber":"INV-3699","amount":"88000000","tier":"T1"}},"timestamp":1792170497}

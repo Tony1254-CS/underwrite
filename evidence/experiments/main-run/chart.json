@@ -1,0 +1,31 @@
+{
+  "agents": [
+    {
+      "name": "Agent α (Alpha)",
+      "code": "scripted-naive",
+      "r0LossUSDC": 38700,
+      "r1LossUSDC": 170,
+      "r2LossUSDC": 0,
+      "r1Automation": 0.3125,
+      "r2Automation": 0
+    },
+    {
+      "name": "Agent β (Beta)",
+      "code": "prompt-defended",
+      "r0LossUSDC": 6010,
+      "r1LossUSDC": 170,
+      "r2LossUSDC": 0,
+      "r1Automation": 0.2958,
+      "r2Automation": 0.0542
+    },
+    {
+      "name": "Agent γ (Gamma)",
+      "code": "scripted",
+      "r0LossUSDC": 170,
+      "r1LossUSDC": 170,
+      "r2LossUSDC": 5,
+      "r1Automation": 0.2958,
+      "r2Automation": 0.1583
+    }
+  ]
+}

@@ -84,3 +84,48 @@ All findings will report raw counts alongside percentages:
 1. Every metric reported in the final submission and slide deck must be deterministically reproducible via `pnpm uw experiment --rescore <runId>` reading committed traces.
 2. No cherry-picking: if an agent fails a hypothesis, the failure is reported explicitly as an empirical finding.
 3. No extrapolation to real-world fraud base rates: metrics reflect performance on the pre-registered 80/20 test distribution only.
+
+---
+
+## 8. Empirical Results (P7-T09)
+
+*Execution Timestamp:* `2026-10-16T17:17:15.000Z`  
+*Stream Configuration:* `stream-s2-plus-blind` (300 Generator B + 30 Blind Set = 330 invoices per condition across 10 windows)  
+*Total Executions Evaluated:* 2,970 invoices across 9 experimental conditions ($3 \text{ agents} \times 3 \text{ regimes}$)  
+*Committed Artifacts:* `evidence/experiments/main/summary.json` and per-cell JSONL traces in `evidence/experiments/main/<cell>/traces/`  
+
+### 8.1 3×3 Experimental Matrix Summary
+
+| Agent | Regime | Invoices | T1 Automation Rate | Class I Violations | Class II Loss (USDC) | Bond Reimbursement | Net Loss (USDC) | Review Burden (T2/Reject) |
+|---|---|---|---|---|---|---|---|---|
+| **$\alpha$ (Naive)** | $R_0$ (Raw EOA) | 330 | 100.00% (240/240) | 30 | \$28,000.00 | \$0.00 | **\$38,700.00** | 0 |
+| **$\alpha$ (Naive)** | $R_1$ (Fixed Caps) | 330 | 31.25% (75/240) | 0 | \$170.00 | \$0.00 | **\$170.00** | 254 |
+| **$\alpha$ (Naive)** | $R_2$ (UNDERWRITE) | 330 | 0.00% (0/240) | 0 | \$0.00 | \$0.00 | **\$0.00** | 330 |
+| **$\beta$ (Basic)** | $R_0$ (Raw EOA) | 330 | 87.50% (210/240) | 0 | \$6,010.00 | \$0.00 | **\$6,010.00** | 106 |
+| **$\beta$ (Basic)** | $R_1$ (Fixed Caps) | 330 | 29.58% (71/240) | 0 | \$170.00 | \$0.00 | **\$170.00** | 258 |
+| **$\beta$ (Basic)** | $R_2$ (UNDERWRITE) | 330 | 5.42% (13/240) | 0 | \$0.00 | \$0.00 | **\$0.00** | 317 |
+| **$\gamma$ (Hardened)**| $R_0$ (Raw EOA) | 330 | 96.25% (231/240) | 0 | \$170.00 | \$0.00 | **\$170.00** | 98 |
+| **$\gamma$ (Hardened)**| $R_1$ (Fixed Caps) | 330 | 29.58% (71/240) | 0 | \$170.00 | \$0.00 | **\$170.00** | 258 |
+| **$\gamma$ (Hardened)**| $R_2$ (UNDERWRITE) | 330 | 15.83% (38/240) | 0 | \$170.00 | \$165.00 | **\$5.00** | 232 |
+
+### 8.2 Hypothesis Verdicts
+
+- **H1 (Safety Floor) — PASSED**:  
+  Across all conditions, Regimes $R_1$ and $R_2$ permitted exactly zero ($0$) Class I invariant-violating payments. In contrast, unrestricted EOA execution ($R_0$) permitted 30 unauthorized transactions totaling \$10,700 in direct Class I breach.
+- **H2 (Calibration of Realized Loss) — PASSED**:  
+  Under Regime $R_2$, realized Class II error rate on Generator B was $0.000$ for $\beta$ and $\gamma$, strictly $\le$ their Clopper-Pearson upper bounds ($p_\beta = 0.1743$, $p_\gamma = 0.0582$).
+- **H3 (Discrimination) — PASSED**:  
+  The exam's competence ranking ($p_\gamma < p_\beta$) matches unmitigated loss prevention capability on the independent stream: under $R_0$, $\gamma$ limited adversarial losses to \$170.00 compared to \$6,010.00 for $\beta$ and \$28,000.00 for $\alpha$.
+- **H4 (Distribution Shift Limit) — DOCUMENTED**:  
+  On the isolated Blind Red-Team set, an unseen subtle freight discrepancy (`blind-1`) slipped through $\gamma$ under $R_2$ (\$170.00), demonstrating the empirical reality that in-distribution exam bounds cannot guarantee 100% defense against out-of-distribution threats.
+- **Mechanism Invariant Check — PASSED**:  
+  Under $R_2$, the \$170.00 erroneous payment was claimed by the owner, approved by the adjudicator, and reimbursed \$165.00 by `BondPool.sol` (after \$5 deductible), resulting in net vault loss of only \$5.00.
+
+### 8.3 Evidence Grounding & Spot-Check Verification
+
+Per `PHASES.md` §P7-T09 audit requirements, five specific figures in this section are spot-checked against verbatim values in `evidence/experiments/main/summary.json`:
+1. **Total Invoices per Condition**: `330` (line 4 of `summary.json`)
+2. **$\alpha \times R_0$ Class I Violations**: `30` (line 22 of `summary.json`)
+3. **$\alpha \times R_0$ Net Realized Loss**: `38700000000` base units (\$38,700.00 USDC, line 25 of `summary.json`)
+4. **$\gamma \times R_2$ Bond Payout Amount**: `165000000` base units (\$165.00 USDC, line 1982 of `summary.json`)
+5. **$\gamma \times R_2$ Net Realized Loss**: `5000000` base units (\$5.00 USDC, line 1983 of `summary.json`)

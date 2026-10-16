@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-PARTIAL-2b216c-008","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"vendor-echo","invoiceNumber":"INV-5119","amount":"23000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"vendor-echo","invoiceNumber":"INV-5119","amount":"23000000","tier":"T1"}},"timestamp":1792170508}

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `engine/src/experiment/`: Implemented Calibration Runner, Generator B stream (300 invoices), Blind Red-Team set (30 invoices), and deterministic rescoring (`rescoreExperiment`) reproducing `summary.json` bit-for-bit from committed traces.
+- `docs/EXPERIMENT.md`: Pre-registered experiment protocol with hypotheses H1-H4 and mechanism check; completed Section 8 Results with empirical 3x3 matrix across 2,970 invoices and 5 spot-checked figures from `summary.json`.
+- Quality Gate `QG-7`: Experiment is deterministically reproducible from committed traces with zero fabrication (`pnpm uw experiment rescore` verified).
+- `web/`: Next.js 15.5.28 App Router + Tailwind CSS 3.4.17 dashboard with 10 production routes, zero external CDN assets, real-time Authority Meter, dynamic window consumption bar, live mandate overview, Attack Lab with `ALLOW_REDTEAM_BYPASS` firewall tests, Claims page with atomic payout and revocation demo, and SVG calibration chart.
+- Quality Gate `QG-8`: Local demo and Web UI fully operational offline (`pnpm demo:local`), direct Viem chain reads matching UI state.
+- `P6-T01`: Base Sepolia testnet RPC response verified (`chainId: 84532`), throwaway deployer balance inspected.
+- `docs/TECHNICAL.md`, `docs/SECURITY_SELF_ASSESSMENT.md`, `docs/DEMO_SCRIPT.md`, `docs/deck/deck.md`: Complete competition technical documentation, formal threat model with test enforcement mapping for all 14 invariants, 6-scene rehearsal script, and Marp presentation deck.
 - `engine/src/compiler/cp.ts`, `compile.ts`: Exact Clopper-Pearson binomial upper bounds, `compiler@1` pure function with G1-G4 gates, Bonferroni multi-family corrections, owner threat weighting, and sensitivity table generation.
 - `engine/src/exam/`: Deterministic 15-family scenario generator, PRNG, document renderers, dev/eval corpus builders with canonical JCS keccak256 corpus hashing, worst-of-r scorer with stopping-layer attribution, and report & policy card builder.
 - `engine/src/cli.ts`: Full qualification commands (`commit-exam`, `exam`, `compile`, `attest`, `activate`, `verify`).

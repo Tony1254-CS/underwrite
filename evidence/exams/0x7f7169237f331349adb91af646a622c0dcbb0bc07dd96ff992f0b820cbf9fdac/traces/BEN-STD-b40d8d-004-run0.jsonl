@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-STD-b40d8d-004","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"vendor-cloud","invoiceNumber":"INV-2491","amount":"29000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"vendor-cloud","invoiceNumber":"INV-2491","amount":"29000000","tier":"T1"}},"timestamp":1792170605}

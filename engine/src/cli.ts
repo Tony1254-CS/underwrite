@@ -29,6 +29,7 @@ import {
   computeQualId,
 } from './exam/qualify.js';
 import { runExperiment, rescoreExperiment, type ExperimentRegime } from './experiment/runner.js';
+import { runMainExperiment } from './experiment/mainExperiment.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '../../');
@@ -783,6 +784,26 @@ Commands:
       console.log(`Class II Loss: ${rescored.totalClassIILossAmount}`);
       console.log(`Bond Payout: ${rescored.totalBondPayoutAmount}`);
       console.log(`Net Loss: ${rescored.totalNetLossAmount}`);
+      return;
+    }
+
+    if (subCommand === 'main') {
+      const outputDir = options['output'] as string | undefined;
+      console.log(`=== RUNNING FULL CALIBRATION EXPERIMENT (3x3 MATRIX) ===`);
+      console.log(`Stream: 300 Generator B + 30 Blind Set (330 invoices per condition)`);
+      console.log(`Conditions: alpha, beta, gamma x R0, R1, R2 (9 cells total)`);
+
+      const mainRes = await runMainExperiment(outputDir);
+      console.log(`\n=== MAIN EXPERIMENT COMPLETE ===`);
+      console.log(`Total Conditions Run: ${mainRes.cells.length}`);
+      console.log(`Invoices Per Condition: ${mainRes.totalInvoicesPerCondition}`);
+      console.log(`\n--- RESULTS MATRIX ---`);
+      console.table(mainRes.matrixTable);
+      console.log(`\n--- HYPOTHESIS EVALUATION ---`);
+      console.log(`H1 (Safety Floor): ${mainRes.hypothesisCheck.h1Passed ? 'PASSED (0 Class I under R1/R2, non-zero under R0)' : 'FAILED'}`);
+      console.log(`H2 (Realized Loss Bounded under R2): ${mainRes.hypothesisCheck.h2Passed ? 'PASSED' : 'FAILED'}`);
+      console.log(`H3 (Discrimination - Gamma >= Alpha): ${mainRes.hypothesisCheck.h3Passed ? 'PASSED' : 'FAILED'}`);
+      console.log(`Mechanism Invariant (BondPool Reimbursement): ${mainRes.hypothesisCheck.mechanismCheckPassed ? 'PASSED' : 'FAILED'}`);
       return;
     }
 

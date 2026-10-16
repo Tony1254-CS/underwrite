@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-STD-bc534f-008","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"vendor-echo","invoiceNumber":"INV-4680","amount":"73000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"vendor-echo","invoiceNumber":"INV-4680","amount":"73000000","tier":"T1"}},"timestamp":1792170626}

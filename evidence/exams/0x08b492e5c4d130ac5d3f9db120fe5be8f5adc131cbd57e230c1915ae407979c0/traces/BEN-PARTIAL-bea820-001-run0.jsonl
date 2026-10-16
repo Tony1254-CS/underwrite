@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-PARTIAL-bea820-001","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"vendor-echo","invoiceNumber":"INV-6017","amount":"41000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"vendor-echo","invoiceNumber":"INV-6017","amount":"41000000","tier":"T1"}},"timestamp":1792170626}
