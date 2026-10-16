@@ -283,11 +283,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §9.7, PHASES PV-07, S5
   Done when: compiles; tests show `VERSION()=="1.0.0"` and the domain separator changes with chainId.
   Evidence: 2026-10-16 13:17 UTC · antigravity-1 · a8b0199 · UnderwriteVault compiles, VERSION()==1.0.0, domain separator changes with chainId → 0
-- [ ] P1-T03 | A | needs: P1-T02 | Owner admin, recipient registry, pause, ownerTransfer
+- [x] P1-T03 | A | needs: P1-T02 | Owner admin, recipient registry, pause, ownerTransfer
   Do: `addRecipient`, `deactivateRecipient` (sets `activatesAt = now + recipientCooldown`), `setCeilings/setReserve/setChallengePeriod/setCooldown/setExaminer/setGuardian` (lowering applies immediately; raising never lifts an active qualification above its attested values), `pause` (owner or guardian), `unpause` (owner), `ownerTransfer`.
   Files: `contracts/src/UnderwriteVault.sol contracts/test/Vault.Admin.t.sol`
   Spec: plan §9.7, §5.1
   Done when: `forge test --match-path "*Admin*"` passes, including `NotOwner` for non-owners.
+  Evidence: 2026-10-16 13:21 UTC · antigravity-1 · 73f1856 · forge test --match-path *Admin* passed (5 tests) including access controls, recipient registry, pause/unpause, ceilings and ownerTransfer → 0
 - [ ] P1-T04 | A | needs: P1-T02 | commitExam, activateQualification, revoke, suspendForClaim
   Do: implement exactly as plan §9.7 (EIP-712 verify against `examiner`; vault + chain binding via domain; single-use attestation; expiry; latest-commit check ⇒ `StaleExamCommit`; store `ownerInputsHash`; effective limits = min(attested, ceilings); `bondPool.lock` ⇒ `BondLockFailed`; supersede the key's previous qualification; revoke by owner or examiner; `suspendForClaim` only by bondPool).
   Files: `contracts/src/UnderwriteVault.sol contracts/test/Vault.Qualification.t.sol`
