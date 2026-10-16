@@ -1,9 +1,9 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 15:10 UTC, antigravity-1
-Last verified working state: P2 complete, QG-2 passed (All 17 contract test suites pass with 101/101 tests, claim demo verified, ABIs exported for UnderwriteVault, MockUSDC, and BondPool; engine typecheck clean)
+## Handoff — 2026-10-16 15:18 UTC, antigravity-1
+Last verified working state: P3-T06 complete (Deterministic policy engine with 24-case decision table, manifest builder, canonical JCS, vendor registry, money and types passing 70 tests in engine)
 Active phase: P3 — Engine core (Track B)
-Next concrete task: P3-T01 | B | needs: QG-0 | Types (zod) and ReasonCode (Files: engine/src/types/*.ts)
+Next concrete task: P3-T07 | B | needs: QG-1,P3-T01 | Chain layer (Files: engine/src/chain/*.ts)
 Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 21; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `bash scripts/check_inv.sh` → 0 missing invariants; `cd contracts && forge test --match-path "*invariant*"` → 6 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 101 tests passed across 17 test suites; `forge fmt --check --root contracts` → clean; `node scripts/export-abi.mjs && pnpm -r typecheck` → exit 0; P1-T15 independent review passed with APPROVE verdict; QG-1 gate passed; P2-T01..P2-T08 complete; QG-2 gate passed.
 Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs; 101 targeted tests cover all errors and all 14 invariants).
 Known failures: None

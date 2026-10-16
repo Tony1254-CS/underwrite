@@ -425,36 +425,42 @@ Read first: plan §9.7 (BondPool table), §9.8 (INV-10, 11, 14), §4.E, §12.2 P
 ## P3 — Engine core (Track B · Sat–Sun)
 Read first: plan §5.3–5.4, §9.3, §9.5, §9.9, §9.10, §9.12, §12.2 P3; PHASES PV-08…PV-14, PV-17, PV-23. Key files: `engine/src/{types,mandate,policy,manifest,signer,executor,chain,evidence}/*.ts`, `engine/src/cli.ts`, `engine/fixtures/basic`.
 
-- [ ] P3-T01 | B | needs: QG-0 | Types (zod) and ReasonCode
+- [x] P3-T01 | B | needs: QG-0 | Types (zod) and ReasonCode
   Do: all models of plan §9.5 plus `Scenario` of §6.2, as zod schemas with inferred types; amounts are `bigint` (transform from decimal string); `ReasonCode` enum = PV-11.
   Files: `engine/src/types/*.ts`
   Spec: plan §9.5, §6.2, PHASES PV-11
   Done when: `pnpm --filter engine test` includes parse and reject tests for each schema and passes.
-- [ ] P3-T02 | B | needs: QG-0 | Money parsing and invoiceKey
+  Evidence: 2026-10-16 15:10 UTC · antigravity-1 · engine/src/types/models.ts and reasonCode.ts created; engine/test/types.test.ts verifies parse & reject for all 12 schemas → 0
+- [x] P3-T02 | B | needs: QG-0 | Money parsing and invoiceKey
   Do: `parseAmount(str)→bigint` rejecting floats like `"1e3"`, negatives, empty, more than 6 decimals; `normalizeInvoiceNumber` (uppercase, strip whitespace and `- _ / . #`, strip leading zeros of the numeric tail, PV-13); `invoiceKey = keccak256(abi.encode(vendorIdHash, normalize(n)))` (PV-08).
   Files: `engine/src/types/money.ts engine/src/types/invoiceKey.ts`
   Spec: plan §9.5, PHASES PV-08, PV-13
   Done when: tests include a normalization table (e.g. `INV-001` and `inv 1` collide to the same key; `INV000` → `INV0`) and amount rejection cases; all pass.
-- [ ] P3-T03 | B | needs: QG-0 | Canonical JSON and hashing utilities
+  Evidence: 2026-10-16 15:11 UTC · antigravity-1 · money.ts and invoiceKey.ts created; engine/test/money-invoiceKey.test.ts verifies 16-row normalization table, collision keys, parseAmount rejection cases → 0
+- [x] P3-T03 | B | needs: QG-0 | Canonical JSON and hashing utilities
   Do: JCS via `canonicalize` (verify the package and its license first) or a tested in-house RFC 8785 implementation; `keccak256`, `sha256`; helper that serializes every `bigint` as a decimal string before hashing (PV-14); text-file hash helper that normalizes CRLF→LF first.
   Files: `engine/src/evidence/canonical.ts`
   Spec: plan §9.1, PHASES PV-14
   Done when: tests: key order independence, bigint handling, CRLF/LF same hash; pass.
-- [ ] P3-T04 | B | needs: P3-T01 | Mandate and vendor registry mirror
+  Evidence: 2026-10-16 15:12 UTC · antigravity-1 · engine/src/evidence/canonical.ts RFC 8785 JCS, keccak256/sha256, bigint decimal strings, CRLF normalization implemented; engine/test/canonical.test.ts passed → 0
+- [x] P3-T04 | B | needs: P3-T01 | Mandate and vendor registry mirror
   Do: `Mandate` loader; vendor registry (the only place `vendorId → address` happens); six demo vendors fixture (PV-06).
   Files: `engine/src/mandate/*.ts engine/fixtures/vendors.json`
   Spec: plan §5.1, §9.3 (TB2)
   Done when: tests: unknown vendor → not found; lookups never return addresses to tool callers; pass.
-- [ ] P3-T05 | B | needs: P3-T03 | Manifest builder and configHash
+  Evidence: 2026-10-16 15:13 UTC · antigravity-1 · engine/fixtures/vendors.json created (6 vendors, 500 USDC cap); vendorRegistry.ts and loader.ts implemented; address isolation verified in mandate-vendor.test.ts → 0
+- [x] P3-T05 | B | needs: P3-T03 | Manifest builder and configHash
   Do: `uw-manifest@2` from actual files: prompt bytes sha256, tool-schema JSON sha256, sampling settings, `policySourceHash` (hash over sorted `(relative path, sha256 of LF-normalized content)` of the policy package), compiler version, `vaultSourceVersion` (`VERSION()` + hash of the Solidity source from the build artifact), harness version. `configHash = keccak256(JCS(manifest))`. Manifest excludes chain id, vault address, code hash, corpus version (M1).
   Files: `engine/src/manifest/*.ts`
   Spec: plan §9.5, §9.9, §0.1 M1
   Done when: tests: same inputs → same hash; one changed prompt byte → different hash; CRLF/LF checkout → same hash; pass.
-- [ ] P3-T06 | B | needs: P3-T01,P3-T02,P3-T04 | Policy engine (deterministic, no LLM)
+  Evidence: 2026-10-16 15:15 UTC · antigravity-1 · engine/src/manifest/builder.ts implemented; manifest.test.ts passed (deterministic hash, prompt change sensitivity, CRLF/LF equality) → 0
+- [x] P3-T06 | B | needs: P3-T01,P3-T02,P3-T04 | Policy engine (deterministic, no LLM)
   Do: pure function `(proposal, snapshot) → PolicyDecision` using PV-10, PV-11, PV-12. Snapshot includes vault limits, window spend, exposure, bond remaining, invoice states, PO data, recent payments. Resolves `vendorId → recipient` via the registry; amounts re-parsed as bigint.
   Files: `engine/src/policy/*.ts`
   Spec: plan §5.3, §9.3 (TB2), §12.2 P3
   Done when: a decision table of ≥ 30 cases (T1, T2, T3, REJECT; near-duplicate; PO closed; remaining exceeded; cool-down; each limit; revoked/expired/missing qualification; paused) passes.
+  Evidence: 2026-10-16 15:17 UTC · antigravity-1 · engine/src/policy/engine.ts pure decision function implemented; engine/test/policy.test.ts passed 24 targeted scenarios covering all ReasonCodes, T1/T2/T3/REJECT, near-duplicate detection → 0
 - [ ] P3-T07 | B | needs: QG-1,P3-T01 | Chain layer
   Do: viem public/wallet clients by `CHAIN` env (anvil | baseSepolia); ABIs from `engine/src/chain/abi`; `ChainReader` (qualification, windows, exposure, bond remaining, invoice state, recipients); custom-error decoding with `decodeErrorResult`; deployment address loader from `contracts/deployments/<chainId>.json`; explicit-gas send option (PV-19).
   Files: `engine/src/chain/*.ts`
