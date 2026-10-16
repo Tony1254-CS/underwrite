@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web/`: Full Dynamic Interactive dApp Overhaul (DEC-026):
+  - `web/src/context/AuthContext.tsx`: Universal Web3 wallet connector (`window.ethereum` / MetaMask) + 1-click testnet persona switcher (`Owner`, `Examiner`, `Underwriter`, `Adjudicator`, `Agent Key`) with persistent role identity and permissions.
+  - `web/src/components/Header.tsx`: Dynamic status bar replacing static "READ-ONLY SHADOW MIRROR" with live Anvil 31337 network badge, role dropdown, connected account pill, and 1-click runtime state reset button.
+  - `web/src/app/submit/page.tsx`: Inbound Invoice Processing Studio with 5 pre-crafted scenario payloads, custom parameter inputs, agent model selector ($\gamma$ Gemini 2.5 Pro, $\beta$ Flash, $\alpha$ Naive), and real-time Four Facts EVM execution rendering.
+  - `web/src/app/page.tsx`: Interactive Owner Action Center with pending $T_2$ challenge review queue (live 300s window countdown, 1-click Approve/Reject buttons) and dynamic Vendor Registry portal with 300s security cooldown timers.
+  - `web/src/app/claims/page.tsx`: Dynamic claims settlement desk with live loss filing modal, interactive Adjudicator approve/reject actions, and atomic BondPool payout and authority revocation.
+  - `web/src/lib/runtimeState.ts`: Server-side singleton managing dynamic vault balances, vendor registries, pending approvals, executed transaction receipts, and atomic claim consequences.
+  - `web/src/app/api/invoices/`: `/evaluate` and `/action` routes for real-time invoice processing and Owner decisions.
+  - `web/src/app/api/vendors/route.ts`: Vendor registry management with 300-second cooldown enforcement.
 - `web/`: Apple-grade visionOS acrylic glassmorphic UI overhaul across all 10 views (`Dashboard`, `Policy Card`, `Run Traces`, `Attack Lab`, `Claims`, `Evidence`, `Verify`), featuring multi-layer backdrop blurs, obsidian dark space canvas, harmonic color-wheel specular edge lighting (cyan, emerald, amber, rose, indigo), glowing LED jewel provenance pills, and tabular financial typography (DEC-025).
 - `docs/competition/SUBMISSION_DRAFT.md`: Formulated complete hackathon submission portal package with 60-second pitch, core 3-sentence summary, 4-layer architecture, and offline judge verification commands.
 - `P9-T10`: Completed Pre-Submission Checklist audit (verified 0 secrets in git history, clean dependency review, and all 10 phase reality probes PRESENT).

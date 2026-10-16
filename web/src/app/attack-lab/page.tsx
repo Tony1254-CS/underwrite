@@ -68,8 +68,45 @@ export default function AttackLabPage() {
     executed: boolean;
   } | null>(null);
 
-  const handleRunEvaluation = () => {
-    // Pure deterministic client-side evaluation matching Policy Engine rules
+  const handleRunEvaluation = async () => {
+    try {
+      const res = await fetch('/api/invoices/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vendorId,
+          invoiceNumber,
+          amount,
+          poNumber,
+        }),
+      });
+      const json = await res.json();
+      if (json.success && json.data) {
+        const d = json.data;
+        if (allowBypass && d.decided === 'REJECT') {
+          // In bypass mode, simulated Anvil bypass shows EVM contract rejection
+          setEvaluation({
+            proposed: d.proposed,
+            decided: d.decided,
+            reasonCodes: d.reasonCodes,
+            contractResult: d.reasonCodes.includes('VENDOR_UNKNOWN')
+              ? 'Reverted: RecipientNotAllowed() (EVM Invariant INV-1)'
+              : d.reasonCodes.includes('DUPLICATE_INVOICE')
+              ? 'Reverted: DuplicateInvoice() (EVM Invariant INV-3)'
+              : 'Reverted: EVM Invariant Gate Reverted',
+            fundsMoved: false,
+            executed: false,
+          });
+        } else {
+          setEvaluation(d);
+        }
+        return;
+      }
+    } catch {
+      // fallback to client evaluation if offline
+    }
+
+    // Client fallback
     const registeredVendors = ['acme_industrial', 'globex_logistics', 'initech_software', 'cyberdyne_systems', 'wayne_enterprises', 'stark_industries'];
     const knownInvoices = ['INV-001', 'INV-002', 'INV-003'];
 

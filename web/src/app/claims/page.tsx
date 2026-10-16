@@ -1,30 +1,31 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   ControlledBadge,
   ScriptedBadge,
-  ReplayBadge,
-  SimulatedBadge,
 } from "@/components/Badges";
 import {
   formatUSDC,
-  formatTimestamp,
   truncateHash,
 } from "@/lib/format";
+import { useAuth } from "@/context/AuthContext";
 
 interface ClaimRecord {
   id: string;
+  claimId?: number;
   qualId: string;
   paymentId: string;
   lossAmount: string;
-  evidenceHash: string;
-  statusCode: number;
-  status: string;
+  deductible?: string;
   payout: string;
+  status: string;
   timestamp?: number;
-  adjudicator?: string;
+  evidenceHash: string;
   txHash?: string;
+  adjudicator?: string;
+  consequenceSummary?: string;
 }
 
 interface ClaimsApiResponse {
@@ -32,6 +33,15 @@ interface ClaimsApiResponse {
     chainId: number;
     connected: boolean;
     bondPool: string;
+  };
+  bondStatus?: {
+    underwriter: string;
+    adjudicator: string;
+    deductibleUSDC: string;
+    perClaimCapUSDC: string;
+    claimGracePeriodDays: number;
+    totalPayoutsUSDC: string;
+    bondRemainingUSDC?: string;
   };
   poolConfig: {
     perClaimCap: string;
@@ -42,36 +52,8 @@ interface ClaimsApiResponse {
   claims: ClaimRecord[];
 }
 
-const DEFAULT_DEMO_CLAIMS: ClaimRecord[] = [
-  {
-    id: "1",
-    qualId: "0xbbb46bb57a3b607db14a54da74466541e9983a1683c17e0062136a5fb310dbe6",
-    paymentId: "101",
-    lossAmount: "250000000", // $250.00 USDC
-    evidenceHash: "0x3f9a7c2b1e4d5f8a0b9c2e1f4d7a8b3c5e2d1f0a9b8c7d6e5f4a3b2c1d0e9f8a",
-    statusCode: 1,
-    status: "APPROVED",
-    payout: "245000000", // $245.00 USDC ($250 - $5 deductible)
-    timestamp: 1792168470,
-    adjudicator: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
-    txHash: "0x7c4f9a...8b1e",
-  },
-  {
-    id: "2",
-    qualId: "0x446c170b79810cb60ede41b693e571e802cb4b3b6286bba7301899f33d54617f",
-    paymentId: "102",
-    lossAmount: "600000000", // $600.00 USDC
-    evidenceHash: "0x89e2bc84013d41f5a9e2bc84013d41f5a9e2bc84013d41f5a9e2bc84013d41f5",
-    statusCode: 1,
-    status: "APPROVED",
-    payout: "495000000", // $495.00 USDC (Capped at $500 perClaimCap - $5 deductible)
-    timestamp: 1792168920,
-    adjudicator: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
-    txHash: "0x3d9e1f...4a5c",
-  },
-];
-
 export default function ClaimsPage() {
+  const { user, isOwner, isAdjudicator } = useAuth();
   const [data, setData] = useState<ClaimsApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,6 +61,13 @@ export default function ClaimsPage() {
   const [adjudicationStep, setAdjudicationStep] = useState<number>(0);
   const [adjudicationLog, setAdjudicationLog] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<"ACTIVE" | "APPROVED" | "ALL">("ALL");
+
+  // New claim filing state
+  const [showFileModal, setShowFileModal] = useState(false);
+  const [paymentIdInput, setPaymentIdInput] = useState('1');
+  const [lossAmountInput, setLossAmountInput] = useState('300.00');
+  const [evidenceInput, setEvidenceInput] = useState('0x3f9a7c2b1e4d5f8a0b9c2e1f4d7a8b3c5e2d1f0a9b8c7d6e5f4a3b2c1d0e9f8a');
+  const [filing, setFiling] = useState(false);
 
   const fetchClaims = async () => {
     try {
@@ -98,37 +87,110 @@ export default function ClaimsPage() {
     fetchClaims();
   }, []);
 
-  const handleSimulateClaimLifecycle = () => {
+  const handleFileClaim = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setFiling(true);
+      const res = await fetch('/api/claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'FILE',
+          paymentId: paymentIdInput,
+          lossAmountUSDC: lossAmountInput,
+          evidenceHash: evidenceInput,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || 'Failed to file claim');
+      }
+      setShowFileModal(false);
+      await fetchClaims();
+    } catch (err: any) {
+      alert(`Claim Filing Error: ${err.message}`);
+    } finally {
+      setFiling(false);
+    }
+  };
+
+  const handleAdjudicate = async (claimId: number, approve: boolean) => {
+    try {
+      const res = await fetch('/api/claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'ADJUDICATE',
+          claimId,
+          approve,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || 'Adjudication failed');
+      }
+      await fetchClaims();
+    } catch (err: any) {
+      alert(`Adjudication Error: ${err.message}`);
+    }
+  };
+
+  const handleSimulateClaimLifecycle = async () => {
     setSimulatingClaim(true);
     setAdjudicationStep(1);
     setAdjudicationLog([
-      "[INIT] Starting Phase 2 Atomic Consequence Demo...",
-      "[STEP 1] Agent executed erroneous payment: $300.00 USDC (Payment #103, qualId: 0xbbb4...)",
-      "[STEP 2] Owner detected discrepancy; filing claim via BondPool.fileClaim(paymentId=103, loss=300 USDC)...",
+      "[INIT] Starting Phase 2 Atomic Consequence Execution...",
+      "[STEP 1] Agent executed erroneous payment: $300.00 USDC (Payment #103, qualId: 0xa38c...)",
+      "[STEP 2] Owner detected discrepancy; dispatching POST /api/claims (fileClaim)...",
     ]);
 
-    setTimeout(() => {
+    try {
+      // Step 2: Actually file the claim on the server
+      const fileRes = await fetch('/api/claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'FILE',
+          paymentId: '103',
+          lossAmountUSDC: '300.00',
+          evidenceHash: '0x8b3e819a7123efd6810294821049281049281049281049281049281049281049',
+        }),
+      });
+      const fileData = await fileRes.json();
+      const newClaimId = fileData.claim?.claimId || 2;
+
+      await new Promise((r) => setTimeout(r, 700));
       setAdjudicationStep(2);
       setAdjudicationLog((prev) => [
         ...prev,
-        "[STEP 3] Claim #3 registered with status: FILED.",
-        "[STEP 4] Designated Adjudicator (0x15d34...C6A65) invoking approveClaim(claimId=3)...",
+        `[STEP 3] Claim #${newClaimId} registered on BondPool with status: PENDING.`,
+        `[STEP 4] Designated Adjudicator (${user.address.slice(0, 8)}...) approving claim via approveClaim(#${newClaimId})...`,
       ]);
-    }, 800);
 
-    setTimeout(() => {
+      // Step 3: Actually adjudicate the claim
+      await new Promise((r) => setTimeout(r, 800));
+      const adjRes = await fetch('/api/claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'ADJUDICATE',
+          claimId: newClaimId,
+          approve: true,
+        }),
+      });
+      const adjData = await adjRes.json();
+
       setAdjudicationStep(3);
       setAdjudicationLog((prev) => [
         ...prev,
         "[ATOMIC TRANSACTION EXECUTED IN 1 TX]:",
         "  -> Bond Pool transferred $295.00 USDC payout directly into UnderwriteVault (net of $5 deductible).",
-        "  -> Emitted ClaimPaid(claimId=3, payout=295 USDC, vault=0x9fE4...).",
-        "  -> Invoked vault.revokeQualification(qualId=0xbbb4...) in the EXACT SAME CALL.",
+        `  -> Emitted ClaimPaid(claimId=${newClaimId}, payout=295 USDC, vault=0x9fE4...).`,
+        "  -> Invoked vault.revokeQualification(qualId=0xa38c...) in the EXACT SAME CALL.",
         "  -> Qualification status updated to: REVOKED on-chain.",
       ]);
-    }, 1600);
 
-    setTimeout(() => {
+      await new Promise((r) => setTimeout(r, 800));
       setAdjudicationStep(4);
       setAdjudicationLog((prev) => [
         ...prev,
@@ -136,14 +198,22 @@ export default function ClaimsPage() {
         "  -> Agent attempts subsequent pay() transaction with revoked key...",
         "  -> Smart Contract EVM Revert strictly triggered: QualificationRevoked().",
         "  -> Authority Meter for this agent immediately drops to $0.00.",
-        "[COMPLETE] Consequence demonstrated: 1 transaction restores vault funds and removes authority.",
+        `[COMPLETE] ${adjData.consequence || '1 transaction restores vault funds and removes authority.'}`,
       ]);
+
+      await fetchClaims();
+    } catch (err: any) {
+      setAdjudicationLog((prev) => [...prev, `[ERROR] ${err.message}`]);
+    } finally {
       setSimulatingClaim(false);
-    }, 2400);
+    }
   };
 
-  const displayClaims =
-    data?.claims && data.claims.length > 0 ? data.claims : DEFAULT_DEMO_CLAIMS;
+  const displayClaims = data?.claims || [];
+  const filteredClaims = displayClaims.filter((c) => {
+    if (activeTab === 'ALL') return true;
+    return c.status === activeTab;
+  });
 
   return (
     <div className="space-y-12 pb-16">
@@ -157,6 +227,9 @@ export default function ClaimsPage() {
             <span className="text-[11px] px-3.5 py-1 rounded-full font-mono uppercase tracking-wider font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
               BONDPOOL COLLATERALIZED
             </span>
+            <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-white/[0.06] text-slate-300 border border-white/[0.1]">
+              Active Persona: <strong className="text-white">{user.name}</strong>
+            </span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-none">
             Claims &amp; <span className="text-gradient-cyan">Bond Settlement</span>
@@ -166,9 +239,17 @@ export default function ClaimsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <ControlledBadge label="DESIGNATED ADJUDICATOR" />
-          <ScriptedBadge />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowFileModal(true)}
+            className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/20 to-amber-600/30 text-amber-300 border border-amber-500/50 text-xs font-mono font-bold hover:border-amber-400 hover:text-white transition-all shadow-sm active:scale-95"
+          >
+            + File Loss Claim (Owner)
+          </button>
+          <div className="hidden sm:flex items-center gap-2.5">
+            <ControlledBadge label="DESIGNATED ADJUDICATOR" />
+            <ScriptedBadge />
+          </div>
         </div>
       </div>
 
@@ -182,13 +263,14 @@ export default function ClaimsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="glass-card-interactive specular-cyan rounded-3xl p-6 space-y-2">
           <div className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-bold">
-            Per-Claim Cap
+            Free Bond Collateral
           </div>
           <div className="text-3xl font-black font-mono text-white num-tabular">
-            {formatUSDC(data?.poolConfig?.perClaimCap || "500000000")}
+            ${data?.bondStatus?.bondRemainingUSDC || '2,000.00'}{' '}
+            <span className="text-xs text-slate-400 font-sans font-normal">USDC</span>
           </div>
           <div className="text-xs font-mono text-slate-400 font-medium">
-            Maximum single payout limit
+            Backing unreviewed T1 exposure
           </div>
         </div>
 
@@ -200,7 +282,7 @@ export default function ClaimsPage() {
             {formatUSDC(data?.poolConfig?.deductible || "5000000")}
           </div>
           <div className="text-xs font-mono text-slate-400 font-medium">
-            5.00 USDC first-loss share
+            $5.00 USDC first-loss share
           </div>
         </div>
 
@@ -229,6 +311,67 @@ export default function ClaimsPage() {
           </div>
         </div>
       </div>
+
+      {/* MODAL: FILE NEW CLAIM */}
+      {showFileModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
+          <div className="glass-panel-elevated specular-amber rounded-3xl p-8 max-w-lg w-full space-y-6">
+            <div className="flex justify-between items-center pb-4 border-b border-white/[0.08]">
+              <h3 className="text-xl font-bold text-white">File Loss Claim with Evidence</h3>
+              <button onClick={() => setShowFileModal(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <form onSubmit={handleFileClaim} className="space-y-4 font-mono text-xs">
+              <div>
+                <label className="text-slate-300 block mb-1 font-bold">Payment ID Ref</label>
+                <input
+                  type="text"
+                  value={paymentIdInput}
+                  onChange={(e) => setPaymentIdInput(e.target.value)}
+                  className="w-full p-3 rounded-xl bg-black/60 border border-white/[0.12] text-white"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-slate-300 block mb-1 font-bold">Incurred Loss Amount (USDC)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={lossAmountInput}
+                  onChange={(e) => setLossAmountInput(e.target.value)}
+                  className="w-full p-3 rounded-xl bg-black/60 border border-white/[0.12] text-white"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-slate-300 block mb-1 font-bold">Evidence Hash (bytes32)</label>
+                <input
+                  type="text"
+                  value={evidenceInput}
+                  onChange={(e) => setEvidenceInput(e.target.value)}
+                  className="w-full p-3 rounded-xl bg-black/60 border border-white/[0.12] text-white text-[10px]"
+                  required
+                />
+              </div>
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowFileModal(false)}
+                  className="px-4 py-2 rounded-xl bg-white/[0.05] text-slate-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={filing}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 text-white font-bold"
+                >
+                  {filing ? 'Filing...' : 'Submit Claim'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* INTERACTIVE PHASE 2 ATOMIC CONSEQUENCE SIMULATOR */}
       <section className="glass-panel-elevated specular-cyan rounded-[32px] p-8 md:p-12 space-y-8">
@@ -290,7 +433,7 @@ export default function ClaimsPage() {
             </div>
             <div className="font-bold text-white text-sm">Owner Submits Evidence</div>
             <div className="text-xs text-slate-400 mt-2 font-sans leading-relaxed">
-              Evidence hash pinned; status registered as FILED.
+              Evidence hash pinned; status registered as PENDING.
             </div>
           </div>
 
@@ -389,33 +532,58 @@ export default function ClaimsPage() {
                 <th className="py-4 px-6 font-bold">Payment Ref</th>
                 <th className="py-4 px-6 font-bold">Loss Amount</th>
                 <th className="py-4 px-6 font-bold">Approved Payout</th>
-                <th className="py-4 px-6 font-bold">Enclave Status</th>
-                <th className="py-4 px-6 font-bold">Adjudicator / Evidence</th>
+                <th className="py-4 px-6 font-bold">Status</th>
+                <th className="py-4 px-6 font-bold">Actions / Evidence</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.06] text-slate-300">
-              {displayClaims.map((claim) => (
+              {filteredClaims.map((claim) => (
                 <tr key={claim.id} className="hover:bg-white/[0.04] transition-colors">
                   <td className="py-5 px-6 font-black text-white text-sm">#{claim.id}</td>
                   <td className="py-5 px-6 text-slate-400 truncate max-w-[140px]" title={claim.qualId}>
                     {truncateHash(claim.qualId, 8, 6)}
                   </td>
                   <td className="py-5 px-6 text-slate-200 font-semibold">Payment #{claim.paymentId}</td>
-                  <td className="py-5 px-6 text-amber-300 font-bold num-tabular text-sm">{formatUSDC(claim.lossAmount)}</td>
-                  <td className="py-5 px-6 text-emerald-400 font-black num-tabular text-sm">{formatUSDC(claim.payout)}</td>
+                  <td className="py-5 px-6 text-amber-300 font-bold num-tabular text-sm">
+                    {formatUSDC(claim.lossAmount)}
+                  </td>
+                  <td className="py-5 px-6 text-emerald-400 font-black num-tabular text-sm">
+                    {formatUSDC(claim.payout)}
+                  </td>
                   <td className="py-5 px-6">
                     <span
                       className={`px-3 py-1 rounded-full text-[10px] font-black ${
                         claim.status === "APPROVED"
                           ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_#10b981]"
-                          : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
+                          : claim.status === "PENDING"
+                          ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                          : "bg-rose-500/20 text-rose-300 border border-rose-500/40"
                       }`}
                     >
                       {claim.status}
                     </span>
                   </td>
-                  <td className="py-5 px-6 text-slate-400 truncate max-w-[180px]" title={claim.evidenceHash}>
-                    {truncateHash(claim.evidenceHash, 8, 6)}
+                  <td className="py-5 px-6">
+                    {claim.status === "PENDING" ? (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleAdjudicate(claim.claimId || parseInt(claim.id, 10), true)}
+                          className="px-3 py-1 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 rounded-lg border border-emerald-500/40 font-bold text-[10px]"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleAdjudicate(claim.claimId || parseInt(claim.id, 10), false)}
+                          className="px-3 py-1 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 rounded-lg border border-rose-500/40 font-bold text-[10px]"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-slate-400 truncate max-w-[180px] block" title={claim.evidenceHash}>
+                        {truncateHash(claim.evidenceHash, 8, 6)}
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))}

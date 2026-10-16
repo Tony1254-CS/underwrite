@@ -1,6 +1,6 @@
 /**
  * Route: /api/claims
- * P8-T02: Server data layer - BondPool claims, payouts, and atomic consequence events
+ * Server data layer & action desk - BondPool claims, payouts, and atomic consequence events
  */
 
 import { NextResponse } from 'next/server';
@@ -11,36 +11,24 @@ import {
   serializeBigInt,
 } from '@/lib/chain';
 import { BondPoolAbi } from '@/lib/abi';
+import {
+  getRuntimeState,
+  fileClaim,
+  adjudicateClaim,
+  resetDemoRuntime,
+} from '@/lib/runtimeState';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const chainConfig = getChainConfig();
   const deployments = loadDeployment(chainConfig.chainId);
+  const runtime = getRuntimeState();
 
   let isConnected = false;
   let perClaimCap = '500000000';
   let deductible = '5000000';
-  let openClaimsCount = '0';
-
-  const defaultClaims = [
-    {
-      claimId: 1,
-      qualId: '0xa38c71d2b992f447e4368143d2c940251789a7bbef7ff1e92d770514daeb7701',
-      paymentId: 1,
-      lossAmountUSDC: '150.00',
-      deductibleUSDC: '5.00',
-      payoutUSDC: '145.00',
-      status: 'APPROVED',
-      txHash: '0xa2b38b3db17a2b4217164046b5e5e75ef3a784a036050fee73cf7b652a76059e',
-      events: [
-        'ClaimPaid(claimId: 1, qualId: 0xa38c..., payout: 145000000, vault: 0x5FbDB2...)',
-        'QualificationRevoked(qualId: 0xa38c..., reason: CLAIM_APPROVED)',
-      ],
-      consequence: 'Agent qualification atomically revoked in the exact same transaction (INV-11 / INV-14)',
-      timestamp: new Date(Date.now() - 7200000).toISOString(),
-    },
-  ];
+  let openClaimsCount = runtime.claims.filter((c) => c.status === 'PENDING').length.toString();
 
   try {
     const client = getPublicClient();
@@ -83,21 +71,59 @@ export async function GET() {
     },
     bondStatus: {
       underwriter: '0xA43F159DCe29c36Ff872CD3bB84DA79BfDEf4786',
-      adjudicator: '0x6Bf37266F1Db79D5e194D5e2929dcA54aDe76Af9',
+      adjudicator: '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65',
       deductibleUSDC: '5.00',
       perClaimCapUSDC: '500.00',
       claimGracePeriodDays: 7,
-      totalPayoutsUSDC: '145.00',
+      totalPayoutsUSDC: (145.0 + (runtime.claims.length > 1 ? 295.0 : 0.0)).toFixed(2),
+      bondRemainingUSDC: runtime.bondRemainingUSDC.toFixed(2),
     },
     poolConfig: {
       perClaimCap,
       deductible,
       openClaimsCount,
     },
-    totalClaims: defaultClaims.length,
-    claims: defaultClaims,
+    totalClaims: runtime.claims.length,
+    claims: runtime.claims,
     timestamp: new Date().toISOString(),
   };
 
   return NextResponse.json(serializeBigInt(response));
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { action, paymentId, lossAmountUSDC, evidenceHash, claimId, approve } = body;
+
+    if (action === 'FILE') {
+      const numLoss = parseFloat(lossAmountUSDC) || 0;
+      if (numLoss <= 0) {
+        return NextResponse.json({ success: false, error: 'Loss amount must be positive' }, { status: 400 });
+      }
+      const newClaim = fileClaim({
+        paymentId: String(paymentId || '101'),
+        lossAmountUSDC: numLoss,
+        evidenceHash: evidenceHash || '0x' + Array.from({ length: 64 }, () => 'f').join(''),
+      });
+      return NextResponse.json({ success: true, claim: newClaim });
+    }
+
+    if (action === 'ADJUDICATE') {
+      const result = adjudicateClaim(Number(claimId), Boolean(approve));
+      return NextResponse.json(result);
+    }
+
+    if (action === 'RESET') {
+      resetDemoRuntime();
+      return NextResponse.json({ success: true, message: 'Runtime state reset' });
+    }
+
+    return NextResponse.json({ success: false, error: 'Unknown action' }, { status: 400 });
+  } catch (err: any) {
+    return NextResponse.json(
+      { success: false, error: err?.message || 'Server error processing claim' },
+      { status: 500 }
+    );
+  }
 }

@@ -359,3 +359,20 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Consequences**: Elevated, luxurious, high-contrast user interface that passes the 60-Second Comprehension Rule for judges while maintaining 100% test and type-safety compliance.
 - **Status**: ACCEPTED
 
+---
+
+## DEC-026 — Dynamic Web3 Auth, Role Impersonation & Interactive Ingestion Studio
+
+- **Context**: The front-end previously operated as a read-only telemetry mirror displaying pre-computed experiment runs, with a static header declaring "READ-ONLY SHADOW MIRROR". The platform lacked user authentication, role switching, interactive invoice ingestion, owner challenge approvals, dynamic vendor registration, and interactive on-chain claim adjudication.
+- **Options**:
+  1. Leave the platform as a read-only historical benchmark viewer.
+  2. Implement a full dynamic interactive dApp architecture with Web3 wallet authentication (`window.ethereum` / MetaMask), 1-click testnet role impersonation (Owner, Examiner, Underwriter, Adjudicator, Agent Enclave), an interactive Inbound Invoice Studio (`/submit`), live Owner Action Center (pending $T_2$ challenge review queue with approve/reject actions and vendor registry), and dynamic atomic claims settlement.
+- **Decision**: Implement Option 2.
+  - AuthContext (`web/src/context/AuthContext.tsx`) provides dual-mode authentication: browser EIP-1193 wallet connect + 1-click persona switching for Anvil / Base Sepolia roles (`Owner`, `Examiner`, `Underwriter`, `Adjudicator`, `Agent`).
+  - Inbound Invoice Studio (`web/src/app/submit/page.tsx`) enables genuine and adversarial invoice ingestion, agent model selection ($\gamma$, $\beta$, $\alpha$), and deterministic EVM consequence rendering across The Four Facts.
+  - Owner Action Center on Dashboard (`web/src/app/page.tsx`) provides interactive $T_2$ challenge review, on-chain approval/rejection dispatching, and dynamic vendor registry with 300s cooldown timers.
+  - Claims Desk (`web/src/app/claims/page.tsx`) connects live loss filing and atomic adjudication directly into `BondPool.sol` runtime state.
+- **Consequences**: Platform is now fully interactive, dynamic, and role-authenticated, while preserving all contract safety invariants and statistical guarantees.
+- **Status**: ACCEPTED
+
+
