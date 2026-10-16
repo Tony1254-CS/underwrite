@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web/`: Startup-Grade Enterprise Authentication & Hover-Expanding Sidebar (DEC-028):
+  - `web/src/context/AuthContext.tsx`: Enterprise RBAC authentication provider with corporate credentials, password verification on role switching, session persistence in localStorage, and custom account registration.
+  - `web/src/components/AuthModal.tsx`: Global security challenge modal requiring password verification before switching into Owner, Examiner, Underwriter, or Adjudicator profiles.
+  - `web/src/components/PortalGuard.tsx`: Role guard component restricting portal access to authenticated role holders and rendering inline password challenge prompts.
+  - `web/src/app/auth/login/page.tsx`: Institutional single sign-on desk with corporate email and password inputs, error validation, and 1-click fast credentials filler.
+  - `web/src/app/auth/register/page.tsx`: Enterprise onboarding desk to provision new accounts with role assignment, department, and custom credentials.
+  - `web/src/components/Sidebar.tsx`: Dynamic auto-collapsing navbar that minimizes to an 80px icon rail and maximizes to 320px on mouse hover, with pin toggle and active session dock.
+  - `web/src/components/Header.tsx`: Password-guarded profile selector with visual indicators and direct SSO links.
 - `web/`: Dedicated Role Portals Architecture & Mock Knobs Purge (DEC-027):
   - `web/src/app/portals/owner/page.tsx`: Owner Governance Desk with live vault liquidity custody, T2 pending challenge review queue (approve/reject), dynamic vendor registry with 300s cooldown enforcement, and formal loss claim filing.
   - `web/src/app/portals/examiner/page.tsx`: AI Safety Examiner Desk with 390-scenario exam runner, Clopper-Pearson 99% exact binomial bounds calculation ($p \le 0.0531$), and EIP-712 attestation generator.

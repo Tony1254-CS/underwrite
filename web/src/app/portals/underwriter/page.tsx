@@ -3,9 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { PortalGuard } from '@/components/PortalGuard';
 import { formatUSDC, truncateHash } from '@/lib/format';
 
 export default function UnderwriterPortalPage() {
+  return (
+    <PortalGuard requiredRole="UNDERWRITER" portalName="Underwriter & Bond LP Portal">
+      <UnderwriterPortalContent />
+    </PortalGuard>
+  );
+}
+
+function UnderwriterPortalContent() {
   const { user, isUnderwriter, switchRole } = useAuth();
   const [state, setState] = useState<any>(null);
   const [depositAmount, setDepositAmount] = useState('');

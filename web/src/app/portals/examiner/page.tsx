@@ -3,8 +3,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { PortalGuard } from '@/components/PortalGuard';
 
 export default function ExaminerPortalPage() {
+  return (
+    <PortalGuard requiredRole="EXAMINER" portalName="Safety Examiner & Attestation Portal">
+      <ExaminerPortalContent />
+    </PortalGuard>
+  );
+}
+
+function ExaminerPortalContent() {
   const { user, isExaminer, switchRole } = useAuth();
   const [selectedAgent, setSelectedAgent] = useState<'gamma' | 'beta' | 'alpha'>('gamma');
   const [runningExam, setRunningExam] = useState(false);

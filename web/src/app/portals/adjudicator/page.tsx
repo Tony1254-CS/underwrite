@@ -3,9 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { PortalGuard } from '@/components/PortalGuard';
 import { formatUSDC, truncateHash } from '@/lib/format';
 
 export default function AdjudicatorPortalPage() {
+  return (
+    <PortalGuard requiredRole="ADJUDICATOR" portalName="Claims Adjudication & Dispute Portal">
+      <AdjudicatorPortalContent />
+    </PortalGuard>
+  );
+}
+
+function AdjudicatorPortalContent() {
   const { user, isAdjudicator, switchRole } = useAuth();
   const [claims, setClaims] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

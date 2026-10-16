@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
+import { AuthModal } from "@/components/AuthModal";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
@@ -30,6 +31,9 @@ export default function RootLayout({
         </div>
 
         <AuthProvider>
+          {/* Global Enterprise Auth Challenge Modal */}
+          <AuthModal />
+
           {/* Floating visionOS Acrylic Sidebar */}
           <Sidebar />
 

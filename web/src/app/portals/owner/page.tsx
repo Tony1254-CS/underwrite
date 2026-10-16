@@ -3,9 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { PortalGuard } from '@/components/PortalGuard';
 import { formatUSDC, truncateHash } from '@/lib/format';
 
 export default function OwnerPortalPage() {
+  return (
+    <PortalGuard requiredRole="OWNER" portalName="Business Owner & CFO Portal">
+      <OwnerPortalContent />
+    </PortalGuard>
+  );
+}
+
+function OwnerPortalContent() {
   const { user, isOwner, switchRole } = useAuth();
   const [state, setState] = useState<any>(null);
   const [vendors, setVendors] = useState<any[]>([]);

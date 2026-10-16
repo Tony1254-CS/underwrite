@@ -392,5 +392,23 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Consequences**: Eliminates demo clutter, provides clear role isolation for judges, and ensures real-world fidelity across all user personas.
 - **Status**: ACCEPTED
 
+---
+
+## DEC-028 — Startup-Grade Enterprise Authentication & Hover-Expanding Sidebar
+
+- **Context**: In real enterprise fintech startups, users and operators cannot switch between administrative CFO vaults, risk examiner desks, and claims adjudication without authentication and password verification. Free-floating role toggles without password checks create an unrealistic, non-production impression. Furthermore, fixed wide navbars consume horizontal canvas space on desktop displays.
+- **Options**:
+  1. Rely on client-side mock roles with unauthenticated dropdown switching.
+  2. Implement startup-grade enterprise Role-Based Access Control (RBAC):
+     - Institutional password verification for each persona (`cfo@underwrite.fi` / `OwnerPassword2026!`, `auditor@underwrite.fi` / `ExaminerPassword2026!`, `underwriter@underwrite.fi` / `UnderwriterPassword2026!`, `adjudicator@underwrite.fi` / `AdjudicatorPassword2026!`).
+     - Global password-verification challenge modal (`AuthModal.tsx`) triggered when attempting to switch profiles or access protected workspaces.
+     - Protected portal route guard (`PortalGuard.tsx`) denying unauthorized access and presenting inline password challenges.
+     - Dedicated enterprise authentication desk (`/auth/login`) and new account registration (`/auth/register`).
+     - Auto-collapsing and hover-maximizing navbar (`Sidebar.tsx`) that minimizes to an 80px rail and expands to 320px on mouse hover, with manual pin toggle.
+- **Decision**: Implement Option 2.
+- **Consequences**: Ensures true startup-grade production security fidelity, enforces real RBAC credentials across all 4 portals, and maximizes screen real estate via hover-expanding navigation.
+- **Status**: ACCEPTED
+
+
 
 
