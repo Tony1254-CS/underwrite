@@ -39,4 +39,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `DECISIONS.md`: recorded DEC-020 defining custom errors and events for BondPool.
 - `contracts/src/BondPool.sol`: implemented claims lifecycle (`fileClaim`, `approveClaim`, `rejectClaim`, `suspendForClaim`), loss caps, deductible flooring, remaining caps, and payout transfer to vault.
 - `contracts/test/BondPool.Claims.t.sol`: 4 unit tests verifying claim filing, expiration checks, adjudication payout calculation, and atomic suspension.
+- `contracts/test/integration/VaultBondPool.Integration.t.sol`: integration tests combining MockUSDC, BondPool, and UnderwriteVault verifying lock on activation, BondLockFailed, and InsufficientBacking with live BondPool.
 

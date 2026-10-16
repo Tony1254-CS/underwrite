@@ -112,4 +112,5 @@ None.
 
 - 2026-10-16 14:27 UTC | P2-T01 complete | `contracts/src/BondPool.sol` implemented (deposit, withdrawFree, lock, remaining, release, setVault); `cd contracts && forge test --match-path *BondPool.Core*` -> 4 tests passed; full test suite passes 82 tests across 13 suites.
 - 2026-10-16 14:34 UTC | P2-T02 complete | Claims lifecycle implemented in `BondPool.sol` (fileClaim, approveClaim, rejectClaim, atomic suspendForClaim); `cd contracts && forge test --match-path *BondPool.Claims*` -> 4 tests passed; all P1 + P2 tests pass cleanly (86 tests across 14 suites).
+- 2026-10-16 14:38 UTC | P2-T03 complete | Integration tests combining MockUSDC, BondPool, and UnderwriteVault implemented in `contracts/test/integration/VaultBondPool.Integration.t.sol`; `cd contracts && forge test --match-path *integration*` -> 2 tests passed; all P1 + P2 tests pass cleanly (88 tests across 15 suites).
 
