@@ -44,6 +44,7 @@ None.
 - 2026-10-16 14:09 UTC | `forge fmt --check --root contracts` -> exit 0, formatting clean.
 - 2026-10-16 14:10 UTC | `slither` static analysis run on `UnderwriteVault.sol` and `MockUSDC.sol`. Findings triaged below.
 - 2026-10-16 14:10 UTC | `forge coverage` -> not run: solc 0.8.28 compiler limitation (`forge coverage` disables optimizer / via_ir and produces "Stack too deep" on complex EIP-712 structs; with `--ir-minimum` solc emits Yul stack-too-deep). Full test suite (78 tests) provides comprehensive coverage of all 24 custom errors and 13 invariants.
+- 2026-10-16 14:12 UTC | `scripts/export-abi.mjs` -> exported JSON and TypeScript ABIs (`UnderwriteVault.json`, `UnderwriteVault.ts`, `MockUSDC.json`, `MockUSDC.ts`) into `engine/src/chain/abi/`; `pnpm -r typecheck` passed (exit 0).
 
 ## Slither Triage (P1-T13)
 
