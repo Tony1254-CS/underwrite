@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-const contracts = ['UnderwriteVault', 'MockUSDC'];
+const contracts = ['UnderwriteVault', 'MockUSDC', 'BondPool'];
 const outDir = path.join(rootDir, 'contracts', 'out');
 const targetAbiDir = path.join(rootDir, 'engine', 'src', 'chain', 'abi');
 
