@@ -112,15 +112,19 @@ export default function EvidencePage() {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 relative">
+      {/* Background Aurora Glow */}
+      <div className="ambient-aurora-cyan -top-20 -left-20 pointer-events-none opacity-40" />
+      <div className="ambient-aurora-emerald top-96 -right-20 pointer-events-none opacity-30" />
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-6 border-b border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-6 border-b border-white/[0.08] relative z-10">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
-              Evidence &amp; Verification
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white flex items-center gap-3">
+              Evidence <span className="text-gradient-cyan">&amp; Verification</span>
             </h1>
-            <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-semibold tracking-wider uppercase shadow-glow-emerald">
+            <span className="jewel-pill jewel-pill-emerald font-mono">
               ZERO-TRUST AUDIT
             </span>
           </div>
@@ -136,7 +140,7 @@ export default function EvidencePage() {
       </div>
 
       {/* FIELD-BY-FIELD VERIFICATION PANEL (Reproducing `uw verify <qualId>`) */}
-      <section className={`glass-panel-elevated rounded-3xl p-6 md:p-10 space-y-8 transition-all duration-500 ${
+      <section className={`glass-panel-elevated rounded-3xl p-6 md:p-10 space-y-8 transition-all duration-500 relative z-10 ${
         verifyData?.overallPass ? "specular-emerald" : "specular-rose"
       }`}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/[0.08] pb-5">
@@ -251,18 +255,19 @@ export default function EvidencePage() {
       </section>
 
       {/* Evidence Artifacts Registry */}
-      <div className="glass-panel specular-cyan rounded-3xl overflow-hidden">
-        <div className="p-6 border-b border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="glass-panel-elevated specular-cyan rounded-3xl overflow-hidden relative z-10">
+        <div className="p-6 md:p-8 border-b border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">
+            <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-glow-cyan" />
               Pinned Evidence Artifacts (evidence/onchain &amp; exams)
             </h2>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
+            <p className="text-xs text-slate-400 font-mono mt-1">
               Immutable SHA-256 and Keccak-256 content-addressed bundle proofs
             </p>
           </div>
-          <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-glow-emerald" />
+          <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-glow-emerald animate-pulse" />
             All 5 Artifacts Cryptographically Linked
           </span>
         </div>
@@ -271,27 +276,32 @@ export default function EvidencePage() {
           {EVIDENCE_ARTIFACTS.map((art) => (
             <div
               key={art.name}
-              className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.03] transition-colors"
+              className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.04] transition-all group"
             >
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2.5">
-                  <span className="font-bold text-white text-sm">{art.name}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-slate-300 border border-white/[0.08]">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <span className="font-bold text-white text-sm group-hover:text-cyan-300 transition-colors">
+                    {art.name}
+                  </span>
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/[0.08] text-slate-300 border border-white/[0.12] font-semibold">
                     {art.category}
                   </span>
                 </div>
                 <div className="text-[11px] text-slate-400 flex items-center gap-3">
-                  <span>Size: {art.size}</span>
+                  <span>Size: <strong className="text-slate-300">{art.size}</strong></span>
                   <span>•</span>
-                  <span>Ref: {art.blockOrRun}</span>
+                  <span>Ref: <strong className="text-cyan-400">{art.blockOrRun}</strong></span>
                 </div>
-                <div className="text-[11px] text-slate-500 select-all font-mono" title={art.hash}>
-                  Digest: {art.hash}
+                <div className="text-[11px] text-slate-400 select-all font-mono bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.05] inline-block" title={art.hash}>
+                  <span className="text-slate-500 mr-2">Digest:</span>{art.hash}
                 </div>
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-glow-emerald">
+                <span className="px-3.5 py-1.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-glow-emerald flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
                   VERIFIED
                 </span>
               </div>

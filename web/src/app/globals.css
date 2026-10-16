@@ -3,12 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --background: #05070b;
-  --foreground: #f1f5f9;
-  --card: rgba(13, 19, 34, 0.65);
-  --card-hover: rgba(24, 35, 58, 0.75);
-  --border: rgba(255, 255, 255, 0.08);
-  --accent: #06b6d4;
+  --background: #030610;
+  --foreground: #f8fafc;
+  --card: rgba(10, 16, 32, 0.6);
+  --border: rgba(255, 255, 255, 0.12);
+  --accent: #00f2fe;
 }
 
 * {
@@ -19,150 +18,206 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: #030610;
+  color: #f8fafc;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6, 182, 212, 0.12), transparent 70%),
-    radial-gradient(ellipse 60% 40% at 85% 60%, rgba(99, 102, 241, 0.08), transparent 60%),
-    radial-gradient(ellipse 50% 30% at 15% 75%, rgba(16, 185, 129, 0.08), transparent 60%);
-  background-attachment: fixed;
 }
 
-/* Tabular figures for financial numbers & addresses */
+/* Tabular figures for financial numbers & hashes */
 .num-tabular {
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 /* Custom scrollbars for visionOS dark acrylic */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(5, 7, 11, 0.6);
+  background: rgba(3, 6, 16, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.35);
 }
 
-/* Apple visionOS Acrylic Glass Architecture */
+/* ============================================================
+   APPLE visionOS LIQUID RETINA ACRYLIC GLASS ENGINE
+   ============================================================ */
+
+/* High-Impact Glass Panel */
 .glass-panel {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(10, 15, 28, 0.65);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.38), inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
-}
-
-.glass-panel-elevated {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 100%), rgba(13, 20, 36, 0.78);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(8, 14, 28, 0.65);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 16px 48px -4px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
 }
 
+/* Elevated Hero Glass Panel */
+.glass-panel-elevated {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.025) 100%), rgba(10, 18, 36, 0.72);
+  backdrop-filter: blur(40px) saturate(220%);
+  -webkit-backdrop-filter: blur(40px) saturate(220%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 
+    0 25px 60px -12px rgba(0, 0, 0, 0.75),
+    0 0 40px -10px rgba(6, 182, 212, 0.2),
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Interactive Floating Glass Card */
 .glass-card-interactive {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(11, 17, 31, 0.65);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 100%), rgba(9, 15, 30, 0.6);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 12px 32px -4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card-interactive:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.24);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(15, 23, 42, 0.75);
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%), rgba(14, 22, 44, 0.75);
+  box-shadow: 
+    0 24px 48px -8px rgba(0, 0, 0, 0.7),
+    0 0 30px -5px rgba(6, 182, 212, 0.3),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.4);
 }
 
-/* Harmonic Specular Border Highlights */
-.specular-emerald {
-  border-top-color: rgba(52, 211, 153, 0.45) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.38), inset 0 1px 0 0 rgba(52, 211, 153, 0.35), 0 0 25px -8px rgba(16, 185, 129, 0.25);
-}
-
+/* Harmonic Specular Border Highlights (Directional Beveled Top Rim) */
 .specular-cyan {
-  border-top-color: rgba(56, 189, 248, 0.45) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.38), inset 0 1px 0 0 rgba(56, 189, 248, 0.35), 0 0 25px -8px rgba(6, 182, 212, 0.25);
+  border-top-color: rgba(6, 182, 212, 0.8) !important;
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.6),
+    0 0 35px -8px rgba(6, 182, 212, 0.35),
+    inset 0 1.5px 0 0 rgba(56, 189, 248, 0.6),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.specular-emerald {
+  border-top-color: rgba(16, 185, 129, 0.8) !important;
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.6),
+    0 0 35px -8px rgba(16, 185, 129, 0.35),
+    inset 0 1.5px 0 0 rgba(52, 211, 153, 0.6),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
 }
 
 .specular-amber {
-  border-top-color: rgba(251, 191, 36, 0.45) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.38), inset 0 1px 0 0 rgba(251, 191, 36, 0.35), 0 0 25px -8px rgba(245, 158, 11, 0.25);
+  border-top-color: rgba(245, 158, 11, 0.8) !important;
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.6),
+    0 0 35px -8px rgba(245, 158, 11, 0.35),
+    inset 0 1.5px 0 0 rgba(251, 191, 36, 0.6),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
 }
 
 .specular-rose {
-  border-top-color: rgba(251, 113, 133, 0.45) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.38), inset 0 1px 0 0 rgba(251, 113, 133, 0.35), 0 0 25px -8px rgba(244, 63, 94, 0.25);
+  border-top-color: rgba(244, 63, 94, 0.8) !important;
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.6),
+    0 0 35px -8px rgba(244, 63, 94, 0.35),
+    inset 0 1.5px 0 0 rgba(251, 113, 133, 0.6),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
 }
 
 .specular-indigo {
-  border-top-color: rgba(165, 180, 252, 0.45) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.38), inset 0 1px 0 0 rgba(165, 180, 252, 0.35), 0 0 25px -8px rgba(99, 102, 241, 0.25);
+  border-top-color: rgba(99, 102, 241, 0.8) !important;
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.6),
+    0 0 35px -8px rgba(99, 102, 241, 0.35),
+    inset 0 1.5px 0 0 rgba(165, 180, 252, 0.6),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
 }
 
-/* Ambient optical glow orbs */
-.ambient-glow-emerald {
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, transparent 70%);
+/* ============================================================
+   AURORA BOREALIS OPTICAL MESH LIGHTING
+   ============================================================ */
+
+.ambient-aurora-cyan {
+  background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.35) 0%, rgba(14, 165, 233, 0.15) 45%, transparent 70%);
 }
 
-.ambient-glow-cyan {
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.16) 0%, transparent 70%);
+.ambient-aurora-emerald {
+  background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.32) 0%, rgba(5, 150, 105, 0.12) 45%, transparent 70%);
 }
 
-.ambient-glow-amber {
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, transparent 70%);
+.ambient-aurora-violet {
+  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.35) 0%, rgba(99, 102, 241, 0.15) 45%, transparent 70%);
 }
 
-.ambient-glow-rose {
-  background: radial-gradient(circle, rgba(244, 63, 94, 0.16) 0%, transparent 70%);
+.ambient-aurora-amber {
+  background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.32) 0%, rgba(217, 119, 6, 0.12) 45%, transparent 70%);
 }
 
-.ambient-glow-violet {
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.16) 0%, transparent 70%);
+.ambient-aurora-rose {
+  background: radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.35) 0%, rgba(225, 29, 72, 0.15) 45%, transparent 70%);
 }
 
-/* Provenance badge styling */
-.badge-simulated {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.16) 0%, rgba(244, 63, 94, 0.05) 100%);
-  color: #fb7185;
-  border: 1px solid rgba(244, 63, 94, 0.35);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+/* Radiant Typography */
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #ffffff 0%, #38bdf8 60%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.badge-scripted {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.16) 0%, rgba(168, 85, 247, 0.05) 100%);
-  color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.35);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #ffffff 0%, #34d399 60%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.badge-controlled {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.16) 0%, rgba(14, 165, 233, 0.05) 100%);
-  color: #38bdf8;
-  border: 1px solid rgba(14, 165, 233, 0.35);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+.text-gradient-amber {
+  background: linear-gradient(135deg, #ffffff 0%, #fbbf24 60%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.badge-replay {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(245, 158, 11, 0.05) 100%);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+.text-gradient-rose {
+  background: linear-gradient(135deg, #ffffff 0%, #fb7185 60%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Frosted Jewel Badges */
+.jewel-pill {
+  position: relative;
+  display: inline-flex;
+  items-center: center;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Pulsing radar ring */
+@keyframes radarPulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.radar-ring {
+  animation: radarPulse 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
 }

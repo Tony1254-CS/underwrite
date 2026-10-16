@@ -372,3 +372,9 @@ Decision: DEC-025
    - Command: `pnpm -r test`
    - Output: Exit code 0.
    - Result: 25/25 test files passed, 157/157 tests passed (0 failures).
+
+4. **Evidence Explorer VisionOS Elevation & Typecheck:**
+   - Files elevated: `web/src/app/evidence/page.tsx`, `web/src/app/globals.css`, `web/src/app/layout.tsx`, `web/src/components/Sidebar.tsx`, `web/src/app/page.tsx`, `web/src/app/exam/page.tsx`, `web/src/app/traces/page.tsx`, `web/src/app/attack-lab/page.tsx`, `web/src/app/claims/page.tsx`, `web/src/app/verify/page.tsx`, `web/src/app/experiment/page.tsx`.
+   - Command: `pnpm --filter web typecheck`
+   - Output: Exit code 0 (`$ tsc --noEmit`), 0 errors.
+   - Dev server: `pnpm --filter web dev` running on `http://localhost:3001` with hot module replacement active.
