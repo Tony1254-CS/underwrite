@@ -425,10 +425,12 @@ contract UnderwriteVault is VaultErrors {
 
         emit QualificationActivated(a.qualId, a.agentKey, effT1PerTx, effT1PerWindow, effT2PerTx, a.expiresAt);
 
-        // Interactions: Lock required bond backing in BondPool
-        try bondPool.lock(a.qualId, effT1PerWindow) { }
-        catch {
-            revert BondLockFailed();
+        // Interactions: Lock required bond backing in BondPool (only if T1 authority granted)
+        if (effT1PerWindow > 0) {
+            try bondPool.lock(a.qualId, effT1PerWindow) { }
+            catch {
+                revert BondLockFailed();
+            }
         }
 
         // Release bond backing for superseded qualification if any
