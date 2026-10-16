@@ -224,11 +224,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §13.6
   Done when: `git check-ignore -v .env .keys/x contracts/broadcast/x` lists all three; `git check-ignore .env.example evidence/onchain/x contracts/deployments/84532.json` prints nothing.
   Evidence: 2026-10-16 12:31 UTC · antigravity-1 · 0a782e3 · git check-ignore -v .env .keys/x contracts/broadcast/x; git check-ignore .env.example evidence/onchain/x contracts/deployments/84532.json → all three ignored; tracked paths print nothing
-- [ ] P0-T05 | X | needs: P0-T01 | Directory skeleton and README stub
+- [x] P0-T05 | X | needs: P0-T01 | Directory skeleton and README stub
   Do: create every directory of plan §13.1 (empty ones get `.gitkeep`): `contracts/{src,test,script,deployments}`, `engine/src/{types,mandate,policy,agent,exam,compiler,manifest,signer,executor,chain,evidence,experiment}`, `engine/test`, `engine/fixtures`, `web`, `scenarios`, `evidence/{exams,experiments,onchain,transcripts}`, `docs/competition`, `scripts`. `README.md` = title + "work in progress, see STATUS.md".
   Files: as listed
   Spec: plan §13.1
   Done when: `git ls-files | grep -c gitkeep` ≥ 10 and every path above exists.
+  Evidence: 2026-10-16 12:33 UTC · antigravity-1 · 71ec0e8 · git ls-files | grep -c gitkeep → 25 gitkeep files present, all skeleton directories exist
 - [ ] P0-T06 | B | needs: P0-T04,P0-T05 | pnpm workspace and engine package
   Do: root `package.json` (private; `packageManager` = installed pnpm version; scripts `build test lint typecheck` → `pnpm -r …`; `"uw": "pnpm --filter engine uw"`; `"demo:local": "echo demo:local not implemented until P8 && exit 1"`), `pnpm-workspace.yaml` (`packages: [engine, web]`). `engine/`: TypeScript strict, ESM, `tsx`, vitest, eslint, prettier, deps `viem` (v2) and `zod`, script `"uw": "tsx src/cli.ts"`, one trivial passing test. `web/package.json` = stub whose scripts print "web stub (P8)" and exit 0; say so in STATUS.md.
   Files: `package.json pnpm-workspace.yaml engine/** web/package.json`
