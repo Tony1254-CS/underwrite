@@ -236,12 +236,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §9.1
   Done when: `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` all exit 0.
   Evidence: 2026-10-16 12:38 UTC · antigravity-1 · 835f50b · pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test → all exit 0 across workspace, 1 passing test
-- [~] P0-T07 | A | needs: P0-T04,P0-T05 | Foundry project with pinned dependencies
+- [x] P0-T07 | A | needs: P0-T04,P0-T05 | Foundry project with pinned dependencies
   Do: make the first commit before installing. `contracts/foundry.toml`: pinned exact `solc_version` (≥ 0.8.24, record in DECISIONS), optimizer on, fuzz runs ≥ 512, invariant runs ≥ 256 and depth ≥ 100; pick an `evm_version` that Base Sepolia supports (confirmed again by the deploy in P6-T02). Install `forge-std` and OpenZeppelin Contracts v5 at pinned release tags (check `forge install --help` for current flags), `remappings.txt`, and one placeholder test.
   Files: `contracts/foundry.toml contracts/remappings.txt contracts/lib/** contracts/test/Smoke.t.sol`
   Spec: plan §9.1
   Done when: `cd contracts && forge build && forge test && forge fmt --check` exit 0.
-  Claim: antigravity-1 · 2026-10-16T12:39:00Z
+  Evidence: 2026-10-16 12:47 UTC · antigravity-1 · e0c43a5 · cd contracts && forge build && forge test && forge fmt --check → all exit 0, 1 test passed, formatted
 - [ ] P0-T08 | X | needs: P0-T06,P0-T07 | CI workflow
   Do: `.github/workflows/ci.yml`, on push and pull request: checkout with submodules; Foundry toolchain; `forge fmt --check`, `forge build`, `forge test`; Node 22 + pnpm; `pnpm install --frozen-lockfile`; `pnpm -r lint`, `pnpm -r typecheck`, `pnpm -r test`.
   Files: `.github/workflows/ci.yml`
