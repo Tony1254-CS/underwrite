@@ -544,4 +544,151 @@ contract UnderwriteVault is VaultErrors {
         // --- Token transfer (Interactions) ---
         token.safeTransfer(recipient, amount);
     }
+
+    // --- T2 Flow: Request, Execute, Veto (P1-T06) ---
+
+    /**
+     * @notice Proposes a Tier 2 payment subject to a challenge period and owner/guardian veto.
+     * @param recipient Target registered recipient.
+     * @param amount Token amount in base units (micro-USDC).
+     * @param invoiceKey Unique invoice key.
+     * @param memoHash Semantic or context hash.
+     * @return id Pending payment sequential identifier.
+     */
+    function requestPayment(address recipient, uint256 amount, bytes32 invoiceKey, bytes32 memoHash)
+        external
+        returns (uint256 id)
+    {
+        // PV-09 Revert check order:
+        // 1. Paused
+        if (paused) revert Paused();
+
+        // 2. NotAgent
+        if (!hasAgentEverHadQualification[msg.sender]) revert NotAgent();
+
+        // 3. NoActiveQualification
+        bytes32 qualId = activeQualOf[msg.sender];
+        if (qualId == bytes32(0)) revert NoActiveQualification();
+
+        StoredQualification storage q = quals[qualId];
+
+        // 4. QualificationRevoked
+        if (q.revoked) revert QualificationIsRevoked();
+
+        // 5. QualificationExpired
+        if (q.attestation.expiresAt <= block.timestamp) revert QualificationExpired();
+
+        // 6. T2NotAllowed
+        if (!q.attestation.t2Allowed) revert T2NotAllowed();
+
+        // 7. RecipientNotAllowed (cooldown does NOT block T2)
+        Recipient storage r = recipients[recipient];
+        if (!r.active) revert RecipientNotAllowed();
+
+        // 8. ExceedsPerTx (t2)
+        uint256 currentT2Max = q.effectiveT2MaxPerTx < ceilings.t2PerTx ? q.effectiveT2MaxPerTx : ceilings.t2PerTx;
+        if (amount > currentT2Max) revert ExceedsPerTx();
+
+        // 9. DuplicateInvoice
+        if (invoiceState[invoiceKey] != InvoiceStatus.NONE) revert DuplicateInvoice();
+
+        // Effects
+        invoiceState[invoiceKey] = InvoiceStatus.RESERVED;
+        id = nextPendingId++;
+        uint256 readyAt = block.timestamp + challengePeriod;
+
+        pending[id] = PendingPayment({
+            qualId: qualId,
+            recipient: recipient,
+            amount: amount,
+            invoiceKey: invoiceKey,
+            memoHash: memoHash,
+            readyAt: readyAt,
+            status: PendingStatus.PENDING
+        });
+
+        emit PaymentRequested(id, qualId, recipient, amount, readyAt);
+    }
+
+    /**
+     * @notice Executes a Tier 2 pending payment once the challenge period has elapsed.
+     * @param id The pending payment identifier.
+     * @return paymentId The resulting executed payment identifier.
+     */
+    function executePending(uint256 id) external returns (uint256 paymentId) {
+        PendingPayment storage p = pending[id];
+
+        // PV-09 Revert check order:
+        // 1. NotPending (if uninitialized or already executed)
+        if (p.status == PendingStatus.NONE || p.status == PendingStatus.EXECUTED) revert NotPending();
+
+        // 2. Vetoed
+        if (p.status == PendingStatus.VETOED) revert Vetoed();
+
+        if (p.status != PendingStatus.PENDING) revert NotPending();
+
+        // 3. NotReady
+        if (block.timestamp < p.readyAt) revert NotReady();
+
+        // 4. Paused
+        if (paused) revert Paused();
+
+        // 5. Qualification errors
+        bytes32 qualId = p.qualId;
+        StoredQualification storage q = quals[qualId];
+        if (q.revoked) revert QualificationIsRevoked();
+        if (q.attestation.expiresAt <= block.timestamp) revert QualificationExpired();
+        if (!q.active || activeQualOf[q.attestation.agentKey] != qualId) revert NoActiveQualification();
+
+        // 6. RecipientNotAllowed
+        Recipient storage r = recipients[p.recipient];
+        if (!r.active) revert RecipientNotAllowed();
+
+        // 7. ExceedsPerTx (t2)
+        uint256 currentT2Max = q.effectiveT2MaxPerTx < ceilings.t2PerTx ? q.effectiveT2MaxPerTx : ceilings.t2PerTx;
+        if (p.amount > currentT2Max) revert ExceedsPerTx();
+
+        // 8. ReserveBreached
+        uint256 bal = token.balanceOf(address(this));
+        if (bal < p.amount || bal - p.amount < reserveFloor) revert ReserveBreached();
+
+        // Effects
+        p.status = PendingStatus.EXECUTED;
+        invoiceState[p.invoiceKey] = InvoiceStatus.PAID;
+
+        paymentId = nextPaymentId++;
+        payments[paymentId] = PaymentRecord({
+            qualId: qualId,
+            recipient: p.recipient,
+            amount: p.amount,
+            invoiceKey: p.invoiceKey,
+            memoHash: p.memoHash,
+            tier: 2,
+            timestamp: block.timestamp,
+            reconciled: false
+        });
+
+        emit PaymentExecuted(paymentId, qualId, p.recipient, p.amount, p.invoiceKey, 2);
+
+        // Interaction
+        token.safeTransfer(p.recipient, p.amount);
+    }
+
+    /**
+     * @notice Vetoes a pending Tier 2 payment, releasing the invoice key back to unspent (NONE).
+     * @param id The pending payment identifier.
+     */
+    function veto(uint256 id) external {
+        if (msg.sender != owner && msg.sender != guardian) revert NotGuardianOrOwner();
+
+        PendingPayment storage p = pending[id];
+        if (p.status == PendingStatus.VETOED) revert Vetoed();
+        if (p.status != PendingStatus.PENDING) revert NotPending();
+
+        p.status = PendingStatus.VETOED;
+        invoiceState[p.invoiceKey] = InvoiceStatus.NONE;
+
+        emit PaymentVetoed(id, msg.sender);
+    }
 }
+
