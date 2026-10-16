@@ -337,11 +337,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §9.8
   Done when: `forge test --match-path "*invariant*"` passes.
   Evidence: 2026-10-16 13:58 UTC · antigravity-1 · e11b007 · cd contracts && forge test --match-path *invariant* passed (256 runs, 25,600 calls, 0 reverts); INV-1, INV-2, INV-5, INV-10 verified → 0
-- [ ] P1-T12 | A | needs: P1-T09,P1-T10,P1-T11 | INV coverage matrix
+- [x] P1-T12 | A | needs: P1-T09,P1-T10,P1-T11 | INV coverage matrix
   Do: ensure each of INV-1…10, 12, 13, 14 has at least one test whose name contains `INV<n>_`. INV-11 is covered in P2.
   Files: `contracts/test/**`
   Spec: plan §9.8
   Done when: `cd contracts && for n in 1 2 3 4 5 6 7 8 9 10 12 13 14; do grep -rq "INV${n}_" test || echo "MISSING INV$n"; done` prints nothing.
+  Evidence: 2026-10-16 14:02 UTC · antigravity-1 · 06eaeb1 · bash scripts/check_inv.sh printed nothing, forge test passed 78 tests across 12 suites (INV-1..10, 12..14 verified) → 0
 - [ ] P1-T13 | A | needs: P1-T12 | Coverage, formatting, static analysis
   Do: `forge coverage --report summary`; `forge fmt --check`; run `slither` if installable (`pip install slither-analyzer`; the Python command here is `python`) and triage every finding in TESTING.md; if slither cannot run, write "not run: <reason>".
   Files: `TESTING.md`

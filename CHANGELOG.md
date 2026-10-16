@@ -27,3 +27,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `contracts/test/Vault.Edge.t.sol`: 12 unit tests verifying edge cases from plan §5.5 (exact boundaries, window rollover, single-block payments, T2 revalidation, mid-window ceiling reduction, boundary bursts, reconcile unblocking, and stale commit rejection).
 - `contracts/test/Vault.Fuzz.t.sol`: property-based fuzz tests with 512 runs each verifying INV-2 (window limit), INV-3 (per-tx limits), INV-5 (invoice single-use), and INV-6 (reserve floor preservation).
 - `contracts/test/invariant/`: stateful invariant test suite with `InvariantHandler` executing 25,600 random actions across 256 runs, validating `invariant_INV1_*`, `invariant_INV2_*`, `invariant_INV5_*`, and `invariant_INV10_*`.
+- `contracts/test/Vault.Matrix.t.sol`: dedicated invariant coverage suite ensuring INV-4, INV-7, INV-8, INV-9, INV-12, INV-13, and INV-14 are explicitly covered by named tests.
+- `scripts/check_inv.sh`: automated check verifying all mandatory invariants INV-1..10, 12..14 are present in test suites.

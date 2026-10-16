@@ -1,14 +1,14 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 13:59 UTC, antigravity-1
-Last verified working state: e11b007 — P1-T11 verified with stateful invariant tests (25,600 calls)
+## Handoff — 2026-10-16 14:06 UTC, antigravity-1
+Last verified working state: 06eaeb1 — P1-T12 verified with invariant coverage matrix (78 tests across 12 suites)
 Active phase: P1 — UnderwriteVault + MockUSDC (Track A)
-Next concrete task: P1-T12 | A | needs: P1-T09,P1-T10,P1-T11 | INV coverage matrix (Files: contracts/test/**)
-Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 19; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified; QG-0 clean-clone build & test passed; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `cd contracts && forge test --match-path "*invariant*"` → 4 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 71 tests passed across 11 test suites. Note: web/package.json is stubbed for P8.
-Tests NOT run: Full Slither analysis (to be run in P1-T13)
+Next concrete task: P1-T13 | A | needs: P1-T12 | Coverage, formatting, static analysis (Files: TESTING.md)
+Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 19; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified; QG-0 clean-clone build & test passed; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `bash scripts/check_inv.sh` → 0 missing invariants; `cd contracts && forge test --match-path "*invariant*"` → 4 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 78 tests passed across 12 test suites.
+Tests NOT run: Full Slither analysis (to be evaluated in P1-T13)
 Known failures: None
 Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL)
-Risks of touching current code: Low (stateful invariant suite verified, proceeding to INV coverage matrix check)
+Risks of touching current code: Low (full test suite passes cleanly, proceeding to P1-T13 coverage/static analysis)
 Phase checklist: P0 [x] P1 [ ] P2 [ ] P3 [ ] P4 [ ] P5 [ ] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x]
 
 ## Testnet accounts (Base Sepolia throwaways, generated local .env)
