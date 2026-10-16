@@ -376,11 +376,12 @@ Read first: plan §9.7 (BondPool table), §9.8 (INV-10, 11, 14), §4.E, §12.2 P
   Spec: plan §9.7, PHASES S7
   Done when: unit tests for deposit, withdrawFree (free only), lock (vault only; fails when free is insufficient), remaining, release rules, `setVault` once.
   Evidence: 2026-10-16 14:27 UTC · antigravity-1 · cd contracts && forge test --match-path *BondPool.Core* passed (4 tests); full test suite passes 82 tests across 13 suites; DEC-020 recorded → 0
-- [ ] P2-T02 | A | needs: P2-T01 | Claims: fileClaim, approveClaim, rejectClaim, atomic revoke
+- [x] P2-T02 | A | needs: P2-T01 | Claims: fileClaim, approveClaim, rejectClaim, atomic revoke
   Do: `fileClaim` (vault owner; `isClaimable`; within `claimGrace`; `lossAmount ≤ payment.amount`), `approveClaim` (`payout = min(approvedLoss − deductible (floor 0), perClaimCap, remaining(qualId))`, transfer to the VAULT, then `vault.suspendForClaim(qualId, claimId)` which revokes and removes the claimed payment from exposure — vault reads the paymentId from the pool, S6), `rejectClaim`. Update the vault accordingly and re-run all P1 tests.
   Files: `contracts/src/BondPool.sol contracts/src/UnderwriteVault.sol`
   Spec: plan §9.7, §9.8 (INV-11, 14)
   Done when: `forge test` (all P1 tests + new) passes after the vault change.
+  Evidence: 2026-10-16 14:34 UTC · antigravity-1 · cd contracts && forge test --match-path *BondPool.Claims* passed (4 tests); all P1 + P2 tests pass cleanly (86 tests across 14 suites) → 0
 - [ ] P2-T03 | A | needs: P2-T02 | Integration tests with the real BondPool
   Do: `test/integration/*.t.sol` deploy USDC + BondPool + Vault together and re-run the key backing scenarios (lock on activation, `BondLockFailed`, `InsufficientBacking`) against the real pool.
   Files: `contracts/test/integration/**`

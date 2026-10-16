@@ -48,6 +48,7 @@ interface IVaultForBondPool {
             uint256 timestamp,
             bool reconciled
         );
+    function owner() external view returns (address);
 }
 
 /**
@@ -258,6 +259,7 @@ contract BondPool is IBondPool, BondPoolErrors {
     function fileClaim(uint256 paymentId, uint256 lossAmount, bytes32 evidenceHash) external returns (uint256 claimId) {
         if (!vaultSet) revert VaultNotSet();
         IVaultForBondPool v = IVaultForBondPool(vault);
+        if (msg.sender != v.owner()) revert NotVaultOwner();
 
         if (!v.isClaimable(paymentId)) revert PaymentNotClaimable();
         if (claimedPayment[paymentId]) revert PaymentNotClaimable();
