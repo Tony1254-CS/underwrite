@@ -34,4 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/check_inv.sh`: automated check verifying all mandatory invariants INV-1..10, 12..14 are present in test suites.
 - `TESTING.md`: independent review of `UnderwriteVault.sol` for task P1-T15 by `antigravity-reviewer-1` approving vault implementation for quality gate QG-1.
 - `PHASES.md`: Phase 1 Quality Gate QG-1 passed; all 16 Phase 1 tasks verified and green.
+- `contracts/src/BondPool.sol`: implemented BondPool core with underwriter deposits, unencumbered withdrawals, vault-only bond locks, remaining views, expiration/grace-bounded releases, and one-time vault binding.
+- `contracts/test/BondPool.Core.t.sol`: 4 unit tests verifying deposit/withdraw, lock bounds, release rules, and single-use setVault.
+- `DECISIONS.md`: recorded DEC-020 defining custom errors and events for BondPool.
 

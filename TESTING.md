@@ -110,3 +110,5 @@ None.
 - Security verification: No known path where an agent key can move funds outside INV-1.
 - Gate status: **QG-1 PASSED**. Vault is safe to build on.
 
+- 2026-10-16 14:27 UTC | P2-T01 complete | `contracts/src/BondPool.sol` implemented (deposit, withdrawFree, lock, remaining, release, setVault); `cd contracts && forge test --match-path *BondPool.Core*` -> 4 tests passed; full test suite passes 82 tests across 13 suites.
+
