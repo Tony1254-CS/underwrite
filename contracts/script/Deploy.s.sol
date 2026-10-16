@@ -29,12 +29,18 @@ contract DeployScript is Script {
 
     function run() external returns (address vaultAddr, address bondPoolAddr, address tokenAddr) {
         uint256 pk = vm.envOr("DEPLOYER_PRIVATE_KEY", deployerPk);
+        uint256 oPk = vm.envOr("OWNER_PRIVATE_KEY", ownerPk);
+        uint256 exPk = vm.envOr("EXAMINER_PRIVATE_KEY", examinerPk);
+        uint256 uPk = vm.envOr("UNDERWRITER_PRIVATE_KEY", underwriterPk);
+        uint256 adjPk = vm.envOr("ADJUDICATOR_PRIVATE_KEY", adjudicatorPk);
+        uint256 gPk = vm.envOr("GUARDIAN_PRIVATE_KEY", guardianPk);
+
         address deployer = vm.addr(pk);
-        address owner = vm.addr(ownerPk);
-        address examiner = vm.addr(examinerPk);
-        address underwriter = vm.addr(underwriterPk);
-        address adjudicator = vm.addr(adjudicatorPk);
-        address guardian = vm.addr(guardianPk);
+        address owner = vm.addr(oPk);
+        address examiner = vm.addr(exPk);
+        address underwriter = vm.addr(uPk);
+        address adjudicator = vm.addr(adjPk);
+        address guardian = vm.addr(gPk);
 
         console2.log("=== DEPLOYING UNDERWRITE PROTOCOL ===");
         console2.log("Chain ID:", block.chainid);
@@ -66,14 +72,14 @@ contract DeployScript is Script {
         vm.stopBroadcast();
 
         // 6. Underwriter links vault and deposits bond backing
-        vm.startBroadcast(underwriterPk);
+        vm.startBroadcast(uPk);
         bondPool.setVault(vaultAddr);
         token.approve(bondPoolAddr, BOND_DEPOSIT);
         bondPool.deposit(BOND_DEPOSIT);
         vm.stopBroadcast();
 
         // 7. Owner registers 6 demo vendors
-        vm.startBroadcast(ownerPk);
+        vm.startBroadcast(oPk);
         address[6] memory vendors = [
             address(0x1111111111111111111111111111111111111111),
             address(0x2222222222222222222222222222222222222222),
@@ -121,7 +127,12 @@ contract DeployScript is Script {
             '",\n',
             '  "adjudicator": "',
             vm.toString(adjudicator),
-            '"\n',
+            '",\n',
+            '  "guardian": "',
+            vm.toString(guardian),
+            '",\n',
+            '  "version": "1.0.0",\n',
+            '  "solc": "0.8.28"\n',
             "}\n"
         );
 
