@@ -1,0 +1,14 @@
+{
+  "name": "underwrite",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@12.8.1",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "uw": "pnpm --filter engine uw",
+    "demo:local": "echo demo:local not implemented until P8 && exit 1"
+  }
+}
