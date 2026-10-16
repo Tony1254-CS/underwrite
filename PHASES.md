@@ -388,11 +388,12 @@ Read first: plan §9.7 (BondPool table), §9.8 (INV-10, 11, 14), §4.E, §12.2 P
   Spec: plan §9.7
   Done when: `forge test --match-path "*integration*"` passes.
   Evidence: 2026-10-16 14:38 UTC · antigravity-1 · cd contracts && forge test --match-path *integration* passed (2 tests); lock on activation, BondLockFailed, and InsufficientBacking with real BondPool verified; 88 tests pass across 15 suites → 0
-- [ ] P2-T04 | A | needs: P2-T02 | BondPool tests (plan §12.2 P2 list)
+- [x] P2-T04 | A | needs: P2-T02 | BondPool tests (plan §12.2 P2 list)
   Do: lock fails when free is insufficient ⇒ activation reverts `BondLockFailed`; payout caps (deductible, perClaimCap, remaining); duplicate claim; claim on a T2 payment, an owner transfer, and a reconciled payment all rejected; `approveClaim` pays and revokes in ONE tx with both events (`ClaimPaid`, `QualificationRevoked`); `pay` reverts `InsufficientBacking` after the payout drains `remaining`; claim after the bond is exhausted (payout 0, still revokes); release rules.
   Files: `contracts/test/BondPool.t.sol`
   Spec: plan §9.7, §5.5
   Done when: `forge test --match-path "*BondPool*"` passes with a named test for each item.
+  Evidence: 2026-10-16 14:42 UTC · antigravity-1 · cd contracts && forge test --match-path *BondPool.t.sol* passed (11 tests); all scenarios from plan §12.2 P2 verified; total 99 tests pass across 16 suites → 0
 - [ ] P2-T05 | A | needs: P2-T03 | Fuzz and invariant tests for INV-10, 11, 14
   Do: handler that interleaves pay, reconcile, claims, time warps across window boundaries; `invariant_INV10_*`, `invariant_INV11_*`, `invariant_INV14_*`, `testFuzz_INV11_*`.
   Files: `contracts/test/invariant/**`

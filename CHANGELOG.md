@@ -40,4 +40,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `contracts/src/BondPool.sol`: implemented claims lifecycle (`fileClaim`, `approveClaim`, `rejectClaim`, `suspendForClaim`), loss caps, deductible flooring, remaining caps, and payout transfer to vault.
 - `contracts/test/BondPool.Claims.t.sol`: 4 unit tests verifying claim filing, expiration checks, adjudication payout calculation, and atomic suspension.
 - `contracts/test/integration/VaultBondPool.Integration.t.sol`: integration tests combining MockUSDC, BondPool, and UnderwriteVault verifying lock on activation, BondLockFailed, and InsufficientBacking with live BondPool.
+- `contracts/test/BondPool.t.sol`: comprehensive test suite with 11 tests verifying all plan §12.2 P2 requirements (lock failure, payout caps, duplicate claim rejection, T2/owner/reconciled claim rejection, atomic claim approve + revoke, insufficient backing drain, exhausted bond claim, release rules).
 
