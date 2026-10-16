@@ -24,8 +24,8 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Options**:
   1. Gnosis Safe module or ERC-7710 execution enforcers.
   2. Minimal custom smart contract vault (`UnderwriteVault.sol`).
-- **Decision**: Build a custom minimal vault in Solidity ≥ 0.8.24 with Foundry and OpenZeppelin v5.
-- **Consequences**: Invariants are auditable, verifiable, and free of upstream abstraction overhead. Packaging as Safe/ERC-7710 modules is deferred to future work.
+- **Decision**: Build a custom minimal vault in Solidity pinned to exact version 0.8.28 (`solc_version = "0.8.28"`, `evm_version = "cancun"`) with Foundry and OpenZeppelin v5 (v5.1.0).
+- **Consequences**: Invariants are auditable, verifiable, and free of upstream abstraction overhead. Pinned compiler ensures bit-identical reproducibility. Packaging as Safe/ERC-7710 modules is deferred to future work.
 - **Status**: ACCEPTED
 
 ---
