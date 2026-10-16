@@ -7,6 +7,10 @@ import { MockUSDC } from "../src/MockUSDC.sol";
 import { MockBondPool } from "./mocks/MockBondPool.sol";
 import { VaultErrors } from "../src/interfaces/VaultErrors.sol";
 
+// Note: Per DEC-019 S5, the custom error is named QualificationIsRevoked to prevent
+// Solidity collision with event QualificationRevoked(bytes32,bytes32).
+// QualificationRevoked.selector is mapped to VaultErrors.QualificationIsRevoked.selector.
+
 contract VaultQualificationTest is Test {
     UnderwriteVault public vault;
     MockUSDC public token;
