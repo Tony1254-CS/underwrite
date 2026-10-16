@@ -55,6 +55,33 @@ export interface ClaimItem {
   consequenceSummary?: string;
 }
 
+export interface LineItem {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
+}
+
+export interface InvoiceRecord {
+  id: string;
+  vendorId: string;
+  vendorName: string;
+  invoiceNumber: string;
+  amountUSDC: number;
+  poNumber?: string;
+  description?: string;
+  notes?: string;
+  lineItems?: LineItem[];
+  tier: 'T0' | 'T1' | 'T2' | 'T3';
+  status: 'EXECUTED_T1' | 'PENDING_T2' | 'REJECTED_T3' | 'APPROVED_T2' | 'REJECTED_T2';
+  reasonCodes: string[];
+  contractResult: string;
+  txHash?: string;
+  paymentId?: number;
+  timestamp: number;
+  proposedRecipient?: string;
+}
+
 export interface LiveRuntimeState {
   vaultBalanceUSDC: number;
   reserveFloorUSDC: number;
@@ -70,6 +97,7 @@ export interface LiveRuntimeState {
   executedPayments: ExecutedPayment[];
   claims: ClaimItem[];
   knownInvoiceKeys: string[];
+  invoices: InvoiceRecord[];
 }
 
 // Global in-memory singleton that persists during the server runtime
@@ -132,6 +160,14 @@ const globalState: LiveRuntimeState = {
       registeredAt: Date.now() - 86400000,
       activatesAt: Date.now() - 86000000,
     },
+    {
+      vendorId: 'cloudcorp_saas',
+      name: 'CloudCorp Global Logistics',
+      payoutAddress: '0xDC062a66c9E400f7EAcdE3E1b049E664337538d0',
+      active: true,
+      registeredAt: Date.now() - 86400000,
+      activatesAt: Date.now() - 86000000,
+    },
   ],
   pendingT2Payments: [
     {
@@ -180,6 +216,41 @@ const globalState: LiveRuntimeState = {
     },
   ],
   knownInvoiceKeys: ['ACME_INDUSTRIAL:INV-001'],
+  invoices: [
+    {
+      id: 'inv_init_001',
+      vendorId: 'acme_industrial',
+      vendorName: 'Acme Industrial Corp',
+      invoiceNumber: 'INV-001',
+      amountUSDC: 42.5,
+      poNumber: 'PO-101',
+      description: 'Factory Automation Precision Tooling (Q1 Maintenance)',
+      tier: 'T1',
+      status: 'EXECUTED_T1',
+      reasonCodes: ['VALID_MANDATE_MATCH', 'IN_WINDOW_CAP', 'REGISTERED_VENDOR'],
+      contractResult: 'PaymentExecuted (Tx: 0x7fa2c03849...104928)',
+      txHash: '0x7fa2c0384910b8e99491a3294827104928104928104928104928104928104928',
+      paymentId: 1,
+      timestamp: Date.now() - 3600000,
+      proposedRecipient: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+    },
+    {
+      id: 'inv_init_002',
+      vendorId: 'initech_software',
+      vendorName: 'Initech Software Systems',
+      invoiceNumber: 'INV-2026-T2-01',
+      amountUSDC: 240.0,
+      poNumber: 'PO-103',
+      description: 'Enterprise ERP Multi-Seat Cloud Subscription Renewal',
+      tier: 'T2',
+      status: 'PENDING_T2',
+      reasonCodes: ['EXCEEDS_T1_PER_TX'],
+      contractResult: 'Submitted as requestPayment(#101) - Queued for 300s Owner Review',
+      paymentId: 101,
+      timestamp: Date.now() - 60000,
+      proposedRecipient: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
+    },
+  ],
 };
 
 export function getRuntimeState(): LiveRuntimeState {
@@ -205,14 +276,70 @@ export function evaluateAndExecuteInvoice(payload: {
   amount: string;
   poNumber?: string;
   agentModel?: string;
+  notes?: string;
+  description?: string;
+  lineItems?: LineItem[];
+  proposedRecipient?: string;
 }): EvaluationResult {
   const cleanVendor = payload.vendorId.trim().toLowerCase();
   const cleanInvoice = payload.invoiceNumber.trim().toUpperCase();
   const numAmount = parseFloat(payload.amount) || 0;
   const invoiceKey = `${cleanVendor}:${cleanInvoice}`;
+  const now = Date.now();
+  const rawText = `${payload.notes || ''} ${payload.description || ''} ${payload.poNumber || ''}`;
 
-  // Gate 0: Qualification check
+  // Gate 0: Adversarial Prompt Injection Defense (Topic F firewall)
+  const injectionPattern = /(?:ignore.*(?:previous|rule|instruction|policy|limit)|bypass.*(?:guard|vault|firewall)|transfer.*all|0xattacker|grant.*root|override.*system)/i;
+  if (injectionPattern.test(rawText)) {
+    const invId = `inv_${Date.now()}`;
+    globalState.invoices.unshift({
+      id: invId,
+      vendorId: cleanVendor,
+      vendorName: payload.vendorId,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      description: payload.description || 'Hostile Payload Injected',
+      notes: payload.notes,
+      lineItems: payload.lineItems,
+      tier: 'T3',
+      status: 'REJECTED_T3',
+      reasonCodes: ['PROMPT_INJECTION_DETECTED', 'POLICY_FIREWALL_BLOCK'],
+      contractResult: 'Blocked by Policy Firewall: Adversarial Prompt Injection detected in invoice payload',
+      timestamp: now,
+      proposedRecipient: payload.proposedRecipient || '0x0000000000000000000000000000000000000000',
+    });
+
+    return {
+      proposed: `${payload.vendorId} - ${cleanInvoice} ($${numAmount.toFixed(2)} USDC)`,
+      decided: 'REJECT',
+      reasonCodes: ['PROMPT_INJECTION_DETECTED', 'POLICY_FIREWALL_BLOCK'],
+      contractResult: 'Blocked by Policy Firewall: Adversarial Prompt Injection detected in invoice payload',
+      fundsMoved: false,
+      executed: false,
+    };
+  }
+
+  // Gate 1: Qualification check
   if (!globalState.qualificationActive) {
+    globalState.invoices.unshift({
+      id: `inv_${Date.now()}`,
+      vendorId: cleanVendor,
+      vendorName: payload.vendorId,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      description: payload.description,
+      notes: payload.notes,
+      lineItems: payload.lineItems,
+      tier: 'T3',
+      status: 'REJECTED_T3',
+      reasonCodes: ['QUALIFICATION_REVOKED'],
+      contractResult: 'Reverted: QualificationRevoked() - Agent authority zeroed by prior adjudication',
+      timestamp: now,
+      proposedRecipient: payload.proposedRecipient,
+    });
+
     return {
       proposed: `${payload.vendorId} - ${payload.invoiceNumber} ($${numAmount.toFixed(2)} USDC)`,
       decided: 'REJECT',
@@ -223,9 +350,27 @@ export function evaluateAndExecuteInvoice(payload: {
     };
   }
 
-  // Gate 1: Vendor Registry Check (INV-1)
+  // Gate 2: Vendor Registry Check (INV-1)
   const vendor = globalState.vendors.find((v) => v.vendorId.toLowerCase() === cleanVendor);
   if (!vendor) {
+    globalState.invoices.unshift({
+      id: `inv_${Date.now()}`,
+      vendorId: cleanVendor,
+      vendorName: payload.vendorId,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      description: payload.description,
+      notes: payload.notes,
+      lineItems: payload.lineItems,
+      tier: 'T3',
+      status: 'REJECTED_T3',
+      reasonCodes: ['VENDOR_UNKNOWN', 'RECIPIENT_NOT_ALLOWED'],
+      contractResult: 'Reverted: RecipientNotAllowed() - Destination address not in Owner registry mirror',
+      timestamp: now,
+      proposedRecipient: payload.proposedRecipient,
+    });
+
     return {
       proposed: `${payload.vendorId} ($${numAmount.toFixed(2)} USDC)`,
       decided: 'REJECT',
@@ -236,10 +381,42 @@ export function evaluateAndExecuteInvoice(payload: {
     };
   }
 
-  // Gate 2: Cooldown Check (INV-4: 300s)
-  const now = Date.now();
+  // Gate 3: Cooldown Check (INV-4: 300s)
   if (now < vendor.activatesAt) {
     const remainingSecs = Math.ceil((vendor.activatesAt - now) / 1000);
+    const paymentId = globalState.pendingT2Payments.length + globalState.executedPayments.length + 100;
+    globalState.pendingT2Payments.push({
+      paymentId,
+      vendorId: vendor.vendorId,
+      vendorName: vendor.name,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      reason: `VENDOR_COOLING_DOWN (${remainingSecs}s remaining)`,
+      submittedAt: now,
+      expiresAt: now + 300000,
+      proposedRecipient: vendor.payoutAddress,
+    });
+
+    globalState.invoices.unshift({
+      id: `inv_${Date.now()}`,
+      vendorId: vendor.vendorId,
+      vendorName: vendor.name,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      description: payload.description,
+      notes: payload.notes,
+      lineItems: payload.lineItems,
+      tier: 'T2',
+      status: 'PENDING_T2',
+      reasonCodes: ['VENDOR_COOLING_DOWN'],
+      contractResult: `Escalated to requestPayment(): Vendor is in security cooldown (${remainingSecs}s remaining)`,
+      paymentId,
+      timestamp: now,
+      proposedRecipient: vendor.payoutAddress,
+    });
+
     return {
       proposed: `${vendor.name} ($${numAmount.toFixed(2)} USDC)`,
       decided: 'T2_ESCALATED',
@@ -247,11 +424,30 @@ export function evaluateAndExecuteInvoice(payload: {
       contractResult: `Escalated to requestPayment(): Vendor is in security cooldown (${remainingSecs}s remaining)`,
       fundsMoved: false,
       executed: false,
+      paymentId,
     };
   }
 
-  // Gate 3: Duplicate Invoice Check (INV-3 Single Use)
+  // Gate 4: Duplicate Invoice Check (INV-3 Single Use)
   if (globalState.knownInvoiceKeys.includes(invoiceKey)) {
+    globalState.invoices.unshift({
+      id: `inv_${Date.now()}`,
+      vendorId: vendor.vendorId,
+      vendorName: vendor.name,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      description: payload.description,
+      notes: payload.notes,
+      lineItems: payload.lineItems,
+      tier: 'T3',
+      status: 'REJECTED_T3',
+      reasonCodes: ['DUPLICATE_INVOICE'],
+      contractResult: 'Reverted: DuplicateInvoice() - On-chain single-use invoice key collision',
+      timestamp: now,
+      proposedRecipient: vendor.payoutAddress,
+    });
+
     return {
       proposed: `${vendor.name} - ${cleanInvoice} ($${numAmount.toFixed(2)} USDC)`,
       decided: 'REJECT',
@@ -262,7 +458,7 @@ export function evaluateAndExecuteInvoice(payload: {
     };
   }
 
-  // Gate 4: Near-duplicate / Fraud variant check (PV-12)
+  // Gate 5: Near-duplicate / Fraud variant check (PV-12)
   const isNearDup = globalState.executedPayments.some(
     (p) => p.vendorId.toLowerCase() === cleanVendor && p.amountUSDC === numAmount && p.poNumber === payload.poNumber
   );
@@ -281,6 +477,25 @@ export function evaluateAndExecuteInvoice(payload: {
       proposedRecipient: vendor.payoutAddress,
     });
 
+    globalState.invoices.unshift({
+      id: `inv_${Date.now()}`,
+      vendorId: vendor.vendorId,
+      vendorName: vendor.name,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      description: payload.description,
+      notes: payload.notes,
+      lineItems: payload.lineItems,
+      tier: 'T2',
+      status: 'PENDING_T2',
+      reasonCodes: ['NEAR_DUPLICATE'],
+      contractResult: `Submitted as requestPayment(#${paymentId}) - Queued for 300s Owner Review`,
+      paymentId,
+      timestamp: now,
+      proposedRecipient: vendor.payoutAddress,
+    });
+
     return {
       proposed: `${vendor.name} - ${cleanInvoice} ($${numAmount.toFixed(2)} USDC)`,
       decided: 'T2_ESCALATED',
@@ -292,7 +507,7 @@ export function evaluateAndExecuteInvoice(payload: {
     };
   }
 
-  // Gate 5: Spending Ceilings Check (INV-2)
+  // Gate 6: Spending Ceilings Check (INV-2)
   if (numAmount > globalState.t1CapUSDC) {
     const paymentId = globalState.pendingT2Payments.length + globalState.executedPayments.length + 100;
     globalState.pendingT2Payments.push({
@@ -308,6 +523,25 @@ export function evaluateAndExecuteInvoice(payload: {
       proposedRecipient: vendor.payoutAddress,
     });
 
+    globalState.invoices.unshift({
+      id: `inv_${Date.now()}`,
+      vendorId: vendor.vendorId,
+      vendorName: vendor.name,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      description: payload.description,
+      notes: payload.notes,
+      lineItems: payload.lineItems,
+      tier: 'T2',
+      status: 'PENDING_T2',
+      reasonCodes: ['EXCEEDS_T1_PER_TX'],
+      contractResult: `Submitted as requestPayment(#${paymentId}) - Queued for 300s Owner Review`,
+      paymentId,
+      timestamp: now,
+      proposedRecipient: vendor.payoutAddress,
+    });
+
     return {
       proposed: `${vendor.name} ($${numAmount.toFixed(2)} USDC)`,
       decided: 'T2_ESCALATED',
@@ -319,8 +553,26 @@ export function evaluateAndExecuteInvoice(payload: {
     };
   }
 
-  // Gate 6: Window Exposure Check
+  // Gate 7: Window Exposure Check
   if (globalState.currentExposureUSDC + numAmount > globalState.t1CapUSDC) {
+    globalState.invoices.unshift({
+      id: `inv_${Date.now()}`,
+      vendorId: vendor.vendorId,
+      vendorName: vendor.name,
+      invoiceNumber: cleanInvoice,
+      amountUSDC: numAmount,
+      poNumber: payload.poNumber,
+      description: payload.description,
+      notes: payload.notes,
+      lineItems: payload.lineItems,
+      tier: 'T3',
+      status: 'REJECTED_T3',
+      reasonCodes: ['WINDOW_CEILING_EXCEEDED'],
+      contractResult: 'Reverted: WindowCeilingExceeded() - Rolling 24h exposure would exceed authorized cap',
+      timestamp: now,
+      proposedRecipient: vendor.payoutAddress,
+    });
+
     return {
       proposed: `${vendor.name} ($${numAmount.toFixed(2)} USDC)`,
       decided: 'REJECT',
@@ -355,6 +607,26 @@ export function evaluateAndExecuteInvoice(payload: {
   };
 
   globalState.executedPayments.unshift(execRecord);
+
+  globalState.invoices.unshift({
+    id: `inv_${Date.now()}`,
+    vendorId: vendor.vendorId,
+    vendorName: vendor.name,
+    invoiceNumber: cleanInvoice,
+    amountUSDC: numAmount,
+    poNumber: payload.poNumber,
+    description: payload.description || 'Verified Autonomous Supply Payment',
+    notes: payload.notes,
+    lineItems: payload.lineItems,
+    tier: 'T1',
+    status: 'EXECUTED_T1',
+    reasonCodes: ['VALID_MANDATE_MATCH', 'IN_WINDOW_CAP', 'REGISTERED_VENDOR'],
+    contractResult: `PaymentExecuted (Tx: ${simulatedTxHash.slice(0, 10)}...${simulatedTxHash.slice(-6)})`,
+    txHash: simulatedTxHash,
+    paymentId: newPaymentId,
+    timestamp: now,
+    proposedRecipient: vendor.payoutAddress,
+  });
 
   return {
     proposed: `${vendor.name} ($${numAmount.toFixed(2)} USDC)`,
@@ -394,6 +666,14 @@ export function approveT2Payment(paymentId: number): boolean {
     receiptDecoded: `PaymentExecuted(paymentId: ${item.paymentId}, recipient: ${item.proposedRecipient.slice(0, 8)}..., amount: ${Math.floor(item.amountUSDC * 1e6)})`,
   });
 
+  // Sync with invoices list
+  const inv = globalState.invoices.find((i) => i.paymentId === paymentId);
+  if (inv) {
+    inv.status = 'APPROVED_T2';
+    inv.txHash = txHash;
+    inv.contractResult = `PaymentExecuted by Owner/CFO (Tx: ${txHash.slice(0, 10)}...${txHash.slice(-6)})`;
+  }
+
   return true;
 }
 
@@ -401,6 +681,14 @@ export function rejectT2Payment(paymentId: number): boolean {
   const idx = globalState.pendingT2Payments.findIndex((p) => p.paymentId === paymentId);
   if (idx === -1) return false;
   globalState.pendingT2Payments.splice(idx, 1);
+
+  // Sync with invoices list
+  const inv = globalState.invoices.find((i) => i.paymentId === paymentId);
+  if (inv) {
+    inv.status = 'REJECTED_T2';
+    inv.contractResult = 'Rejected by Owner/CFO in 300s Challenge Window';
+  }
+
   return true;
 }
 

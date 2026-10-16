@@ -75,12 +75,12 @@ export const INSTITUTIONAL_ACCOUNTS: Record<Exclude<RoleType, 'WALLET'>, UserAcc
     id: 'acc_agent_005',
     email: 'vendor@cloudcorp.com',
     password: 'VendorPassword2026!',
-    name: 'Autonomous AP Submitter',
-    title: 'Inbound Invoicing Operator',
-    department: 'Enterprise AP & Supplier Gateway',
+    name: 'CloudCorp Global Logistics',
+    title: 'Enterprise Supplier & Authorized AP Invoicing Agent',
+    department: 'Global Logistics & Inbound Billing Portal',
     role: 'AGENT',
     address: '0xDC062a66c9E400f7EAcdE3E1b049E664337538d0',
-    badge: 'AUTONOMOUS SIGNER',
+    badge: 'VENDOR / AP AGENT',
     color: 'rose',
     avatarSeed: 'agent-submitter',
   },
@@ -138,6 +138,7 @@ interface AuthContextType {
   isUnderwriter: boolean;
   isAdjudicator: boolean;
   isAgent: boolean;
+  isVendor: boolean;
   // Auth challenge modal state
   authModalOpen: boolean;
   setAuthModalOpen: (open: boolean) => void;
@@ -402,6 +403,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isUnderwriter: currentUser.role === 'UNDERWRITER',
         isAdjudicator: currentUser.role === 'ADJUDICATOR',
         isAgent: currentUser.role === 'AGENT',
+        isVendor: currentUser.role === 'AGENT',
         authModalOpen,
         setAuthModalOpen,
         targetRoleForModal,

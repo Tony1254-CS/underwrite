@@ -33,6 +33,7 @@ export async function GET() {
       vendors: live.vendors,
       pendingT2Payments: live.pendingT2Payments,
       executedPayments: live.executedPayments,
+      invoices: live.invoices || [],
       qualificationActive: live.qualificationActive,
       timestamp: new Date().toISOString(),
     });

@@ -10,7 +10,7 @@ const ROLE_PORTAL_ROUTES: Record<RoleType, string> = {
   EXAMINER: '/portals/examiner',
   UNDERWRITER: '/portals/underwriter',
   ADJUDICATOR: '/portals/adjudicator',
-  AGENT: '/submit',
+  AGENT: '/portals/vendor',
   WALLET: '/portals/owner',
 };
 

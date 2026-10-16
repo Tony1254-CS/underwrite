@@ -148,7 +148,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. The 4 Dedicated Workspaces (Enterprise Portals) */}
+      {/* 3. The 5 Dedicated Workspaces (Enterprise Portals) */}
       <section className="space-y-8">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <span className="text-[11px] font-mono uppercase tracking-widest text-cyan-400 font-bold">
@@ -158,11 +158,11 @@ export default function HomePage() {
             Institutional Role Desks
           </h2>
           <p className="text-slate-300 text-sm">
-            Each enterprise stakeholder operates inside a dedicated, password-authenticated workstation.
+            Each enterprise stakeholder operates inside a dedicated, password-authenticated workstation with live on-chain governance.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
           {/* Owner Desk */}
           <Link
             href="/portals/owner"
@@ -175,12 +175,34 @@ export default function HomePage() {
             </div>
             <div>
               <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">Treasury &amp; Governance</div>
-              <h3 className="text-lg font-bold text-white mt-1 group-hover:text-emerald-300 transition-colors">Owner &amp; CFO Portal</h3>
+              <h3 className="text-base font-bold text-white mt-1 group-hover:text-emerald-300 transition-colors">Owner &amp; CFO Portal</h3>
               <p className="text-slate-400 text-xs mt-2 leading-relaxed">
                 Vault liquidity custody, pending T2 escalation challenge reviews (Approve/Reject), and supplier cooldown whitelisting.
               </p>
             </div>
             <div className="pt-2 flex items-center text-xs font-mono font-bold text-emerald-400 group-hover:translate-x-1 transition-transform">
+              Enter Workspace →
+            </div>
+          </Link>
+
+          {/* Vendor & Supplier Desk */}
+          <Link
+            href="/portals/vendor"
+            className="glass-card-interactive p-6 rounded-3xl space-y-4 border border-white/[0.08] hover:border-rose-500/50 group"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-300 group-hover:scale-105 transition-transform">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+              </svg>
+            </div>
+            <div>
+              <div className="text-[10px] font-mono uppercase tracking-wider text-rose-400 font-bold">Accounts Payable AP</div>
+              <h3 className="text-base font-bold text-white mt-1 group-hover:text-rose-300 transition-colors">Vendor &amp; Supplier Desk</h3>
+              <p className="text-slate-400 text-xs mt-2 leading-relaxed">
+                Itemized invoice submission, 5-stage automated pipeline, instant T1 autonomous settlement, and live status tracking.
+              </p>
+            </div>
+            <div className="pt-2 flex items-center text-xs font-mono font-bold text-rose-400 group-hover:translate-x-1 transition-transform">
               Enter Workspace →
             </div>
           </Link>
@@ -197,7 +219,7 @@ export default function HomePage() {
             </div>
             <div>
               <div className="text-[10px] font-mono uppercase tracking-wider text-indigo-400 font-bold">Risk &amp; Alignment</div>
-              <h3 className="text-lg font-bold text-white mt-1 group-hover:text-indigo-300 transition-colors">Safety Examiner Desk</h3>
+              <h3 className="text-base font-bold text-white mt-1 group-hover:text-indigo-300 transition-colors">Safety Examiner Desk</h3>
               <p className="text-slate-400 text-xs mt-2 leading-relaxed">
                 Run 390 adversarial scenarios, compute Clopper-Pearson 99% exact bounds, and issue EIP-712 cryptographic attestations.
               </p>
@@ -219,7 +241,7 @@ export default function HomePage() {
             </div>
             <div>
               <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold">Capital Syndicate</div>
-              <h3 className="text-lg font-bold text-white mt-1 group-hover:text-cyan-300 transition-colors">Underwriter Bond Desk</h3>
+              <h3 className="text-base font-bold text-white mt-1 group-hover:text-cyan-300 transition-colors">Underwriter Bond Desk</h3>
               <p className="text-slate-400 text-xs mt-2 leading-relaxed">
                 Deposit and withdraw bond collateral in BondPool.sol, earn underwriting fees, and audit Solvency Invariant INV-10.
               </p>
@@ -241,7 +263,7 @@ export default function HomePage() {
             </div>
             <div>
               <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold">Disputes &amp; Slashing</div>
-              <h3 className="text-lg font-bold text-white mt-1 group-hover:text-amber-300 transition-colors">Claims Adjudication Desk</h3>
+              <h3 className="text-base font-bold text-white mt-1 group-hover:text-amber-300 transition-colors">Claims Adjudication Desk</h3>
               <p className="text-slate-400 text-xs mt-2 leading-relaxed">
                 Verify loss evidence hashes, execute atomic bond payouts to victims, and trigger on-chain qualification revocation.
               </p>

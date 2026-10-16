@@ -58,7 +58,8 @@ export function PortalGuard({ requiredRole, portalName, children }: PortalGuardP
           requiredRole === 'OWNER' ? 'bg-emerald-500' :
           requiredRole === 'EXAMINER' ? 'bg-indigo-500' :
           requiredRole === 'UNDERWRITER' ? 'bg-cyan-500' :
-          'bg-amber-500'
+          requiredRole === 'ADJUDICATOR' ? 'bg-amber-500' :
+          'bg-rose-500'
         }`} />
 
         {/* Security Shield Icon */}
@@ -135,7 +136,8 @@ export function PortalGuard({ requiredRole, portalName, children }: PortalGuardP
                 requiredRole === 'OWNER' ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 shadow-emerald-500/25' :
                 requiredRole === 'EXAMINER' ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:brightness-110 shadow-indigo-500/25' :
                 requiredRole === 'UNDERWRITER' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 shadow-cyan-500/25' :
-                'bg-gradient-to-r from-amber-500 to-orange-600 hover:brightness-110 shadow-amber-500/25'
+                requiredRole === 'ADJUDICATOR' ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:brightness-110 shadow-amber-500/25' :
+                'bg-gradient-to-r from-rose-500 to-pink-600 hover:brightness-110 shadow-rose-500/25'
               }`}
             >
               <span>{unlocking ? 'Verifying Password...' : `Authenticate as ${targetAcc.name}`}</span>

@@ -411,19 +411,22 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 
 ---
 
-## DEC-029 — Commercial Startup Landing Architecture, Dedicated Telemetry HUD & Compact Navbar
+## DEC-030 — Dedicated Enterprise Vendor & Supplier Invoicing Portal with 5-Stage AP Pipeline
 
-- **Context**: In commercial enterprise fintech startups, dropping an unauthenticated user directly into low-level telemetry dials (Authority Meter, window consumption) confuses first-time visitors and prospects. A real production startup must present a high-converting, crystal-clear commercial landing page explaining the core problem (why CFOs fear giving AI bank cards), the mathematical solution (pre-flight adversarial exams + on-chain policy + bonded underwriter pools), enterprise pilot tiers, and prominent Sign In CTAs. Furthermore, the collapsed navbar icons were oversized and chunky.
+- **Context**: The foundational concept of Underwrite (FinTechathon 2026 Topic F) requires an end-to-end autonomous accounts payable workflow: an enterprise vendor submits an invoice, the AI agent inspects and validates it, the deterministic policy engine evaluates tiering ($T_0$ observe, $T_1$ autonomous execution $\le \$180$, $T_2$ pending owner challenge $> \$180$ up to $\$500$, $T_3$ prohibited/blocked), the smart contract (`UnderwriteVault.sol`) checks limits, and real funds move or escalate on-chain. Without a dedicated Vendor/Supplier Portal, vendors had no workspace to submit invoices, monitor the 5-stage pipeline, or track their settlement receipts.
 - **Options**:
-  1. Leave technical HUD on the root path `/`.
-  2. Reorganize platform into commercial startup structure:
-     - Root path (`/`) converted into world-class Startup Landing Page with problem/solution breakdown, proof metrics, 4-desk overview, commercial monetization model (0.15% fee), and enterprise pilot tiers.
-     - Technical Protocol HUD moved to dedicated `/dashboard` route.
-     - Sidebar navigation redesigned with slim 64px rail, refined compact 16px icons inside 32px rounded-xl pills, micro-typography, and smooth hover-expansion.
-     - Header updated with global SaaS top navigation (Overview, Protocol HUD, Inbound AP, Audit Trail) and direct Sign In link.
+  1. Rely solely on a generic debug invoice studio without supplier credentials or live state tracking.
+  2. Architect a dedicated Enterprise Vendor & Supplier Invoicing Portal (`/portals/vendor`) with:
+     - Password-guarded supplier access (`vendor@cloudcorp.com` / `VendorPassword2026!`).
+     - Real-time supplier on-chain status (allowlist mirror status, 300s security cooldown timer, lifetime settled volume).
+     - 5 one-click operational presets demonstrating the full governance envelope: $T_1$ Autonomous Settlement (Cloud compute $35 USDC), $T_2$ CFO Challenge Escalation (GPU lease $250 USDC), $T_3$ Unregistered Vendor Revert (INV-1), $T_3$ Adversarial Prompt Injection Defense, and $T_3$ Single-Use Duplicate Replay Revert (INV-3).
+     - Itemized line-items composition desk with automatic totals calculation.
+     - Interactive 5-Stage AP Lifecycle visualizer (`Ingestion` $\to$ `Semantic Inspection` $\to$ `Policy Engine` $\to$ `Smart Contract` $\to$ `Settlement Receipt`).
+     - Real-time Invoices Ledger with 2.5s live polling and direct two-way synchronization with CFO approvals on `/portals/owner`.
 - **Decision**: Implement Option 2.
-- **Consequences**: Elevated commercial credibility, crystal-clear user comprehension within 60 seconds, clear path to revenue, and refined luxury typography and iconography.
+- **Consequences**: Completely unifies the end-to-end financial lifecycle from supplier submission to autonomous on-chain settlement or human challenge review, providing judges with a production-grade AP automation experience.
 - **Status**: ACCEPTED
+
 
 
 

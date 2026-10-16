@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web/`: Dedicated Enterprise Vendor & Supplier Invoicing Portal & 5-Stage AP Pipeline (DEC-030):
+  - `web/src/app/portals/vendor/page.tsx`: Built dedicated Enterprise Vendor Portal protected by `PortalGuard` under `AGENT` role (`vendor@cloudcorp.com` / `VendorPassword2026!`). Features active supplier on-chain identity verification, allowlist status, 300s cooldown monitoring, and live vault parameter limits.
+  - Interactive 5-Stage AP Lifecycle Visualizer: Real-time animated pipeline displaying Inbound Ingestion $\to$ AI Agent Semantic Inspection & Prompt Injection Filter $\to$ Deterministic Policy Engine Tiering ($T_0-T_3$) $\to$ Smart Contract Execution $\to$ Cryptographic Settlement Receipt.
+  - 5 One-Click Operational Presets: Instant testing for $T_1$ Autonomous Settlement (Cloud compute $35 USDC), $T_2$ CFO Challenge Escalation (GPU upgrade $250 USDC), $T_3$ Unknown Vendor Rejection (INV-1), $T_3$ Adversarial Prompt Injection Defense, and $T_3$ Duplicate Replay Rejection (INV-3).
+  - Itemized Invoice Composition Studio: Dynamic line-items editor with real-time subtotal calculation, PO matching, and adversarial memo testing.
+  - Real-Time Cross-Desk Invoices Ledger: Live ledger updating every 2.5s with status tags (`PAID T1`, `QUEUED FOR CFO T2`, `CFO APPROVED`, `BLOCKED T3`), on-chain transaction hash links, and direct two-way synchronization with Owner approvals on `/portals/owner`.
+  - `web/src/lib/runtimeState.ts`: Extended with `InvoiceRecord`, `LineItem`, adversarial prompt-injection heuristic scanning, and synchronized status updates on CFO `approveT2Payment`/`rejectT2Payment`.
+  - `web/src/app/page.tsx`: Updated institutional workstations grid to 5 desks prominently featuring the Vendor & Supplier Portal.
+  - `web/src/components/Sidebar.tsx` & `Header.tsx`: Integrated Vendor Portal navigation with dedicated icon and direct routing.
 - `web/`: Commercial Startup Landing Architecture & Compact Navbar (DEC-029):
   - `web/src/app/page.tsx`: Transformed root landing page into a premier commercial startup landing experience featuring executive value proposition, CFO bottleneck analysis, 4-desk portal tour, on-chain proof metrics, enterprise monetization model (0.15% fee), and enterprise pilot tiers.
   - `web/src/app/dashboard/page.tsx`: Relocated technical Protocol HUD to dedicated dashboard route featuring live Authority Meter, 24h rolling window consumption bar, and Invariant proofs.
