@@ -328,4 +328,50 @@ contract BondPoolComprehensiveTest is Test, VaultErrors, BondPoolErrors {
         vm.expectRevert(NoLockedCapital.selector);
         bondPool.release(qualId);
     }
+
+    /// @notice INV-11: Property fuzz test verifying sum(payouts) <= locked, single payout per paymentId, and transfer to vault
+    function testFuzz_INV11_payout_bounded_and_transferred_to_vault(
+        uint256 paymentAmount,
+        uint256 claimedLoss,
+        uint256 bondAmount
+    ) public {
+        bondAmount = bound(bondAmount, 50e6, 1000e6);
+        uint256 maxPerTx = bondAmount < 200e6 ? bondAmount : 200e6;
+        paymentAmount = bound(paymentAmount, 10e6, maxPerTx);
+        claimedLoss = bound(claimedLoss, 1, paymentAmount);
+
+        bytes32 qualId = _setupActiveQualification(bondAmount);
+
+        vm.prank(agent);
+        uint256 pid = vault.pay(recipient, paymentAmount, keccak256("fuzz-inv11-inv"), keccak256("m"));
+
+        vm.prank(owner);
+        uint256 cid = bondPool.fileClaim(pid, claimedLoss, keccak256("fuzz-ev"));
+
+        uint256 vaultBalBefore = token.balanceOf(address(vault));
+        uint256 lockedBefore = bondPool.locked(qualId);
+
+        vm.prank(adjudicator);
+        uint256 payout = bondPool.approveClaim(cid, claimedLoss);
+
+        // 1. Payout bounded by net loss, perClaimCap, and locked/remaining
+        uint256 expectedNet = claimedLoss > DEDUCTIBLE ? claimedLoss - DEDUCTIBLE : 0;
+        uint256 expectedCap = expectedNet < PER_CLAIM_CAP ? expectedNet : PER_CLAIM_CAP;
+        uint256 expectedPayout = expectedCap < bondAmount ? expectedCap : bondAmount;
+
+        assertEq(payout, expectedPayout);
+        assertLe(payout, lockedBefore);
+        assertLe(bondPool.paidOut(qualId), lockedBefore);
+
+        // 2. Payout strictly went to the vault
+        assertEq(token.balanceOf(address(vault)), vaultBalBefore + payout);
+
+        // 3. Payment cannot be claimed or paid out again
+        assertFalse(vault.isClaimable(pid));
+        assertFalse(bondPool.isClaimable(pid));
+        vm.prank(owner);
+        vm.expectRevert(PaymentNotClaimable.selector);
+        bondPool.fileClaim(pid, claimedLoss, keccak256("fuzz-ev-2"));
+    }
 }
+

@@ -4,19 +4,21 @@ pragma solidity 0.8.28;
 import { Test } from "forge-std/Test.sol";
 import { UnderwriteVault } from "../../src/UnderwriteVault.sol";
 import { MockUSDC } from "../../src/MockUSDC.sol";
-import { MockBondPool } from "../mocks/MockBondPool.sol";
+import { BondPool } from "../../src/BondPool.sol";
 import { InvariantHandler } from "./Handler.sol";
 
 contract VaultInvariantTest is Test {
     UnderwriteVault public vault;
     MockUSDC public token;
-    MockBondPool public bondPool;
+    BondPool public bondPool;
     InvariantHandler public handler;
 
     address public owner = address(0xA1);
     uint256 public examinerPk = 0xB1E5;
     address public examiner;
     address public guardian = address(0xC1);
+    address public underwriter = address(0xD1);
+    address public adjudicator = address(0xE1);
     address public agent1 = address(0xAA1);
     address public vendor1 = address(0xEE1);
     address public vendor2 = address(0xEE2);
@@ -27,15 +29,21 @@ contract VaultInvariantTest is Test {
     bytes32 public qualId;
 
     uint256 public constant INITIAL_VAULT_FUNDS = 50_000_000_000; // 50,000 USDC
+    uint256 public constant UNDERWRITER_DEPOSIT = 20_000_000_000; // 20,000 USDC
     uint256 public constant T1_MAX_PER_TX = 180_000_000;
     uint256 public constant T1_MAX_PER_WINDOW = 500_000_000;
     uint256 public constant T2_MAX_PER_TX = 1000_000_000;
     uint256 public constant RESERVE_FLOOR = 500_000_000;
 
+    uint256 public constant DEDUCTIBLE = 5_000_000; // 5 USDC
+    uint256 public constant PER_CLAIM_CAP = 500_000_000; // 500 USDC
+    uint256 public constant CLAIM_GRACE = 7 days;
+
     function setUp() public {
         examiner = vm.addr(examinerPk);
         token = new MockUSDC();
-        bondPool = new MockBondPool();
+
+        bondPool = new BondPool(underwriter, adjudicator, address(token), DEDUCTIBLE, PER_CLAIM_CAP, CLAIM_GRACE);
 
         UnderwriteVault.Ceilings memory ceilings =
             UnderwriteVault.Ceilings({ perTx: 300_000_000, perWindow: 1000_000_000, t2PerTx: 2000_000_000 });
@@ -44,7 +52,16 @@ contract VaultInvariantTest is Test {
             owner, examiner, guardian, address(bondPool), address(token), ceilings, 86400, RESERVE_FLOOR, 300, 300
         );
 
+        vm.prank(underwriter);
+        bondPool.setVault(address(vault));
+
         token.mint(address(vault), INITIAL_VAULT_FUNDS);
+        token.mint(underwriter, UNDERWRITER_DEPOSIT);
+
+        vm.startPrank(underwriter);
+        token.approve(address(bondPool), type(uint256).max);
+        bondPool.deposit(UNDERWRITER_DEPOSIT);
+        vm.stopPrank();
 
         vm.startPrank(owner);
         vault.addRecipient(vendor1, 20_000_000_000);
@@ -79,12 +96,12 @@ contract VaultInvariantTest is Test {
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(examinerPk, digest);
         bytes memory sig = abi.encodePacked(r, s, v);
 
-        bondPool.setRemaining(qualId, 2000_000_000); // 2000 USDC bond backing
-
         vm.prank(owner);
         vault.activateQualification(a, sig);
 
-        handler = new InvariantHandler(vault, token, bondPool, qualId, agent1, owner, vendor1, vendor2, unallowed);
+        handler = new InvariantHandler(
+            vault, token, bondPool, qualId, agent1, owner, adjudicator, vendor1, vendor2, unallowed
+        );
 
         targetContract(address(handler));
     }
@@ -94,8 +111,9 @@ contract VaultInvariantTest is Test {
         // Agent key itself never holds any vault tokens
         assertEq(token.balanceOf(agent1), 0);
 
-        // Vault balance decrease exactly matches total T1 + total T2 executed
-        uint256 expectedVaultBalance = INITIAL_VAULT_FUNDS - (handler.ghost_totalT1Paid() + handler.ghost_totalT2Paid());
+        // Vault balance change = initial - T1 - T2 + total claim payouts received
+        uint256 expectedVaultBalance = INITIAL_VAULT_FUNDS - (handler.ghost_totalT1Paid() + handler.ghost_totalT2Paid())
+            + handler.ghost_totalPayoutsForQual();
         assertEq(token.balanceOf(address(vault)), expectedVaultBalance);
 
         // Unallowed recipient never receives any funds
@@ -121,5 +139,38 @@ contract VaultInvariantTest is Test {
     /// @notice INV-10: Unreconciled T1 exposure <= bondPool.remaining(qualId) at all times.
     function invariant_INV10_exposure_bounded_by_bond_remaining() public view {
         assertLe(vault.exposure(qualId), bondPool.remaining(qualId));
+    }
+
+    /// @notice INV-11: Sum of payouts for a qual <= locked amount; at most one payout per paymentId; payouts go to vault.
+    function invariant_INV11_payout_bounds_and_single_payout() public view {
+        // 1. Total payouts for qualId <= locked amount
+        assertLe(handler.ghost_totalPayoutsForQual(), bondPool.locked(qualId));
+        assertEq(bondPool.paidOut(qualId), handler.ghost_totalPayoutsForQual());
+
+        // 2. Each paymentId gets at most 1 approved payout
+        uint256[] memory t1Pids = handler.getT1PaymentIds();
+        for (uint256 i = 0; i < t1Pids.length; i++) {
+            uint256 pid = t1Pids[i];
+            assertLe(handler.ghost_paymentPayoutCount(pid), 1);
+            if (handler.ghost_paymentPayoutCount(pid) == 1) {
+                // Payout must not exceed payment amount
+                (,, uint256 pAmount,,,,,) = vault.payments(pid);
+                assertLe(handler.ghost_paymentPayoutTotal(pid), pAmount);
+            }
+        }
+    }
+
+    /// @notice INV-14: Reconciled payments cannot be claimed; each payment is paid out at most once.
+    function invariant_INV14_reconciled_payments_unclaimable() public view {
+        uint256[] memory t1Pids = handler.getT1PaymentIds();
+        for (uint256 i = 0; i < t1Pids.length; i++) {
+            uint256 pid = t1Pids[i];
+            (,,,,,,, bool reconciled) = vault.payments(pid);
+            if (reconciled) {
+                // Reconciled payments must never be reported as claimable
+                assertFalse(vault.isClaimable(pid));
+                assertFalse(bondPool.isClaimable(pid));
+            }
+        }
     }
 }
