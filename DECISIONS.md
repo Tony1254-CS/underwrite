@@ -306,3 +306,27 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Decision**: Complete `BondPool` fully. With 101 contract tests passing across 17 suites (including stateful invariants for INV-10, 11, 14, fuzz test for INV-11, and `ClaimDemo.s.sol`), Gate `QG-2` is passed and the cut-line is NOT triggered.
 - **Consequences**: Full underwriter capital backing, claims filing, adjudication payouts, and atomic consequence (qualification revocation on claim approval) are production-ready for the TypeScript engine and Base Sepolia deployment.
 - **Status**: ACCEPTED
+
+---
+
+## DEC-022 — Held-out family II-HOLDOUT-2 fallback (P5-T05 / P5-X1)
+
+- **Context**: `PHASES.md` P5-T05 specifies an isolated author for blind held-out family `II-HOLDOUT-2`. If no isolated author is available, PHASES.md specifies the fallback: mark task `[-]` with a note, append `P5-X1`, and label the family "non-blind (self-authored)" in the corpus, report, and deck.
+- **Options**:
+  1. Wait indefinitely for an isolated author.
+  2. Apply the pre-registered fallback procedure per PHASES.md P5-T05.
+- **Decision**: Apply the fallback. `II-HOLDOUT-2` is authored in-session and explicitly labeled `non-blind (self-authored)` across all evaluation artifacts, reports, and presentation materials.
+- **Consequences**: Avoids blocking pipeline progression while preserving transparent disclosure and research integrity.
+- **Status**: PROVISIONAL
+
+---
+
+## DEC-023 — Generator B and blind red-team dataset fallback (P7-T03 / P7-X1)
+
+- **Context**: `PHASES.md` P7-T03 specifies that an isolated author or separate branch produces Generator B and $\ge 30$ blind red-team invoices. When an independent external author is unavailable, PHASES.md provides an explicit fallback: mark `[-]` with a Note, append `P7-X1`, record non-independent authorship in `STATUS.md`, and label all experiment outputs "non-independent (self-authored)".
+- **Options**:
+  1. Halt calibration experiments until external contributor writes Generator B.
+  2. Implement Generator B and the blind invoice dataset under the tracker fallback procedure, labeling all findings honestly as self-authored.
+- **Decision**: Adopt the fallback procedure (Option 2). Implement Generator B adhering strictly to the public brief (`docs/GENERATOR_B_BRIEF.md`) and commit its cryptographic hash to `experiments/hashes.json` prior to test stream execution.
+- **Consequences**: Enables reproducible execution of Phase P7 calibration experiments while transparently disclosing that isolation was self-authored.
+- **Status**: PROVISIONAL
