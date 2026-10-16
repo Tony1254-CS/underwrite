@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web`: Interactive Authority Meter, rolling window exposure gauge, live spend simulation, and real-time state refresh on the Dashboard (P8-T03).
+- `web`: Server data layer with viem client, contract ABIs, and dynamic API endpoints `/api/state`, `/api/exams`, `/api/runs`, `/api/claims`, `/api/receipts` (P8-T02).
 - `web`: Next.js 14 and Tailwind CSS scaffold with system fonts, dark UI palette, and stub pages for Dashboard, Policy Card, Traces, Attack Lab, Claims, and Verify (P8-T01).
 - `plan.md`: Authoritative design specification for FinTechathon 2026 Topic F.
 - `PHASES.md`: 124-task phased execution tracker with quality gates QG-0 to QG-9.

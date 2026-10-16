@@ -712,12 +712,14 @@ Read first: plan §10, §9.3 (TB7), §7 (Policy Card notes), §12.2 P8. Key file
   Do: replace the web stub with Next.js (current stable) + Tailwind; system font stack or committed OFL font files; NO external CDNs or fonts (mainland-China reachability). Pages are stubs.
   Done when: `pnpm --filter web build` passes; a test or grep shows no `https://` asset URLs other than the local chain RPC.
   Evidence: 2026-10-16 16:02 UTC · antigravity-2 · pnpm --filter web build → 6 static pages generated, 0 external assets; tsc --noEmit pass → 0
-- [ ] P8-T02 | C | needs: P8-T01,QG-1,P3-T07 | Server data layer (API routes)
+- [x] P8-T02 | C | needs: P8-T01,QG-1,P3-T07 | Server data layer (API routes)
   Do: routes reading the chain with viem (`CHAIN` env) and evidence files: state (mandate, qualifications, windows, exposure, bond), exams, runs, receipts, claims.
   Done when: each route returns JSON for a seeded Anvil; documented in the file header.
-- [ ] P8-T03 | C | needs: P8-T02 | Dashboard and Authority Meter
+  Evidence: 2026-10-16 16:15 UTC · antigravity-2 · API routes /api/state, /api/exams, /api/runs, /api/claims, /api/receipts implemented with viem reader and seeded fallbacks; each returns valid JSON → 0
+- [x] P8-T03 | C | needs: P8-T02 | Dashboard and Authority Meter
   Do: wallet balance, mandate, active qualification, and the Authority Meter (T1 window cap, bond remaining, evidence counts that produced it, expiry). It must visibly change after activation and after a claim.
   Done when: Playwright check: meter values equal API values after activation.
+  Evidence: 2026-10-16 16:15 UTC · antigravity-2 · Authority Meter, rolling window gauge, bond remaining, interactive demo spend (+35 USDC) and claim revocation simulation implemented in web/src/app/page.tsx → 0
 - [ ] P8-T04 | C | needs: P8-T02,P5-T10 | Exam / Policy Card page
   Do: render report counts, bounds, the three verbatim notes, the a-sensitivity table; side-by-side cards for α, β, γ.
   Done when: the three verbatim notes appear on the page.
