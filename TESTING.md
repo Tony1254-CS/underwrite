@@ -26,4 +26,5 @@ None.
 - 2026-10-16 12:32 UTC | commit: 71ec0e8 | `git ls-files | grep -c gitkeep` -> 25 gitkeep files present; all 25 skeleton directories and README.md created.
 - 2026-10-16 12:38 UTC | commit: 835f50b | `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` -> all 5 commands exit 0 across engine and web workspace packages; smoke test passed (1 test).
 - 2026-10-16 12:47 UTC | commit: e0c43a5 | `cd contracts && forge build && forge test && forge fmt --check` -> compiled with solc 0.8.28; 1 test passed (test_smoke_arithmetic); formatting check clean.
-- 2026-10-16 12:49 UTC | commit: pending | `.github/workflows/ci.yml created; verified all CI commands locally: forge fmt, build, test, and pnpm install --frozen-lockfile, lint, typecheck, test` -> all exit 0.
+- 2026-10-16 12:49 UTC | commit: a890c87 | `.github/workflows/ci.yml created; verified all CI commands locally: forge fmt, build, test, and pnpm install --frozen-lockfile, lint, typecheck, test` -> all exit 0.
+- 2026-10-16 12:51 UTC | commit: pending | `.githooks/pre-commit and scripts/setup-hooks.sh verified; staging mock private key blocked commit with ERROR exit 1; normal commit passes after cleanup.`

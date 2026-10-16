@@ -1,0 +1,44 @@
+#!/usr/bin/env sh
+set -e
+
+# UNDERWRITE pre-commit hook
+# 1. Format check for Solidity contracts if staged
+STAGED_CONTRACTS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^contracts/.*\.(sol)$' || true)
+if [ -n "$STAGED_CONTRACTS" ]; then
+    echo "Running forge fmt --check..."
+    (cd contracts && forge fmt --check)
+fi
+
+# 2. Prettier and tsc if TypeScript is staged
+STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
+if [ -n "$STAGED_TS" ]; then
+    echo "Running tsc --noEmit and prettier..."
+    pnpm -r typecheck
+fi
+
+# 3. Secret scan on staged diff
+# Exclude .env.example, evidence/, contracts/deployments/, .githooks/
+STAGED_DIFF=$(git diff --cached -- . ':(exclude).env.example' ':(exclude)evidence/**' ':(exclude)contracts/deployments/**' ':(exclude).githooks/**' || true)
+
+if [ -n "$STAGED_DIFF" ]; then
+    # Check for PRIVATE_KEY=...
+    if printf '%s\n' "$STAGED_DIFF" | grep -qE '^\+[^+].*PRIVATE_KEY[[:space:]]*=[[:space:]]*[^[:space:]]+'; then
+        echo "ERROR: Potential PRIVATE_KEY detected in staged diff!" >&2
+        echo "Private keys must never be committed." >&2
+        exit 1
+    fi
+
+    # Check for Anthropic API keys (sk-ant-)
+    if printf '%s\n' "$STAGED_DIFF" | grep -qE '^\+[^+].*sk-ant-'; then
+        echo "ERROR: Anthropic API key pattern (sk-ant-) detected in staged diff!" >&2
+        exit 1
+    fi
+
+    # Check for generic sk- API keys (sk-[A-Za-z0-9]{20,})
+    if printf '%s\n' "$STAGED_DIFF" | grep -qE '^\+[^+].*sk-[A-Za-z0-9]{20,}'; then
+        echo "ERROR: API key pattern (sk-...) detected in staged diff!" >&2
+        exit 1
+    fi
+fi
+
+exit 0
