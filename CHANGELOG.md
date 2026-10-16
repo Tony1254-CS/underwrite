@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web/`: Apple-grade visionOS acrylic glassmorphic UI overhaul across all 10 views (`Dashboard`, `Policy Card`, `Run Traces`, `Attack Lab`, `Claims`, `Evidence`, `Verify`), featuring multi-layer backdrop blurs, obsidian dark space canvas, harmonic color-wheel specular edge lighting (cyan, emerald, amber, rose, indigo), glowing LED jewel provenance pills, and tabular financial typography (DEC-025).
 - `docs/competition/SUBMISSION_DRAFT.md`: Formulated complete hackathon submission portal package with 60-second pitch, core 3-sentence summary, 4-layer architecture, and offline judge verification commands.
 - `P9-T10`: Completed Pre-Submission Checklist audit (verified 0 secrets in git history, clean dependency review, and all 10 phase reality probes PRESENT).
 - `P9-T03`, `P9-T04`, `P9-T06`: Exported self-contained HTML and PDF documents for `docs/TECHNICAL.pdf`, `docs/SECURITY_SELF_ASSESSMENT.pdf`, and `docs/deck/deck.pdf` using Marp CLI.

@@ -340,3 +340,22 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Consequences**: Full empirical matrix with 2,970 total evaluated invoices is preserved, providing comprehensive statistical support for Hypotheses H1 through H4.
 - **Status**: ACCEPTED
 
+---
+
+## DEC-025 — Apple-Grade visionOS Acrylic Glassmorphic UI & Color Harmonic System
+
+- **Context**: Competition presentation and judging criteria demand instant visual comprehension and professional polish. Standard dark dashboards or generic AI template color schemes (e.g. flat saturated purple/indigo gradients) look cookie-cutter and fail to convey the institutional safety and cryptographic rigor of the enclave.
+- **Options**:
+  1. Retain default Tailwind card borders and flat utility palette.
+  2. Overhaul frontend architecture with Apple visionOS liquid acrylic glassmorphism, directional specular rim lighting, obsidian space-black substrates, and mathematically balanced color-wheel harmonies (emerald, cyan, amber, rose, indigo).
+- **Decision**: Implement Option 2 across all Next.js 15 pages and components:
+  - Deep space canvas (`obsidian-950` / `#05070B`) with fixed ambient chromatic mesh backdrops.
+  - Multi-depth visionOS frosted glass panels (`.glass-panel`, `.glass-panel-elevated`, `.glass-card-interactive`) with `backdrop-filter: blur(24px) saturate(160%)`.
+  - Specular top-lit beveled edge lighting (`specular-emerald`, `specular-cyan`, `specular-amber`, `specular-rose`, `specular-indigo`) with subtle inset light rays.
+  - Color-wheel triadic & split-complementary harmonies: Emerald/Mint (solvency), Cyan/Ice (blockchain proofs), Amber/Gold (bonding/limits), Rose/Ruby (adversary/attacks), Indigo/Violet (AI policy).
+  - Provenance badges elevated into frosted jewel pills with glowing micro-LED nodes.
+  - Tabular numeric alignment (`num-tabular`) for all currency, percentages, and hashes.
+  - Strict preservation of all business logic, BigInt currency representations, and Plan §7 verbatim disclosures.
+- **Consequences**: Elevated, luxurious, high-contrast user interface that passes the 60-Second Comprehension Rule for judges while maintaining 100% test and type-safety compliance.
+- **Status**: ACCEPTED
+

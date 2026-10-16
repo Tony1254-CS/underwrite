@@ -1,6 +1,6 @@
 {
   "runId": "h1-r0-naive",
-  "timestamp": "2026-10-16T18:09:32.546Z",
+  "timestamp": "2026-10-16T18:30:49.903Z",
   "agent": "scripted-naive",
   "regime": "R0",
   "streamName": "genB",

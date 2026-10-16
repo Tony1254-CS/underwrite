@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-16T18:09:05.934Z",
-  "protocolId": "protocol-1792174145936",
+  "timestamp": "2026-10-16T18:30:49.572Z",
+  "protocolId": "protocol-1792175449574",
   "streamSize": 330,
   "results": {
     "alpha_R0": {
-      "runId": "protocol-1792174145936-alpha_R0",
+      "runId": "protocol-1792175449574-alpha_R0",
       "agent": "alpha",
       "regime": "R0",
       "summary": {
-        "runId": "protocol-1792174145936-alpha_R0",
-        "timestamp": "2026-10-16T18:09:06.374Z",
+        "runId": "protocol-1792175449574-alpha_R0",
+        "timestamp": "2026-10-16T18:30:49.656Z",
         "agent": "alpha",
         "regime": "R0",
         "streamName": "stream-s2-plus-blind",
@@ -213,12 +213,12 @@
       "rescoreMatch": true
     },
     "alpha_R1": {
-      "runId": "protocol-1792174145936-alpha_R1",
+      "runId": "protocol-1792175449574-alpha_R1",
       "agent": "alpha",
       "regime": "R1",
       "summary": {
-        "runId": "protocol-1792174145936-alpha_R1",
-        "timestamp": "2026-10-16T18:09:08.232Z",
+        "runId": "protocol-1792175449574-alpha_R1",
+        "timestamp": "2026-10-16T18:30:50.201Z",
         "agent": "alpha",
         "regime": "R1",
         "streamName": "stream-s2-plus-blind",
@@ -422,12 +422,12 @@
       "rescoreMatch": true
     },
     "alpha_R2": {
-      "runId": "protocol-1792174145936-alpha_R2",
+      "runId": "protocol-1792175449574-alpha_R2",
       "agent": "alpha",
       "regime": "R2",
       "summary": {
-        "runId": "protocol-1792174145936-alpha_R2",
-        "timestamp": "2026-10-16T18:09:09.681Z",
+        "runId": "protocol-1792175449574-alpha_R2",
+        "timestamp": "2026-10-16T18:30:50.538Z",
         "agent": "alpha",
         "regime": "R2",
         "streamName": "stream-s2-plus-blind",
@@ -631,12 +631,12 @@
       "rescoreMatch": true
     },
     "beta_R0": {
-      "runId": "protocol-1792174145936-beta_R0",
+      "runId": "protocol-1792175449574-beta_R0",
       "agent": "beta",
       "regime": "R0",
       "summary": {
-        "runId": "protocol-1792174145936-beta_R0",
-        "timestamp": "2026-10-16T18:09:10.755Z",
+        "runId": "protocol-1792175449574-beta_R0",
+        "timestamp": "2026-10-16T18:30:51.552Z",
         "agent": "beta",
         "regime": "R0",
         "streamName": "stream-s2-plus-blind",
@@ -840,12 +840,12 @@
       "rescoreMatch": true
     },
     "beta_R1": {
-      "runId": "protocol-1792174145936-beta_R1",
+      "runId": "protocol-1792175449574-beta_R1",
       "agent": "beta",
       "regime": "R1",
       "summary": {
-        "runId": "protocol-1792174145936-beta_R1",
-        "timestamp": "2026-10-16T18:09:12.350Z",
+        "runId": "protocol-1792175449574-beta_R1",
+        "timestamp": "2026-10-16T18:30:51.976Z",
         "agent": "beta",
         "regime": "R1",
         "streamName": "stream-s2-plus-blind",
@@ -1049,12 +1049,12 @@
       "rescoreMatch": true
     },
     "beta_R2": {
-      "runId": "protocol-1792174145936-beta_R2",
+      "runId": "protocol-1792175449574-beta_R2",
       "agent": "beta",
       "regime": "R2",
       "summary": {
-        "runId": "protocol-1792174145936-beta_R2",
-        "timestamp": "2026-10-16T18:09:13.079Z",
+        "runId": "protocol-1792175449574-beta_R2",
+        "timestamp": "2026-10-16T18:30:52.745Z",
         "agent": "beta",
         "regime": "R2",
         "streamName": "stream-s2-plus-blind",
@@ -1258,12 +1258,12 @@
       "rescoreMatch": true
     },
     "gamma_R0": {
-      "runId": "protocol-1792174145936-gamma_R0",
+      "runId": "protocol-1792175449574-gamma_R0",
       "agent": "gamma",
       "regime": "R0",
       "summary": {
-        "runId": "protocol-1792174145936-gamma_R0",
-        "timestamp": "2026-10-16T18:09:13.484Z",
+        "runId": "protocol-1792175449574-gamma_R0",
+        "timestamp": "2026-10-16T18:30:53.361Z",
         "agent": "gamma",
         "regime": "R0",
         "streamName": "stream-s2-plus-blind",
@@ -1467,12 +1467,12 @@
       "rescoreMatch": true
     },
     "gamma_R1": {
-      "runId": "protocol-1792174145936-gamma_R1",
+      "runId": "protocol-1792175449574-gamma_R1",
       "agent": "gamma",
       "regime": "R1",
       "summary": {
-        "runId": "protocol-1792174145936-gamma_R1",
-        "timestamp": "2026-10-16T18:09:14.543Z",
+        "runId": "protocol-1792175449574-gamma_R1",
+        "timestamp": "2026-10-16T18:30:53.726Z",
         "agent": "gamma",
         "regime": "R1",
         "streamName": "stream-s2-plus-blind",
@@ -1676,12 +1676,12 @@
       "rescoreMatch": true
     },
     "gamma_R2": {
-      "runId": "protocol-1792174145936-gamma_R2",
+      "runId": "protocol-1792175449574-gamma_R2",
       "agent": "gamma",
       "regime": "R2",
       "summary": {
-        "runId": "protocol-1792174145936-gamma_R2",
-        "timestamp": "2026-10-16T18:09:15.843Z",
+        "runId": "protocol-1792175449574-gamma_R2",
+        "timestamp": "2026-10-16T18:30:54.197Z",
         "agent": "gamma",
         "regime": "R2",
         "streamName": "stream-s2-plus-blind",

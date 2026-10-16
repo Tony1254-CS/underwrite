@@ -146,40 +146,42 @@ export default function ClaimsPage() {
     data?.claims && data.claims.length > 0 ? data.claims : DEFAULT_DEMO_CLAIMS;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-6 border-b border-white/[0.08]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-            Claims &amp; BondPool Settlement
-            <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+              Claims &amp; BondPool Settlement
+            </h1>
+            <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-semibold tracking-wider uppercase shadow-glow-cyan">
               REIMBURSEMENT ENCLAVE
             </span>
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          </div>
+          <p className="text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
             Auditable claim settlement lifecycle, oracle loss verification, and atomic qualification revocation.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <ControlledBadge label="DESIGNATED ADJUDICATOR" />
           <ScriptedBadge />
         </div>
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl border border-rose-900/60 bg-rose-950/20 text-xs font-mono text-rose-300">
+        <div className="p-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 text-xs font-mono text-rose-300 backdrop-blur-md">
           Error loading live claims from BondPool: {error}
         </div>
       )}
 
       {/* Bond Pool Parameters Metric Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl border border-slate-800 bg-[#0d121c] space-y-1">
-          <div className="text-[11px] font-mono uppercase text-slate-400">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="glass-card-interactive specular-cyan rounded-2xl p-5 space-y-1.5">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
             Per-Claim Cap
           </div>
-          <div className="text-2xl font-bold font-mono text-cyan-400">
+          <div className="text-2xl font-bold font-mono text-cyan-300 num-tabular">
             {formatUSDC(data?.poolConfig?.perClaimCap || "500000000")}
           </div>
           <div className="text-xs font-mono text-slate-500">
@@ -187,11 +189,11 @@ export default function ClaimsPage() {
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-800 bg-[#0d121c] space-y-1">
-          <div className="text-[11px] font-mono uppercase text-slate-400">
+        <div className="glass-card-interactive specular-amber rounded-2xl p-5 space-y-1.5">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
             Owner Deductible
           </div>
-          <div className="text-2xl font-bold font-mono text-slate-200">
+          <div className="text-2xl font-bold font-mono text-slate-100 num-tabular">
             {formatUSDC(data?.poolConfig?.deductible || "5000000")}
           </div>
           <div className="text-xs font-mono text-slate-500">
@@ -199,11 +201,11 @@ export default function ClaimsPage() {
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-800 bg-[#0d121c] space-y-1">
-          <div className="text-[11px] font-mono uppercase text-slate-400">
+        <div className="glass-card-interactive specular-rose rounded-2xl p-5 space-y-1.5">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
             Open Claims
           </div>
-          <div className="text-2xl font-bold font-mono text-amber-400">
+          <div className="text-2xl font-bold font-mono text-amber-300 num-tabular">
             {data?.poolConfig?.openClaimsCount || "0"}
           </div>
           <div className="text-xs font-mono text-slate-500">
@@ -211,26 +213,27 @@ export default function ClaimsPage() {
           </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-slate-800 bg-[#0d121c] space-y-1">
-          <div className="text-[11px] font-mono uppercase text-slate-400">
+        <div className="glass-card-interactive specular-emerald rounded-2xl p-5 space-y-1.5">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
             BondPool Contract
           </div>
           <div className="text-sm font-bold font-mono text-white truncate" title={data?.chain?.bondPool}>
             {truncateHash(data?.chain?.bondPool || "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512", 8, 6)}
           </div>
-          <div className="text-xs font-mono text-emerald-400">
+          <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-glow-emerald" />
             Connected • Anvil Chain 31337
           </div>
         </div>
       </div>
 
       {/* INTERACTIVE PHASE 2 ATOMIC CONSEQUENCE SIMULATOR */}
-      <section className="rounded-xl border border-slate-800 bg-[#0d121c] p-6 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-4">
+      <section className="glass-panel-elevated specular-cyan rounded-3xl p-6 md:p-10 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/[0.08] pb-5">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
-              <h2 className="text-lg font-bold text-white tracking-tight">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-glow-cyan" />
+              <h2 className="text-xl font-bold text-white tracking-tight">
                 Atomic Claim &amp; Revocation Demonstration (Phase 2)
               </h2>
             </div>
@@ -242,10 +245,10 @@ export default function ClaimsPage() {
           <button
             onClick={handleSimulateClaimLifecycle}
             disabled={simulatingClaim}
-            className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all shadow-md ${
+            className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold transition-all shadow-md ${
               simulatingClaim
-                ? "bg-amber-600 text-white cursor-wait"
-                : "bg-cyan-600 hover:bg-cyan-500 text-white shadow-cyan-900/40"
+                ? "bg-amber-500 text-white cursor-wait shadow-glow-amber"
+                : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-glow-cyan"
             }`}
           >
             {simulatingClaim ? "Adjudicating Atomic Tx..." : "Simulate Claim Lifecycle (Adjudicator Key)"}
@@ -253,67 +256,71 @@ export default function ClaimsPage() {
         </div>
 
         {/* 4-Step Consequence Pipeline Visualizer */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-mono text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
           <div
-            className={`p-4 rounded-xl border transition-all ${
+            className={`p-5 rounded-2xl border transition-all duration-300 ${
               adjudicationStep >= 1
-                ? "bg-slate-850 border-emerald-500/60 text-white"
-                : "bg-slate-900/40 border-slate-800 text-slate-500"
+                ? "bg-black/50 border-emerald-500/50 shadow-glow-emerald text-white"
+                : "bg-black/20 border-white/[0.06] text-slate-500"
             }`}
           >
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               Step 1: Incurred Loss
             </div>
             <div className="font-semibold text-white">Erroneous T1 Payment</div>
-            <div className="text-[11px] text-slate-400 mt-1">
+            <div className="text-[11px] text-slate-400 mt-1.5 font-sans">
               Payment #103 executes $300.00 USDC to malicious invoice.
             </div>
           </div>
 
           <div
-            className={`p-4 rounded-xl border transition-all ${
+            className={`p-5 rounded-2xl border transition-all duration-300 ${
               adjudicationStep >= 2
-                ? "bg-slate-850 border-cyan-500/60 text-white"
-                : "bg-slate-900/40 border-slate-800 text-slate-500"
+                ? "bg-black/50 border-cyan-500/50 shadow-glow-cyan text-white"
+                : "bg-black/20 border-white/[0.06] text-slate-500"
             }`}
           >
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
               Step 2: File Claim
             </div>
             <div className="font-semibold text-white">Owner Submits Evidence</div>
-            <div className="text-[11px] text-slate-400 mt-1">
+            <div className="text-[11px] text-slate-400 mt-1.5 font-sans">
               Evidence hash pinned; status registered as FILED.
             </div>
           </div>
 
           <div
-            className={`p-4 rounded-xl border transition-all ${
+            className={`p-5 rounded-2xl border transition-all duration-300 ${
               adjudicationStep >= 3
-                ? "bg-slate-850 border-emerald-500/60 text-emerald-300"
-                : "bg-slate-900/40 border-slate-800 text-slate-500"
+                ? "bg-black/50 border-emerald-500/60 shadow-[0_0_20px_rgba(16,185,129,0.3)] text-emerald-300"
+                : "bg-black/20 border-white/[0.06] text-slate-500"
             }`}
           >
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-1.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-glow-emerald" />
               Step 3: Atomic Settlement (1 Tx)
             </div>
             <div className="font-semibold text-emerald-400">Vault Paid + Qual Revoked</div>
-            <div className="text-[11px] text-slate-300 mt-1">
+            <div className="text-[11px] text-slate-300 mt-1.5 font-sans">
               $295.00 USDC transferred to vault; qualId marked revoked.
             </div>
           </div>
 
           <div
-            className={`p-4 rounded-xl border transition-all ${
+            className={`p-5 rounded-2xl border transition-all duration-300 ${
               adjudicationStep >= 4
-                ? "bg-slate-850 border-rose-500/60 text-rose-300"
-                : "bg-slate-900/40 border-slate-800 text-slate-500"
+                ? "bg-black/50 border-rose-500/60 shadow-[0_0_20px_rgba(244,63,94,0.3)] text-rose-300"
+                : "bg-black/20 border-white/[0.06] text-slate-500"
             }`}
           >
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-rose-400 mb-1.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shadow-glow-rose" />
               Step 4: Strict Revert
             </div>
             <div className="font-semibold text-rose-400">Subsequent Pay Blocked</div>
-            <div className="text-[11px] text-rose-200 mt-1">
+            <div className="text-[11px] text-rose-200 mt-1.5 font-sans">
               Next pay() strictly reverts with QualificationRevoked().
             </div>
           </div>
@@ -321,7 +328,7 @@ export default function ClaimsPage() {
 
         {/* Live Simulation Console */}
         {adjudicationLog.length > 0 && (
-          <div className="p-4 rounded-lg bg-black/90 border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
+          <div className="p-5 rounded-2xl bg-black/80 border border-white/[0.08] font-mono text-xs text-slate-300 space-y-1.5 backdrop-blur-md shadow-inner">
             {adjudicationLog.map((line, idx) => (
               <div
                 key={idx}
@@ -341,26 +348,26 @@ export default function ClaimsPage() {
       </section>
 
       {/* Claims Registry Table */}
-      <div className="rounded-xl border border-slate-800 bg-[#0d121c] overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="glass-panel specular-indigo rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-sm font-semibold text-slate-200">
+            <h2 className="text-base font-bold text-white tracking-tight">
               Claims Settlement Registry
             </h2>
-            <p className="text-xs text-slate-500 font-mono">
+            <p className="text-xs text-slate-400 font-mono mt-0.5">
               On-chain records verified from BondPool.sol
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono text-slate-500">Filter:</span>
+          <div className="flex items-center gap-2 bg-black/40 p-1 rounded-xl border border-white/[0.06]">
+            <span className="text-xs font-mono text-slate-400 px-2">Filter:</span>
             {(["ALL", "APPROVED", "ACTIVE"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`text-xs font-mono px-2.5 py-1 rounded transition-colors ${
+                className={`text-xs font-mono px-3 py-1 rounded-lg transition-all ${
                   activeTab === tab
-                    ? "bg-slate-800 text-cyan-400 font-semibold"
+                    ? "bg-white/[0.1] text-cyan-300 font-semibold border border-cyan-500/30 shadow-sm"
                     : "text-slate-400 hover:text-white"
                 }`}
               >
@@ -372,39 +379,39 @@ export default function ClaimsPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-900/80 text-slate-400 border-b border-slate-800">
+            <thead className="bg-black/30 text-slate-400 border-b border-white/[0.08]">
               <tr>
-                <th className="py-3 px-4">Claim ID</th>
-                <th className="py-3 px-4">Qualification ID</th>
-                <th className="py-3 px-4">Payment Ref</th>
-                <th className="py-3 px-4">Loss Amount</th>
-                <th className="py-3 px-4">Approved Payout</th>
-                <th className="py-3 px-4">Enclave Status</th>
-                <th className="py-3 px-4">Adjudicator / Evidence</th>
+                <th className="py-3.5 px-5">Claim ID</th>
+                <th className="py-3.5 px-5">Qualification ID</th>
+                <th className="py-3.5 px-5">Payment Ref</th>
+                <th className="py-3.5 px-5">Loss Amount</th>
+                <th className="py-3.5 px-5">Approved Payout</th>
+                <th className="py-3.5 px-5">Enclave Status</th>
+                <th className="py-3.5 px-5">Adjudicator / Evidence</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-300">
+            <tbody className="divide-y divide-white/[0.05] text-slate-300">
               {displayClaims.map((claim) => (
-                <tr key={claim.id} className="hover:bg-slate-850/40 transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-white">#{claim.id}</td>
-                  <td className="py-3.5 px-4 text-slate-400 truncate max-w-[140px]" title={claim.qualId}>
+                <tr key={claim.id} className="hover:bg-white/[0.03] transition-colors">
+                  <td className="py-4 px-5 font-bold text-white">#{claim.id}</td>
+                  <td className="py-4 px-5 text-slate-400 truncate max-w-[140px]" title={claim.qualId}>
                     {truncateHash(claim.qualId, 8, 6)}
                   </td>
-                  <td className="py-3.5 px-4 text-slate-300">Payment #{claim.paymentId}</td>
-                  <td className="py-3.5 px-4 text-amber-300 font-semibold">{formatUSDC(claim.lossAmount)}</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-bold">{formatUSDC(claim.payout)}</td>
-                  <td className="py-3.5 px-4">
+                  <td className="py-4 px-5 text-slate-200">Payment #{claim.paymentId}</td>
+                  <td className="py-4 px-5 text-amber-300 font-semibold num-tabular">{formatUSDC(claim.lossAmount)}</td>
+                  <td className="py-4 px-5 text-emerald-400 font-bold num-tabular">{formatUSDC(claim.payout)}</td>
+                  <td className="py-4 px-5">
                     <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
                         claim.status === "APPROVED"
-                          ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
-                          : "bg-cyan-950 text-cyan-400 border border-cyan-800"
+                          ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-glow-emerald"
+                          : "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30"
                       }`}
                     >
                       {claim.status}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-slate-400 truncate max-w-[180px]" title={claim.evidenceHash}>
+                  <td className="py-4 px-5 text-slate-400 truncate max-w-[180px]" title={claim.evidenceHash}>
                     {truncateHash(claim.evidenceHash, 8, 6)}
                   </td>
                 </tr>

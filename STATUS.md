@@ -1,13 +1,13 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 17:40 UTC, antigravity
-Last verified working state: 103 / 126 tasks completed (84%); ALL 10 phase reality probes PRESENT (P0–P9); P6 testnet deploy script and simulation verified (84532.json generated, EXECUTION_EVIDENCE.md built with 15 receipts); P9 documentation, deck, technical specification, security self-assessment, and competition submission draft fully exported (HTML + PDF).
+## Handoff — 2026-10-16 18:35 UTC, antigravity
+Last verified working state: 104 / 126 tasks completed (85%); ALL 10 phase reality probes PRESENT (P0–P9); Apple-grade visionOS acrylic glassmorphic UI overhaul completed across all 10 views (`/`, `/exam`, `/traces`, `/attack-lab`, `/claims`, `/evidence`, `/verify`) with color-wheel harmonic specular rims, glowing LED jewel provenance pills, and zero generic AI templates (DEC-025); P6 testnet deploy script and simulation verified; P9 documentation, deck, technical specification, security self-assessment, and competition submission draft fully exported (HTML + PDF).
 Active phase: P6 Testnet Deployment (Track A+B) & P9 Final Polish (Track C)
 Next concrete task: P6-T02 (on-chain broadcast on Base Sepolia once deployer funded with testnet ETH), P9-T07 (human demo video recording), P9-T08 (code freeze checkpoint)
-Tests run this session: `pnpm -r test` → 157 tests passed across 25 test files (0 failures); `pnpm -r typecheck` → 0 errors; `forge test` → 101 tests passed across 17 test suites (256 invariant runs, 25,600 calls, 0 reverts); `pnpm --filter web build` → Next.js 15 production build clean (10/10 routes, 0 type errors); `pnpm uw experiment rescore` verified; `pnpm uw verify` verified; `forge script Deploy.s.sol --rpc-url Base Sepolia` simulation clean.
+Tests run this session: `pnpm --filter web typecheck` → 0 errors; `pnpm --filter web build` → Next.js 15 production build clean (10/10 routes, 0 type errors); `pnpm -r test` → 157 tests passed across 25 test files (0 failures); `forge test` → 101 tests passed across 17 test suites (256 invariant runs, 25,600 calls, 0 reverts); `pnpm uw experiment rescore` verified; `pnpm uw verify` verified.
 Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs).
 Known failures: None
-Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL), DEC-020 (BondPool custom errors & events), DEC-021 (Cut-line not triggered; real BondPool retained), DEC-022 (P5-T05 fallback: II-HOLDOUT-2 self-authored), DEC-023 (P7-T03 fallback: Generator B self-authored), DEC-024 (P7-T10 reduced experiment not triggered)
+Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL), DEC-020 (BondPool custom errors & events), DEC-021 (Cut-line not triggered; real BondPool retained), DEC-022 (P5-T05 fallback: II-HOLDOUT-2 self-authored), DEC-023 (P7-T03 fallback: Generator B self-authored), DEC-024 (P7-T10 reduced experiment not triggered), DEC-025 (Apple-grade visionOS Acrylic UI overhaul)
 Risks of touching current code: Low (contracts/, engine/, and web/ regression suites 100% green; zero conflicts with parallel agent track)
 Phase checklist: P0 [x] P1 [x] P2 [x] P3 [x] P4 [x] P5 [x] P6 [ ] P7 [x] P8 [x] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x] QG-2 [x] QG-3 [x] QG-4 [x] QG-5 [x] QG-7 [x] QG-8 [x]
 

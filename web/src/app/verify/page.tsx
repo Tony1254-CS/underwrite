@@ -65,61 +65,64 @@ export default function VerifyPage() {
   const allPassed = fields.every(f => f.status === 'PASS');
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/[0.08]">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-            On-Chain Verification & Evidence
-            <span className={`text-xs px-2.5 py-1 rounded-full font-mono uppercase font-bold border ${
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+              On-Chain Verification &amp; Evidence
+            </h1>
+            <span className={`text-[10px] px-3 py-1 rounded-full font-mono uppercase font-bold border shadow-sm ${
               allPassed
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 shadow-glow-emerald'
+                : 'bg-rose-500/15 text-rose-300 border-rose-500/40 shadow-glow-rose'
             }`}>
               {allPassed ? 'ALL CHECKS PASSED (PASS)' : 'VERIFICATION FAILED'}
             </span>
-          </h1>
-          <p className="text-slate-400 text-sm mt-1">
+          </div>
+          <p className="text-slate-400 text-sm mt-2 max-w-2xl leading-relaxed">
             Independent cryptographic recomputation of exam reports, manifests, and smart contract envelopes.
           </p>
         </div>
 
         {/* Tamper test toggle */}
-        <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono">
-          <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+        <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-black/40 border border-white/[0.08] backdrop-blur-md text-xs font-mono">
+          <label className="flex items-center gap-2.5 cursor-pointer text-slate-300">
             <input
               type="checkbox"
               checked={tampered}
               onChange={e => setTampered(e.target.checked)}
-              className="accent-rose-500 rounded"
+              className="accent-rose-500 rounded cursor-pointer w-4 h-4"
             />
-            <span>Simulate 1-Byte Report Tampering</span>
+            <span className="text-[11px]">Simulate 1-Byte Report Tampering</span>
           </label>
         </div>
       </div>
 
       {/* Field-by-Field Results (P8-T08) */}
-      <div className="rounded-2xl bg-[#0f172a] border border-slate-800 p-6 space-y-4">
-        <h2 className="text-base font-bold text-white mb-2">
-          `uw verify &lt;qualId&gt;` Field-by-Field Audit Log
+      <div className="glass-panel specular-cyan rounded-3xl p-6 md:p-8 space-y-6">
+        <h2 className="text-base font-bold text-white flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-glow-cyan" />
+          <span>`uw verify &lt;qualId&gt;` Field-by-Field Audit Log</span>
         </h2>
 
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {fields.map((field, idx) => (
             <div
               key={idx}
-              className={`p-4 rounded-xl border transition ${
+              className={`p-4 rounded-2xl border transition-all duration-300 backdrop-blur-md ${
                 field.status === 'PASS'
-                  ? 'bg-slate-900/60 border-slate-800'
-                  : 'bg-rose-500/10 border-rose-500/40'
+                  ? 'bg-black/30 border-white/[0.08] hover:border-white/[0.16]'
+                  : 'bg-rose-500/10 border-rose-500/40 shadow-glow-rose'
               }`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                <div className="flex items-center gap-2">
-                  <span className={`font-mono text-xs font-bold px-2 py-0.5 rounded ${
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+                <div className="flex items-center gap-2.5">
+                  <span className={`font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full border shadow-sm ${
                     field.status === 'PASS'
-                      ? 'bg-emerald-500/20 text-emerald-300'
-                      : 'bg-rose-500/30 text-rose-200'
+                      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-glow-emerald'
+                      : 'bg-rose-500/20 text-rose-200 border-rose-500/40 shadow-glow-rose'
                   }`}>
                     {field.status}
                   </span>
@@ -129,13 +132,13 @@ export default function VerifyPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs font-mono text-slate-400">
-                <div className="p-2 rounded bg-slate-950/60 truncate">
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/[0.04] truncate">
                   <span className="text-slate-500">Local Recomputed: </span>
-                  <span className={field.status === 'PASS' ? 'text-slate-300' : 'text-rose-300'}>
+                  <span className={field.status === 'PASS' ? 'text-slate-300' : 'text-rose-300 font-bold'}>
                     {field.expected}
                   </span>
                 </div>
-                <div className="p-2 rounded bg-slate-950/60 truncate">
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/[0.04] truncate">
                   <span className="text-slate-500">On-Chain Value: </span>
                   <span className="text-slate-300">{field.onChain}</span>
                 </div>
@@ -146,40 +149,45 @@ export default function VerifyPage() {
       </div>
 
       {/* Evidence Hashes Table */}
-      <div className="rounded-2xl bg-[#0f172a] border border-slate-800 p-6 space-y-4">
-        <h2 className="text-base font-bold text-white">Immutable On-Chain Evidence Trail</h2>
+      <div className="glass-panel specular-emerald rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-white/[0.08]">
+          <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-glow-emerald" />
+            <span>Immutable On-Chain Evidence Trail</span>
+          </h2>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-900 text-slate-400 uppercase border-b border-slate-800">
+            <thead className="bg-black/30 text-slate-400 uppercase border-b border-white/[0.08]">
               <tr>
-                <th className="p-3">Scene / Action</th>
-                <th className="p-3">Function</th>
-                <th className="p-3">Tx Hash</th>
-                <th className="p-3">Block</th>
-                <th className="p-3">Outcome</th>
+                <th className="py-3.5 px-5">Scene / Action</th>
+                <th className="py-3.5 px-5">Function</th>
+                <th className="py-3.5 px-5">Tx Hash</th>
+                <th className="py-3.5 px-5">Block</th>
+                <th className="py-3.5 px-5">Outcome</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-300">
-              <tr>
-                <td className="p-3 font-semibold text-white">Scene 1: Normal Invoices</td>
-                <td className="p-3 text-sky-400">pay(vendor, 150)</td>
-                <td className="p-3 truncate max-w-xs text-slate-400">0x8e7ab247068a3bbde235b821d2de4a7fb934db06940fea7db7ab0147fcfc46f8</td>
-                <td className="p-3">104</td>
-                <td className="p-3 text-emerald-400 font-bold">PaymentExecuted</td>
+            <tbody className="divide-y divide-white/[0.05] text-slate-300">
+              <tr className="hover:bg-white/[0.03] transition-colors">
+                <td className="py-4 px-5 font-semibold text-white">Scene 1: Normal Invoices</td>
+                <td className="py-4 px-5 text-cyan-300 font-bold">pay(vendor, 150)</td>
+                <td className="py-4 px-5 truncate max-w-xs text-slate-400">0x8e7ab247068a3bbde235b821d2de4a7fb934db06940fea7db7ab0147fcfc46f8</td>
+                <td className="py-4 px-5 num-tabular">104</td>
+                <td className="py-4 px-5 text-emerald-400 font-bold">PaymentExecuted</td>
               </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Scene 2: Escalated Request</td>
-                <td className="p-3 text-amber-400">requestPayment(vendor, 450)</td>
-                <td className="p-3 truncate max-w-xs text-slate-400">0x10b05445712b14aae7b0ffc6978eafb69c89a2d3daf49b626d58ade67490b48c</td>
-                <td className="p-3">108</td>
-                <td className="p-3 text-amber-300 font-bold">PaymentRequested</td>
+              <tr className="hover:bg-white/[0.03] transition-colors">
+                <td className="py-4 px-5 font-semibold text-white">Scene 2: Escalated Request</td>
+                <td className="py-4 px-5 text-amber-300 font-bold">requestPayment(vendor, 450)</td>
+                <td className="py-4 px-5 truncate max-w-xs text-slate-400">0x10b05445712b14aae7b0ffc6978eafb69c89a2d3daf49b626d58ade67490b48c</td>
+                <td className="py-4 px-5 num-tabular">108</td>
+                <td className="py-4 px-5 text-amber-300 font-bold">PaymentRequested</td>
               </tr>
-              <tr>
-                <td className="p-3 font-semibold text-white">Scene 5: Red-team Bypass</td>
-                <td className="p-3 text-rose-400">pay(unregistered, 450)</td>
-                <td className="p-3 truncate max-w-xs text-slate-400">0x4918274019283749102938475819203948571029384756102938475610293847</td>
-                <td className="p-3">115</td>
-                <td className="p-3 text-rose-400 font-bold">RecipientNotAllowed()</td>
+              <tr className="hover:bg-white/[0.03] transition-colors">
+                <td className="py-4 px-5 font-semibold text-white">Scene 5: Red-team Bypass</td>
+                <td className="py-4 px-5 text-rose-400 font-bold">pay(unregistered, 450)</td>
+                <td className="py-4 px-5 truncate max-w-xs text-slate-400">0x4918274019283749102938475819203948571029384756102938475610293847</td>
+                <td className="py-4 px-5 num-tabular">115</td>
+                <td className="py-4 px-5 text-rose-400 font-bold">RecipientNotAllowed()</td>
               </tr>
             </tbody>
           </table>

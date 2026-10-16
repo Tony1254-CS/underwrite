@@ -112,34 +112,40 @@ export default function EvidencePage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-6 border-b border-white/[0.08]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-            Evidence &amp; Verification
-            <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+              Evidence &amp; Verification
+            </h1>
+            <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-semibold tracking-wider uppercase shadow-glow-emerald">
               ZERO-TRUST AUDIT
             </span>
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          </div>
+          <p className="text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
             Deterministic cryptographic audit trail, SHA-256 evidence bundle roots, and off-chain proofs.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <ControlledBadge />
           <ScriptedBadge />
         </div>
       </div>
 
       {/* FIELD-BY-FIELD VERIFICATION PANEL (Reproducing `uw verify <qualId>`) */}
-      <section className="rounded-xl border border-slate-800 bg-[#0d121c] p-6 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-4">
+      <section className={`glass-panel-elevated rounded-3xl p-6 md:p-10 space-y-8 transition-all duration-500 ${
+        verifyData?.overallPass ? "specular-emerald" : "specular-rose"
+      }`}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/[0.08] pb-5">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-              <h2 className="text-lg font-bold text-white tracking-tight">
+            <div className="flex items-center gap-2.5">
+              <span className={`w-2.5 h-2.5 rounded-full ${
+                verifyData?.overallPass ? "bg-emerald-400 shadow-glow-emerald" : "bg-rose-400 shadow-glow-rose"
+              }`} />
+              <h2 className="text-xl font-bold text-white tracking-tight">
                 Cryptographic Qualification Verifier (uw verify)
               </h2>
             </div>
@@ -148,13 +154,13 @@ export default function EvidencePage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleToggleTamper}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all border ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold transition-all border backdrop-blur-md ${
                 simulateTamper
-                  ? "bg-rose-950 text-rose-300 border-rose-700 shadow-[0_0_10px_rgba(244,63,94,0.2)]"
-                  : "bg-slate-900 text-slate-400 border-slate-800 hover:text-white"
+                  ? "bg-rose-500/20 text-rose-300 border-rose-500/40 shadow-glow-rose"
+                  : "bg-black/40 text-slate-400 border-white/[0.08] hover:text-white"
               }`}
             >
               Simulate 1-Byte Report Tamper: {simulateTamper ? "ACTIVE (TAMPERED)" : "OFF (GENUINE)"}
@@ -163,7 +169,7 @@ export default function EvidencePage() {
             <button
               onClick={() => runVerification(simulateTamper)}
               disabled={verifying}
-              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-mono font-bold transition-colors shadow-md disabled:opacity-50"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white text-xs font-mono font-bold transition-all shadow-glow-emerald disabled:opacity-50"
             >
               {verifying ? "Verifying..." : "Re-Verify"}
             </button>
@@ -172,18 +178,18 @@ export default function EvidencePage() {
 
         {/* Verification Verdict Banner */}
         <div
-          className={`p-5 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
+          className={`p-6 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 backdrop-blur-md ${
             verifyData?.overallPass
-              ? "bg-emerald-950/30 border-emerald-500/80 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
-              : "bg-rose-950/30 border-rose-500/80 shadow-[0_0_20px_rgba(244,63,94,0.15)]"
+              ? "bg-emerald-500/10 border-emerald-500/40 shadow-[0_0_24px_rgba(16,185,129,0.2)]"
+              : "bg-rose-500/10 border-rose-500/40 shadow-[0_0_24px_rgba(244,63,94,0.2)]"
           }`}
         >
-          <div className="space-y-1">
-            <div className="text-xs font-mono uppercase tracking-wider text-slate-400">
+          <div className="space-y-1.5">
+            <div className="text-xs font-mono uppercase tracking-wider text-slate-300">
               Audit Status for Qualification:{" "}
-              <span className="text-white font-bold">{truncateHash(verifyData?.qualId, 10, 8)}</span>
+              <span className="text-cyan-300 font-bold">{truncateHash(verifyData?.qualId, 10, 8)}</span>
             </div>
-            <div className="text-xs font-mono text-slate-400">
+            <div className="text-xs font-mono text-slate-400 max-w-2xl leading-relaxed">
               {verifyData?.overallPass
                 ? "All cryptographic digests, compiler envelopes, and on-chain limits match bit-for-bit."
                 : "Tampered report detected! Cryptographic integrity violation halts authorization."}
@@ -191,10 +197,10 @@ export default function EvidencePage() {
           </div>
 
           <div
-            className={`text-3xl font-black font-mono tracking-wider px-5 py-2 rounded-xl border flex items-center justify-center shrink-0 ${
+            className={`text-3xl font-black font-mono tracking-wider px-6 py-2.5 rounded-2xl border flex items-center justify-center shrink-0 ${
               verifyData?.overallPass
-                ? "bg-emerald-950 text-emerald-400 border-emerald-500"
-                : "bg-rose-950 text-rose-400 border-rose-500 animate-pulse"
+                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-glow-emerald"
+                : "bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-glow-rose animate-pulse"
             }`}
           >
             {verifyData?.overallPass ? "PASS" : "FAIL"}
@@ -206,17 +212,17 @@ export default function EvidencePage() {
           {verifyData?.checks.map((check) => (
             <div
               key={check.id}
-              className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+              className={`p-4 rounded-2xl border transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                 check.pass
-                  ? "bg-slate-900/60 border-slate-800"
-                  : "bg-rose-950/20 border-rose-800/80"
+                  ? "bg-black/30 border-white/[0.06] hover:bg-white/[0.03]"
+                  : "bg-rose-500/10 border-rose-500/30"
               }`}
             >
               <div className="space-y-1">
                 <div className="font-semibold text-white flex items-center gap-2">
                   <span
                     className={`w-2 h-2 rounded-full ${
-                      check.pass ? "bg-emerald-400" : "bg-rose-400"
+                      check.pass ? "bg-emerald-400 shadow-glow-emerald" : "bg-rose-400 shadow-glow-rose"
                     }`}
                   />
                   {check.step}
@@ -231,10 +237,10 @@ export default function EvidencePage() {
               </div>
 
               <span
-                className={`text-xs font-bold px-2.5 py-1 rounded border shrink-0 text-center ${
+                className={`text-[10px] font-bold px-3 py-1 rounded-full border shrink-0 text-center uppercase tracking-wider ${
                   check.pass
-                    ? "bg-emerald-950 text-emerald-400 border-emerald-800"
-                    : "bg-rose-950 text-rose-400 border-rose-800"
+                    ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-sm"
+                    : "bg-rose-500/20 text-rose-200 border-rose-500/40 shadow-sm"
                 }`}
               >
                 {check.pass ? "PASS" : "FAIL"}
@@ -245,31 +251,32 @@ export default function EvidencePage() {
       </section>
 
       {/* Evidence Artifacts Registry */}
-      <div className="rounded-xl border border-slate-800 bg-[#0d121c] overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="glass-panel specular-cyan rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-sm font-semibold text-slate-200">
+            <h2 className="text-base font-bold text-white tracking-tight">
               Pinned Evidence Artifacts (evidence/onchain &amp; exams)
             </h2>
-            <p className="text-xs text-slate-500 font-mono">
+            <p className="text-xs text-slate-400 font-mono mt-0.5">
               Immutable SHA-256 and Keccak-256 content-addressed bundle proofs
             </p>
           </div>
-          <span className="text-xs font-mono text-emerald-400">
+          <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-glow-emerald" />
             All 5 Artifacts Cryptographically Linked
           </span>
         </div>
 
-        <div className="divide-y divide-slate-800/80 font-mono text-xs">
+        <div className="divide-y divide-white/[0.05] font-mono text-xs">
           {EVIDENCE_ARTIFACTS.map((art) => (
             <div
               key={art.name}
-              className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:bg-slate-850/40 transition-colors"
+              className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.03] transition-colors"
             >
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-white">{art.name}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2.5">
+                  <span className="font-bold text-white text-sm">{art.name}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-slate-300 border border-white/[0.08]">
                     {art.category}
                   </span>
                 </div>
@@ -278,13 +285,13 @@ export default function EvidencePage() {
                   <span>•</span>
                   <span>Ref: {art.blockOrRun}</span>
                 </div>
-                <div className="text-[11px] text-slate-500 select-all" title={art.hash}>
+                <div className="text-[11px] text-slate-500 select-all font-mono" title={art.hash}>
                   Digest: {art.hash}
                 </div>
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-glow-emerald">
                   VERIFIED
                 </span>
               </div>

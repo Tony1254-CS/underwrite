@@ -340,3 +340,35 @@ Author: antigravity
    - **Dependency Audit:** `pnpm audit --prod` executed; 4 build-tool advisories identified in `web > next > postcss` (non-runtime build CSS handling); 0 vulnerabilities in core contracts or engine.
    - **Forge Submodules:** `contracts/lib/forge-std` and `contracts/lib/openzeppelin-contracts` pinned to stable commits.
    - **Reality Probes:** `scripts/progress.sh` confirms **ALL phases P0 through P9 are PRESENT** (10/10 phase probe groups satisfied).
+
+---
+
+## Phase P8 / UX Refinement (Apple-Grade visionOS Acrylic UI Overhaul)
+
+Date: 2026-10-16 18:31 UTC  
+Author: antigravity  
+Decision: DEC-025
+
+### Verification Steps & Commands
+
+1. **TypeScript Typecheck:**
+   - Command: `pnpm --filter web typecheck`
+   - Output: Exit code 0 (`$ tsc --noEmit`), 0 errors.
+
+2. **Next.js 15 Production Build:**
+   - Command: `pnpm --filter web build`
+   - Output: Exit code 0 (`✓ Compiled successfully in 70s`, static routes generated 11/11).
+   - Prerendered routes:
+     - `/`: 3.58 kB (Dashboard with VisionOS Authority Meter)
+     - `/exam`: 2.9 kB (Policy Card & Clopper-Pearson Compiler)
+     - `/experiment`: 4.88 kB (Empirical Keynote Benchmark & SVG Chart)
+     - `/claims`: 4.92 kB (BondPool Settlement & Atomic Revocation)
+     - `/attack-lab`: 3.25 kB (Red-Team Lab & Four Facts Assessment)
+     - `/traces`: 4.39 kB (Step-by-Step Enclave Traces)
+     - `/verify`: 2.5 kB (Cryptographic Audit & Tamper Test)
+     - All 7 dynamic API endpoints functional.
+
+3. **Workspace Full Regression Suite:**
+   - Command: `pnpm -r test`
+   - Output: Exit code 0.
+   - Result: 25/25 test files passed, 157/157 tests passed (0 failures).

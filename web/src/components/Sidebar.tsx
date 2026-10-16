@@ -25,7 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     name: "Exam & Policy Card",
     href: "/exam",
-    description: "Risk evaluation & pinned rules",
+    description: "Risk bounds & compiler",
     icon: (props) => (
       <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
@@ -98,25 +98,25 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-[#0d121c] border-r border-slate-800 flex flex-col shrink-0 min-h-screen">
+    <aside className="w-64 bg-[#070b16]/70 backdrop-blur-2xl border-r border-white/[0.08] flex flex-col shrink-0 min-h-screen relative z-20">
       {/* Brand Header */}
-      <div className="p-5 border-b border-slate-800/80">
+      <div className="p-5 border-b border-white/[0.08]">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-base font-bold tracking-wider text-slate-100 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+          <span className="font-mono text-base font-bold tracking-wider text-white flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]" />
             UNDERWRITE
           </span>
-          <span className="text-[10px] uppercase font-mono font-semibold tracking-wider px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+          <span className="text-[10px] uppercase font-mono font-semibold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm">
             Read-Only
           </span>
         </div>
-        <p className="text-[11px] text-slate-400 mt-1 font-mono leading-relaxed">
+        <p className="text-[11px] text-slate-400 mt-1.5 font-mono leading-relaxed">
           Autonomous Underwriting &amp; Settlement Enclave
         </p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -124,19 +124,22 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-start gap-3 px-3 py-2.5 rounded-lg transition-colors group ${
+              className={`flex items-start gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${
                 isActive
-                  ? "bg-slate-800/90 text-emerald-400 border border-emerald-500/30"
-                  : "text-slate-300 hover:bg-slate-800/50 hover:text-white border border-transparent"
+                  ? "bg-white/[0.07] text-cyan-300 border border-cyan-500/30 shadow-[0_4px_16px_rgba(6,182,212,0.15)] backdrop-blur-md"
+                  : "text-slate-300 hover:bg-white/[0.04] hover:text-white border border-transparent"
               }`}
             >
+              {isActive && (
+                <span className="absolute left-0 top-2 bottom-2 w-1 bg-gradient-to-b from-cyan-400 to-emerald-400 rounded-r-full shadow-glow-cyan" />
+              )}
               <Icon
                 className={`w-5 h-5 mt-0.5 shrink-0 transition-colors ${
-                  isActive ? "text-emerald-400" : "text-slate-400 group-hover:text-slate-200"
+                  isActive ? "text-cyan-400" : "text-slate-400 group-hover:text-slate-200"
                 }`}
               />
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium leading-none mb-1">
+                <div className={`text-sm font-medium leading-none mb-1 ${isActive ? "text-white font-semibold" : ""}`}>
                   {item.name}
                 </div>
                 <div className="text-[11px] text-slate-400 truncate">
@@ -149,7 +152,7 @@ export function Sidebar() {
       </nav>
 
       {/* System Status / Immutability Notice */}
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/40 text-[11px] font-mono space-y-2">
+      <div className="p-4 border-t border-white/[0.08] bg-black/30 backdrop-blur-md text-[11px] font-mono space-y-2">
         <div className="flex items-center justify-between text-slate-400">
           <span>Mode:</span>
           <span className="text-slate-200">Shadow Viewer</span>
@@ -160,9 +163,12 @@ export function Sidebar() {
         </div>
         <div className="flex items-center justify-between text-slate-400">
           <span>RPC Gateway:</span>
-          <span className="text-emerald-400">Connected</span>
+          <span className="text-emerald-400 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Connected
+          </span>
         </div>
-        <div className="pt-2 border-t border-slate-800/60 text-[10px] text-slate-500 leading-tight">
+        <div className="pt-2 border-t border-white/[0.06] text-[10px] text-slate-500 leading-tight">
           Never signs transactions. Renders chain state &amp; pinned evidence files only.
         </div>
       </div>
