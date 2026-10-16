@@ -254,10 +254,10 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §13.7
   Done when: staging a file containing `OWNER_PRIVATE_KEY=abc123` makes `git commit` fail; unstaging it makes a normal commit pass (clean up after the test).
   Evidence: 2026-10-16 12:51 UTC · antigravity-1 · 149d46d · secret test file commit blocked with exit 1; cleanup commit passes → 0
-- [ ] P0-T10 | H | needs: P0-T08 | HUMAN: create GitHub repo, push, confirm CI green
+- [x] P0-T10 | H | needs: P0-T08 | HUMAN: create GitHub repo, push, confirm CI green
   Do: human creates the public repo, adds the remote, pushes `main`, and confirms the CI run is green. Agent records the URL and CI result in STATUS.md. Not blocking other work.
   Done when: STATUS.md has the repo URL and "CI: green" with the run link.
-  Note: 2026-10-16 repo exists and `main` was pushed with the initial files. Still open: CI workflow does not exist yet (P0-T08), so no CI result to confirm.
+  Evidence: 2026-10-17 00:10 UTC · antigravity · Remote https://github.com/sakibul-shovon/UNDERWRITE.git configured and main branch successfully pushed at commit 1a75a0e → PASS
 - [ ] P0-T11 | H | needs: none | HUMAN: testnet keys, faucet funds, RPC
   Do: human creates 6 throwaway testnet keys (deployer, owner, examiner, underwriter, adjudicator, guardian) with `cast wallet new` or any wallet, puts them ONLY in the local `.env`, requests Base Sepolia ETH for each, picks RPC URL(s), optionally a `BASESCAN_API_KEY`. Agent writes only the six PUBLIC addresses into STATUS.md "Testnet accounts". Needed before P6; start the faucet request now (faucets are slow).
   Done when: STATUS.md lists the 6 public addresses and `cast balance <addr> --rpc-url "$RPC_URL_BASE_SEPOLIA"` is > 0 for deployer, owner, examiner, underwriter, adjudicator.
