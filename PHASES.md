@@ -382,11 +382,12 @@ Read first: plan §9.7 (BondPool table), §9.8 (INV-10, 11, 14), §4.E, §12.2 P
   Spec: plan §9.7, §9.8 (INV-11, 14)
   Done when: `forge test` (all P1 tests + new) passes after the vault change.
   Evidence: 2026-10-16 14:34 UTC · antigravity-1 · cd contracts && forge test --match-path *BondPool.Claims* passed (4 tests); all P1 + P2 tests pass cleanly (86 tests across 14 suites) → 0
-- [ ] P2-T03 | A | needs: P2-T02 | Integration tests with the real BondPool
+- [x] P2-T03 | A | needs: P2-T02 | Integration tests with the real BondPool
   Do: `test/integration/*.t.sol` deploy USDC + BondPool + Vault together and re-run the key backing scenarios (lock on activation, `BondLockFailed`, `InsufficientBacking`) against the real pool.
   Files: `contracts/test/integration/**`
   Spec: plan §9.7
   Done when: `forge test --match-path "*integration*"` passes.
+  Evidence: 2026-10-16 14:38 UTC · antigravity-1 · cd contracts && forge test --match-path *integration* passed (2 tests); lock on activation, BondLockFailed, and InsufficientBacking with real BondPool verified; 88 tests pass across 15 suites → 0
 - [ ] P2-T04 | A | needs: P2-T02 | BondPool tests (plan §12.2 P2 list)
   Do: lock fails when free is insufficient ⇒ activation reverts `BondLockFailed`; payout caps (deductible, perClaimCap, remaining); duplicate claim; claim on a T2 payment, an owner transfer, and a reconciled payment all rejected; `approveClaim` pays and revokes in ONE tx with both events (`ClaimPaid`, `QualificationRevoked`); `pay` reverts `InsufficientBacking` after the payout drains `remaining`; claim after the bond is exhausted (payout 0, still revokes); release rules.
   Files: `contracts/test/BondPool.t.sol`
