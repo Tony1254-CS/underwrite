@@ -85,6 +85,7 @@ contract UnderwriteVault is VaultErrors {
         address recipient;
         uint256 amount;
         bytes32 invoiceKey;
+        bytes32 memoHash;
         uint8 tier;
         uint256 timestamp;
         bool reconciled;
@@ -129,6 +130,7 @@ contract UnderwriteVault is VaultErrors {
     mapping(address => Recipient) public recipients;
     mapping(bytes32 => StoredQualification) public quals;
     mapping(address => bytes32) public activeQualOf;
+    mapping(address => bool) public hasAgentEverHadQualification;
     bytes32[] public activeQualList;
     mapping(bytes32 => bool) public usedAttestation;
 
@@ -405,6 +407,7 @@ contract UnderwriteVault is VaultErrors {
             quals[prevQualId].active = false;
         }
         activeQualOf[a.agentKey] = a.qualId;
+        hasAgentEverHadQualification[a.agentKey] = true;
         activeQualList.push(a.qualId);
 
         quals[a.qualId] = StoredQualification({
@@ -460,5 +463,85 @@ contract UnderwriteVault is VaultErrors {
         }
 
         emit QualificationRevoked(qualId, keccak256("CLAIM"));
+    }
+
+    // --- T1 Payment Execution (P1-T05) ---
+
+    function pay(address recipient, uint256 amount, bytes32 invoiceKey, bytes32 memoHash)
+        external
+        returns (uint256 paymentId)
+    {
+        // PV-09 Revert check order:
+        // 1. Paused
+        if (paused) revert Paused();
+
+        // 2. NotAgent
+        if (!hasAgentEverHadQualification[msg.sender]) revert NotAgent();
+
+        // 3. NoActiveQualification
+        bytes32 qualId = activeQualOf[msg.sender];
+        if (qualId == bytes32(0)) revert NoActiveQualification();
+
+        StoredQualification storage q = quals[qualId];
+
+        // 4. QualificationRevoked
+        if (q.revoked) revert QualificationIsRevoked();
+
+        // 5. QualificationExpired
+        if (q.attestation.expiresAt <= block.timestamp) revert QualificationExpired();
+
+        // 6. RecipientNotAllowed
+        Recipient storage r = recipients[recipient];
+        if (!r.active) revert RecipientNotAllowed();
+
+        // 7. RecipientCoolingDown
+        if (block.timestamp < r.activatesAt) revert RecipientCoolingDown();
+
+        // 8. ExceedsPerTx
+        if (amount > q.effectiveT1MaxPerTx) revert ExceedsPerTx();
+
+        // 9. ExceedsWindow
+        uint256 windowId = block.timestamp / windowSeconds;
+        if (qualWindowSpent[qualId][windowId] + amount > q.effectiveT1MaxPerWindow) {
+            revert ExceedsWindow();
+        }
+
+        // 10. ExceedsRecipientWindow
+        if (recipientWindowSpent[recipient][windowId] + amount > r.perWindowCap) {
+            revert ExceedsRecipientWindow();
+        }
+
+        // 11. DuplicateInvoice
+        if (invoiceState[invoiceKey] != InvoiceStatus.NONE) revert DuplicateInvoice();
+
+        // 12. InsufficientBacking (Exposure check against BondPool remaining)
+        if (exposure[qualId] + amount > bondPool.remaining(qualId)) revert InsufficientBacking();
+
+        // 13. ReserveBreached (Vault balance after payment must be >= reserveFloor)
+        uint256 bal = token.balanceOf(address(this));
+        if (bal < amount || bal - amount < reserveFloor) revert ReserveBreached();
+
+        // --- State updates (Effects) ---
+        qualWindowSpent[qualId][windowId] += amount;
+        recipientWindowSpent[recipient][windowId] += amount;
+        exposure[qualId] += amount;
+        invoiceState[invoiceKey] = InvoiceStatus.PAID;
+
+        paymentId = nextPaymentId++;
+        payments[paymentId] = PaymentRecord({
+            qualId: qualId,
+            recipient: recipient,
+            amount: amount,
+            invoiceKey: invoiceKey,
+            memoHash: memoHash,
+            tier: 1,
+            timestamp: block.timestamp,
+            reconciled: false
+        });
+
+        emit PaymentExecuted(paymentId, qualId, recipient, amount, invoiceKey, 1);
+
+        // --- Token transfer (Interactions) ---
+        token.safeTransfer(recipient, amount);
     }
 }
