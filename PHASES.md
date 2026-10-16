@@ -206,11 +206,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §13.7
   Done when: `git rev-parse --is-inside-work-tree` prints `true`; `pnpm -v`, `forge --version`, `anvil --version` all print versions; TESTING.md has the real output.
   Evidence: 2026-10-16 12:26 UTC · antigravity-1 · a9f6329 · git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version → true, 12.8.1, forge 1.8.5, anvil 1.8.5
-- [ ] P0-T02 | X | needs: P0-T01 | Create tracking files (STATUS, DECISIONS, TESTING, CHANGELOG)
+- [x] P0-T02 | X | needs: P0-T01 | Create tracking files (STATUS, DECISIONS, TESTING, CHANGELOG)
   Do: `STATUS.md` = handoff block per plan §13.3, filled with real values, first line "Progress source of truth: PHASES.md". `DECISIONS.md` = headings `## DEC-001 — <title>` … `DEC-017` seeded from plan §13.4 (each: context, options, decision, consequences, status), plus `DEC-018` "Provisional parameters PV-01…PV-23 (PHASES.md §D3)" and `DEC-019` "Spec-conflict resolutions S1…S8 (PHASES.md §D4)", both PROVISIONAL. `TESTING.md` per plan §13.5. `CHANGELOG.md` with an "Unreleased" heading.
   Files: `STATUS.md DECISIONS.md TESTING.md CHANGELOG.md`
   Spec: plan §13.3–13.5, PHASES §D3–D4
   Done when: `grep -c '^## DEC-' DECISIONS.md` prints ≥ 19; all four files exist.
+  Evidence: 2026-10-16 12:28 UTC · antigravity-1 · 293cd04 · grep -c '^## DEC-' DECISIONS.md; test -f STATUS.md && test -f DECISIONS.md && test -f TESTING.md && test -f CHANGELOG.md → 19, all four files exist
 - [ ] P0-T03 | X | needs: P0-T02 | AGENTS.md, CLAUDE.md, GEMINI.md
   Do: `AGENTS.md` = the 12 rules of plan §13.2 copied verbatim, then a section "Tracker rules": PHASES.md is the progress source of truth; start each session with `bash scripts/progress.sh`; follow PHASES §A–§C; test names carry `INV<n>_`. `CLAUDE.md` and `GEMINI.md` each contain one line: `Read AGENTS.md first.`
   Files: `AGENTS.md CLAUDE.md GEMINI.md`
