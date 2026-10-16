@@ -120,4 +120,4 @@ None.
   2. Owner files claim 1 (tx: `0x10b05445712b14aae7b0ffc6978eafb69c89a2d3daf49b626d58ade67490b48c`).
   3. Outcome 2: Adjudicator approves claim in single atomic tx: 145 USDC payout transferred to vault AND qualification revoked (events `ClaimPaid` + `QualificationRevoked`, tx: `0xa2b38b3db17a2b4217164046b5e5e75ef3a784a036050fee73cf7b652a76059e`).
   4. Outcome 3: Agent attempts subsequent payment `pay()`, which reverts with expected error `NoActiveQualification()`.
-
+- 2026-10-16 16:02 UTC | P8-T01 complete | Next.js 14 and Tailwind CSS scaffold set up in `web/` with system font stack, dark palette, and stub pages for `/`, `/exam`, `/traces`, `/attack-lab`, `/claims`, `/verify`. `pnpm --filter web build` generated 6 static pages with 0 errors. Grep for `https://` returned 0 external assets (mainland-China reachability verified). `pnpm --filter web typecheck` passed (exit 0).

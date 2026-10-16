@@ -708,9 +708,10 @@ Read first: plan §8 (all), §12.2 P7; PHASES §D2, PV-20, PV-22. Key files: `do
 ## P8 — Web UI (Track C · Sat–Mon)
 Read first: plan §10, §9.3 (TB7), §7 (Policy Card notes), §12.2 P8. Key files: `web/package.json`, `scripts/demo-local.sh`. The UI renders reads only; it never decides.
 
-- [ ] P8-T01 | C | needs: QG-0 | Next.js + Tailwind scaffold, self-hosted assets
+- [x] P8-T01 | C | needs: QG-0 | Next.js + Tailwind scaffold, self-hosted assets
   Do: replace the web stub with Next.js (current stable) + Tailwind; system font stack or committed OFL font files; NO external CDNs or fonts (mainland-China reachability). Pages are stubs.
   Done when: `pnpm --filter web build` passes; a test or grep shows no `https://` asset URLs other than the local chain RPC.
+  Evidence: 2026-10-16 16:02 UTC · antigravity-2 · pnpm --filter web build → 6 static pages generated, 0 external assets; tsc --noEmit pass → 0
 - [ ] P8-T02 | C | needs: P8-T01,QG-1,P3-T07 | Server data layer (API routes)
   Do: routes reading the chain with viem (`CHAIN` env) and evidence files: state (mandate, qualifications, windows, exposure, bond), exams, runs, receipts, claims.
   Done when: each route returns JSON for a seeded Anvil; documented in the file header.
