@@ -1,14 +1,14 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 14:21 UTC, antigravity-1
-Last verified working state: QG-1 passed (P1 UnderwriteVault + MockUSDC 100% complete, 78 tests passing, ABIs exported)
-Active phase: P2 — BondPool and backing coupling (Track A) / P3 — Engine core (Track B)
-Next concrete task: P2-T01 | A | needs: QG-1 | BondPool core: deposit, withdrawFree, lock, remaining, release, setVault (Files: contracts/src/BondPool.sol)
-Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 19; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified; QG-0 clean-clone build & test passed; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `bash scripts/check_inv.sh` → 0 missing invariants; `cd contracts && forge test --match-path "*invariant*"` → 4 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 78 tests passed across 12 test suites; `forge fmt --check --root contracts` → clean; `slither` static analysis run on UnderwriteVault and MockUSDC (26 findings triaged in TESTING.md); `node scripts/export-abi.mjs && pnpm -r typecheck` → exit 0; P1-T15 independent review passed with APPROVE verdict; QG-1 gate passed.
-Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs; 78 targeted tests cover all errors and invariants).
+## Handoff — 2026-10-16 14:28 UTC, antigravity-1
+Last verified working state: P2-T01 complete (BondPool core implemented and verified with 4 unit tests; 82 tests passing across 13 suites)
+Active phase: P2 — BondPool and backing coupling (Track A)
+Next concrete task: P2-T02 | A | needs: P2-T01 | Claims: fileClaim, approveClaim, rejectClaim, atomic revoke (Files: contracts/src/BondPool.sol contracts/src/UnderwriteVault.sol)
+Tests run this session: `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version` → true, 12.8.1, forge 1.8.5, anvil 1.8.5; `grep -c '^## DEC-' DECISIONS.md` → 20; `diff plan.md AGENTS.md` → exact match for 12 rules; `git check-ignore` → secrets/builds ignored, deployments/evidence tracked; `git ls-files | grep -c gitkeep` → 25 gitkeep files present; `pnpm install && pnpm -r build && pnpm -r lint && pnpm -r typecheck && pnpm -r test` → all exit 0 across workspace; `cd contracts && forge build && forge test && forge fmt --check` → all exit 0, 1 test passed; `.github/workflows/ci.yml` verified locally; pre-commit hook secret scan verified; QG-0 clean-clone build & test passed; `bash scripts/check_errors.sh` → all 24 custom errors triggered; `bash scripts/check_inv.sh` → 0 missing invariants; `cd contracts && forge test --match-path "*invariant*"` → 4 stateful invariants passed (256 runs, 25,600 calls); `cd contracts && forge test` → 82 tests passed across 13 test suites; `forge fmt --check --root contracts` → clean; `slither` static analysis run on UnderwriteVault and MockUSDC (26 findings triaged in TESTING.md); `node scripts/export-abi.mjs && pnpm -r typecheck` → exit 0; P1-T15 independent review passed with APPROVE verdict; QG-1 gate passed; P2-T01 unit tests passed (4 tests).
+Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs; 82 targeted tests cover all errors and invariants).
 Known failures: None
 Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL)
-Risks of touching current code: Low (Phase 1 complete and locked, ready for BondPool P2-T01 and Engine P3-T01)
+Risks of touching current code: Low (BondPool core verified; proceeding to claims lifecycle P2-T02)
 Phase checklist: P0 [x] P1 [x] P2 [ ] P3 [ ] P4 [ ] P5 [ ] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x]
 
 ## Testnet accounts (Base Sepolia throwaways, generated local .env)

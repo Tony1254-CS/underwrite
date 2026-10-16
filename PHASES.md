@@ -370,11 +370,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
 ## P2 — BondPool and backing coupling (Track A · Sat–Sun, cut-line Sun 18:00 BD)
 Read first: plan §9.7 (BondPool table), §9.8 (INV-10, 11, 14), §4.E, §12.2 P2; PHASES PV-03, PV-04, S6, S7. Key files: `contracts/src/BondPool.sol`, `engine/src/chain/abi/BondPool.json`.
 
-- [ ] P2-T01 | A | needs: QG-1 | BondPool core: deposit, withdrawFree, lock, remaining, release, setVault
+- [x] P2-T01 | A | needs: QG-1 | BondPool core: deposit, withdrawFree, lock, remaining, release, setVault
   Do: per plan §9.7. `setVault` callable once, by the underwriter (deploy order: BondPool → Vault(bondPool) → `bondPool.setVault(vault)`). `release` only when the qualification is inactive or expired, `now > expiresAt + claimGrace`, and there are no open claims. BondPool error names are the implementer's choice (S7); list them in DECISIONS.
   Files: `contracts/src/BondPool.sol`
   Spec: plan §9.7, PHASES S7
   Done when: unit tests for deposit, withdrawFree (free only), lock (vault only; fails when free is insufficient), remaining, release rules, `setVault` once.
+  Evidence: 2026-10-16 14:27 UTC · antigravity-1 · cd contracts && forge test --match-path *BondPool.Core* passed (4 tests); full test suite passes 82 tests across 13 suites; DEC-020 recorded → 0
 - [ ] P2-T02 | A | needs: P2-T01 | Claims: fileClaim, approveClaim, rejectClaim, atomic revoke
   Do: `fileClaim` (vault owner; `isClaimable`; within `claimGrace`; `lossAmount ≤ payment.amount`), `approveClaim` (`payout = min(approvedLoss − deductible (floor 0), perClaimCap, remaining(qualId))`, transfer to the VAULT, then `vault.suspendForClaim(qualId, claimId)` which revokes and removes the claimed payment from exposure — vault reads the paymentId from the pool, S6), `rejectClaim`. Update the vault accordingly and re-run all P1 tests.
   Files: `contracts/src/BondPool.sol contracts/src/UnderwriteVault.sol`

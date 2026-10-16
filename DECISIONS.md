@@ -259,3 +259,39 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
   - `S8`: Reconcile batch size bounded at 50 payments per transaction.
 - **Consequences**: Eliminates implementation ambiguities and ensures contract safety.
 - **Status**: PROVISIONAL
+
+---
+
+## DEC-020 — BondPool errors and interface specification (P2-T01, S7)
+
+- **Context**: Plan §9.7 and PHASES S7 specify BondPool error names and interface definitions are implementer's choice, provided all requirements in plan §9.7 and invariants INV-10, INV-11, and INV-14 are strictly enforced.
+- **Decision**:
+  - `BondPoolErrors` defines:
+    - `NotUnderwriter()`: caller is not the underwriter.
+    - `NotVault()`: caller is not the bound UnderwriteVault contract.
+    - `NotAdjudicator()`: caller is not the adjudicator.
+    - `VaultAlreadySet()`: `setVault` has already been called.
+    - `VaultNotSet()`: action requires a configured vault address.
+    - `ZeroAddress()`: required address parameter is `address(0)`.
+    - `ZeroAmount()`: deposit/lock/withdraw amount is 0.
+    - `InsufficientFreeBalance()`: `withdrawFree` or `lock` exceeds available `free` capital.
+    - `NoLockedCapital()`: `release` called on a qualId with 0 locked capital.
+    - `QualificationStillActive()`: `release` called while qual is still active in the vault.
+    - `ClaimGraceNotElapsed()`: `release` called before `block.timestamp > expiresAt + claimGrace`.
+    - `OpenClaimsExist()`: `release` called while unresolved claims exist for qualId.
+    - `PaymentNotClaimable()`: `fileClaim` called on a payment that is not claimable in the vault.
+    - `ClaimGraceExpired()`: `fileClaim` called after `expiresAt + claimGrace`.
+    - `LossExceedsPaymentAmount()`: `fileClaim` lossAmount > payment.amount.
+    - `ClaimAlreadyResolved()`: `approveClaim` or `rejectClaim` called on a claim not in `FILED` status.
+    - `ClaimNotFound()`: claimId does not exist.
+  - Events:
+    - `Deposited(address indexed underwriter, uint256 amount)`
+    - `Withdrawn(address indexed underwriter, uint256 amount)`
+    - `BondLocked(bytes32 indexed qualId, uint256 amount)`
+    - `BondReleased(bytes32 indexed qualId, uint256 amount)`
+    - `VaultSet(address indexed vault)`
+    - `ClaimFiled(uint256 indexed claimId, bytes32 indexed qualId, uint256 paymentId, uint256 lossAmount, bytes32 evidenceHash)`
+    - `ClaimPaid(uint256 indexed claimId, bytes32 indexed qualId, uint256 payout, address indexed vault)`
+    - `ClaimRejected(uint256 indexed claimId, bytes32 indexed reasonHash)`
+- **Consequences**: Explicit custom errors allow deterministic testing and clean UI error reporting for the underwriter and adjudicator workflows.
+- **Status**: ACCEPTED
