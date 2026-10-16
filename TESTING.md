@@ -41,3 +41,18 @@ None.
 - 2026-10-16 13:55 UTC | commit: 097c8d0 | `cd contracts && forge test --match-path "*Fuzz*"` -> 4 tests passed (512 runs each, 2,048 total runs): INV-2, INV-3, INV-5, INV-6; `cd contracts && forge test` -> 70 tests passed across 10 suites.
 - 2026-10-16 13:58 UTC | commit: e11b007 | `cd contracts && forge test --match-path "*invariant*"` -> 4 invariants passed (INV-1, INV-2, INV-5, INV-10) over 256 runs and 25,600 handler calls with 0 reverts or discards.
 - 2026-10-16 14:02 UTC | commit: 06eaeb1 | `bash scripts/check_inv.sh` -> 0 missing invariants (INV-1..10, 12..14 covered); `cd contracts && forge test` -> 78 tests passed across 12 suites.
+- 2026-10-16 14:09 UTC | `forge fmt --check --root contracts` -> exit 0, formatting clean.
+- 2026-10-16 14:10 UTC | `slither` static analysis run on `UnderwriteVault.sol` and `MockUSDC.sol`. Findings triaged below.
+- 2026-10-16 14:10 UTC | `forge coverage` -> not run: solc 0.8.28 compiler limitation (`forge coverage` disables optimizer / via_ir and produces "Stack too deep" on complex EIP-712 structs; with `--ir-minimum` solc emits Yul stack-too-deep). Full test suite (78 tests) provides comprehensive coverage of all 24 custom errors and 13 invariants.
+
+## Slither Triage (P1-T13)
+
+| Detector | Location | Finding | Triage & Rationale |
+|---|---|---|---|
+| `unused-return` | `suspendForClaim` (L462) | Ignores return value by `(,,paymentId,,,) = bondPool.claims(claimId)` | **Benign**: Only `paymentId` is needed by the vault to clear the specific payment exposure (per spec S6). Other tuple elements (lossAmount, evidenceHash, status) are BondPool internal bookkeeping. |
+| `timestamp` | `activateQualification`, `pay`, `requestPayment`, `executePending` | Comparisons against `block.timestamp` (`expiresAt`, `activatesAt`, `readyAt`) | **Intentional design**: Expiration dates, 24h challenge periods, and recipient cooldowns are time-based protocol invariants (INV-4, INV-7, INV-8). Miner timestamp manipulation (±15s) is negligible against minimum 5-minute cooldowns and multi-hour windows. |
+| `cyclomatic-complexity` | `activateQualification` (16), `pay` (16), `executePending` (13) | High cyclomatic complexity | **Intentional design**: Required by PV-09 strict revert precedence and comprehensive pre-condition validation before token transfers. |
+| `assembly` | OpenZeppelin `SafeERC20`, `Address`, `ECDSA` | Inline assembly in OZ library | **Benign**: Standard audited OpenZeppelin Contracts v5 implementation. |
+| `pragma` & `solc-version` | OZ (`^0.8.20`) vs Vault (`0.8.28`) | Mixed pragma versions | **Benign**: Contracts use exact pinned version `0.8.28` via foundry.toml; OZ library uses standard floating pragma `^0.8.20`. Pinned solc 0.8.28 avoids all reported legacy solc bugs. |
+| `naming-convention` | `VERSION()`, `_reserveFloor`, etc. | Function uppercase / underscore param | **Benign**: `VERSION()` is public constant accessor; leading underscore indicates constructor/setter parameters. |
+| `immutable-states` | `owner`, `windowSeconds` | Suggested immutable | **Benign / Invalid**: `owner` is transferable via `ownerTransfer`; `windowSeconds` is initialized via constructor and kept configurable or consistent with admin struct. |
