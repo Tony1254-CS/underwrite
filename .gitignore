@@ -1,0 +1,21 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+.keys/
+
+# Dependencies & Build Outputs
+node_modules/
+.next/
+coverage/
+dist/
+*.log
+
+# Foundry Outputs
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
