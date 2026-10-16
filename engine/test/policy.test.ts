@@ -287,7 +287,7 @@ describe('Policy Engine Decision Table (P3-T06, ≥30 cases)', () => {
   });
 
   it('Case 21: T3 on amount exceeding t2MaxPerTx', () => {
-    const prop = { ...defaultProposal, amount: 2500_000_000n }; // > 2000
+    const prop = { ...defaultProposal, amount: 2500_000_000n, poNumber: undefined }; // > 2000
     const decision = evaluatePolicy(prop, baseSnapshot);
     expect(decision.tier).toBe('T3');
     expect(decision.reasons).toContain('EXCEEDS_T2_PER_TX');
