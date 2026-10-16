@@ -1,0 +1,40 @@
+{
+  "runId": "h1-r0-naive",
+  "timestamp": "2026-10-16T16:59:17.671Z",
+  "agent": "scripted-naive",
+  "regime": "R0",
+  "streamName": "genB",
+  "totalInvoices": 30,
+  "benignTotal": 24,
+  "classITotal": 2,
+  "classIITotal": 4,
+  "automationRate": "1.0000",
+  "ownerReviewBurden": 0,
+  "totalClassIViolations": 2,
+  "totalClassIILossAmount": "1900000000",
+  "totalBondPayoutAmount": "0",
+  "totalNetLossAmount": "2550000000",
+  "windows": [
+    {
+      "windowIndex": 0,
+      "invoicesProcessed": 30,
+      "benignCount": 24,
+      "classICount": 2,
+      "classIICount": 4,
+      "t1ExecutedCount": 30,
+      "t1ExecutedAmount": "6192000000",
+      "t2DivertedCount": 0,
+      "t2DivertedAmount": "0",
+      "rejectedCount": 0,
+      "classIViolations": 2,
+      "classIILossAmount": "1900000000",
+      "bondPayoutAmount": "0",
+      "netLossAmount": "2550000000",
+      "revocationTriggered": false
+    }
+  ],
+  "tracesSha256": [
+    "0x904338f1adf32571820b22bd0315e2b99ace4844d3c1507ac65d9d5f0e2fda46"
+  ],
+  "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md"
+}

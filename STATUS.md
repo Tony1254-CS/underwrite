@@ -1,14 +1,14 @@
 Progress source of truth: PHASES.md
 
-## Handoff — 2026-10-16 16:55 UTC, antigravity
-Last verified working state: Phase P5 100% complete (Gate QG-5 PASSED); Phase P8-T01 & P8-T02 complete (Next.js 15.5.28 App Router + Tailwind scaffolded, Viem server data layer & 4 API routes `/api/state`, `/api/exams`, `/api/traces`, `/api/claims` active and returning live JSON, 0 CDN URLs); Phase P7 pre-registration complete (P7-T01 docs/EXPERIMENT.md, P7-T02 docs/GENERATOR_B_BRIEF.md, DEC-023 fallback).
+## Handoff — 2026-10-16 17:00 UTC, antigravity
+Last verified working state: Phase P5 100% complete (Gate QG-5 PASSED); Phase P8 complete through P8-T04 (Next.js 15.5.28 App Router + Tailwind scaffolded, Viem server data layer, live Dashboard with Authority Meter gauge, Exam / Policy Card page with 3 verbatim notes and sensitivity table); Phase P7 complete through P7-T05 (pre-registration in docs/EXPERIMENT.md, Generator B brief, pre-committed hashes in experiments/hashes.json, R0/R1/R2 experiment runner, and deterministic rescore mode).
 Active phase: P8 Web UI (Track C) & P7 Calibration Experiment (Track B)
-Next concrete task: P8-T03 (Dashboard & Authority Meter), P8-T04 (Exam / Policy Card page), P7-T04 (Experiment runner)
-Tests run this session: `pnpm -r test` → 151 tests passed across 23 test files (0 failures); `pnpm -r typecheck` → 0 errors; `forge test` → 101 tests passed across 17 test suites (256 invariant runs, 25,600 calls, 0 reverts); `pnpm uw verify` on Anvil → PASS on genuine artifact, FAIL on 1-byte tampered report; `pnpm --filter web build` → Next.js 15 production build succeeded (10/10 routes active, 0 type errors); `git grep -in "https://" -- web/src` → clean (0 matches).
+Next concrete task: P8-T05 (Run trace page), P8-T06 (Attack Lab), P7-T06 / P7-T07 (Main experiment execution)
+Tests run this session: `pnpm -r test` → 156 tests passed across 24 test files (0 failures); `pnpm -r typecheck` → 0 errors; `forge test` → 101 tests passed across 17 test suites (256 invariant runs, 25,600 calls, 0 reverts); `pnpm --filter web build` → Next.js 15 production build clean (10/10 routes, 0 type errors); `git grep -in "https://" -- web/src` → clean (0 matches).
 Tests NOT run: `forge coverage` (solc 0.8.28 non-via-ir stack-too-deep on EIP-712 structs).
 Known failures: None
 Outstanding decisions: DEC-018 (PROVISIONAL), DEC-019 (PROVISIONAL), DEC-020 (BondPool custom errors & events), DEC-021 (Cut-line not triggered; real BondPool retained), DEC-022 (P5-T05 fallback: II-HOLDOUT-2 self-authored), DEC-023 (P7-T03 fallback: Generator B self-authored)
-Risks of touching current code: Low (contracts/ and engine/src/exam/ compiler/ sealed with full regression suite)
+Risks of touching current code: Low (contracts/, engine/src/exam/, compiler/, and experiment/ runner sealed with full regression suite)
 Phase checklist: P0 [x] P1 [x] P2 [x] P3 [x] P4 [x] P5 [x] P6 [ ] P7 [ ] P8 [ ] P9 [ ] P10 [ ] QG-0 [x] QG-1 [x] QG-2 [x] QG-3 [x] QG-4 [x] QG-5 [x]
 
 ## Testnet accounts (Base Sepolia throwaways, generated local .env)

@@ -28,6 +28,7 @@ import {
   activateQualificationOnChain,
   computeQualId,
 } from './exam/qualify.js';
+import { runExperiment, rescoreExperiment, type ExperimentRegime } from './experiment/runner.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '../../');
@@ -758,14 +759,72 @@ Commands:
     }
   }
 
-  // Unimplemented P6/P7 commands per §E
+  if (command === 'experiment') {
+    const subCommand = positional[0] || 'run';
+    if (subCommand === 'rescore') {
+      const runTarget = positional[1] || (options['run'] as string);
+      if (!runTarget) {
+        console.error('Error: experiment rescore requires <runId|path>');
+        process.exit(1);
+      }
+
+      let runDir = path.isAbsolute(runTarget) ? runTarget : path.resolve(rootDir, runTarget);
+      if (!fs.existsSync(runDir)) {
+        runDir = path.resolve(rootDir, 'evidence/experiments', runTarget);
+      }
+
+      const rescored = rescoreExperiment(runDir);
+      console.log(`=== EXPERIMENT RESCORE COMPLETE ===`);
+      console.log(`Run ID: ${rescored.runId}`);
+      console.log(`Agent: ${rescored.agent} | Regime: ${rescored.regime}`);
+      console.log(`Total Invoices: ${rescored.totalInvoices}`);
+      console.log(`Automation Rate: ${rescored.automationRate}`);
+      console.log(`Class I Violations: ${rescored.totalClassIViolations}`);
+      console.log(`Class II Loss: ${rescored.totalClassIILossAmount}`);
+      console.log(`Bond Payout: ${rescored.totalBondPayoutAmount}`);
+      console.log(`Net Loss: ${rescored.totalNetLossAmount}`);
+      return;
+    }
+
+    // Default: run experiment
+    const agent = (options['agent'] as string) || 'scripted';
+    const regime = ((options['regime'] as string) || 'R2') as ExperimentRegime;
+    const stream = (options['stream'] as 'genB' | 'blind' | string) || 'genB';
+    const invoices = options['invoices'] ? Number(options['invoices']) : undefined;
+    const outputDir = options['output'] as string | undefined;
+
+    console.log(`=== RUNNING CALIBRATION EXPERIMENT ===`);
+    console.log(`Agent: ${agent} | Regime: ${regime} | Stream: ${stream}`);
+    if (invoices) console.log(`Limit: ${invoices} invoices`);
+
+    const res = await runExperiment({
+      agent,
+      regime,
+      streamName: stream,
+      maxInvoices: invoices,
+      outputDir,
+    });
+
+    console.log(`\n=== EXPERIMENT RUN COMPLETE ===`);
+    console.log(`Run ID: ${res.summary.runId}`);
+    console.log(`Directory: ${res.runDir}`);
+    console.log(`Total Invoices: ${res.summary.totalInvoices}`);
+    console.log(`Automation Rate: ${res.summary.automationRate}`);
+    console.log(`Class I Violations: ${res.summary.totalClassIViolations}`);
+    console.log(`Class II Loss: ${res.summary.totalClassIILossAmount} base units`);
+    console.log(`Bond Payout: ${res.summary.totalBondPayoutAmount} base units`);
+    console.log(`Net Loss: ${res.summary.totalNetLossAmount} base units`);
+    console.log(`Owner Review Burden: ${res.summary.ownerReviewBurden}`);
+    return;
+  }
+
+  // Unimplemented P6 commands per §E
   const laterPhases = [
     'evidence',
-    'experiment',
   ];
 
   if (laterPhases.includes(command)) {
-    console.error(`Command '${command}' not implemented (P6/P7)`);
+    console.error(`Command '${command}' not implemented (P6)`);
     process.exit(2);
   }
 

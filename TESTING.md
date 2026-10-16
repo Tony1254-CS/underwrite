@@ -265,3 +265,33 @@ Author: antigravity
    - Foundry: 101 tests passed across 17 test suites (including stateful invariant tests with 25,600 calls and 0 reverts).
    - Gate QG-5 Status: **PASSED**.
 
+
+---
+
+## Phase P7 (Calibration Experiment) & Phase P8 (Web UI) Verification Log
+
+Date: 2026-10-16 17:00 UTC
+Author: antigravity
+
+### Verification Steps & Commands
+
+1. **Web UI Scaffold & Invariant Layout (P8-T01, P8-T02, P8-T03, P8-T04):**
+   - Next.js 15.5.28 App Router + Tailwind CSS 3.4.17 with zero external CDN dependencies (`web/src/` has 0 occurrences of `https://`).
+   - Server data layer with 4 Viem API routes (`/api/state`, `/api/exams`, `/api/traces`, `/api/claims`).
+   - Dashboard page with live Authority Meter, dynamic window consumption bar, bond remaining backing, and live mandate limits.
+   - Exam & Policy Card page rendering live exam reports, the 3 verbatim plan §7 disclosures, side-by-side agent comparison ($\alpha$, $\beta$, $\gamma$), and the $a \in \{0.01, 0.05, 0.20\}$ sensitivity table.
+   - Command: `pnpm --filter web build` -> 10/10 routes compiled, production build succeeded (exit code 0).
+   - Command: `pnpm --filter web typecheck` -> 0 errors.
+
+2. **Calibration Experiment Runner & Rescore Mode (P7-T01..P7-T05):**
+   - Pre-registration protocol in `docs/EXPERIMENT.md` with hypotheses H1-H4 and mechanism check.
+   - Generator B deployment stream (300 invoices, 10 windows, 80/20 mix) and Blind Red-Team set ($\ge 30$ invoices) in `engine/src/experiment/generatorB.ts`.
+   - Pre-committed hashes saved in `experiments/hashes.json` (Generator B: `0x1f78142d7ca2617e5af90f643e20108e7576b77f423c9567b608e6de9247a565`, Blind: `0x7667f1be8b0850f07a6c03c73eb21f8b548bbb6c0bbe122945c9d874a7448e5d`).
+   - Experiment runner for R0, R1, and R2 regimes with scripted owner reconciliation in `engine/src/experiment/runner.ts`.
+   - Deterministic rescore function (`rescoreExperiment`) rebuilding `summary.json` from JSONL traces bit-for-bit.
+   - Command: `pnpm -C engine exec vitest run test/experiment-runner.test.ts` -> 5 tests passed (100%).
+
+3. **Workspace Full Regression Suite:**
+   - Command: `pnpm -r test` -> 156 unit tests passed across 24 test files (0 failures).
+   - Command: `pnpm -r typecheck` -> 0 errors.
+   - Command: `forge test` -> 101 tests passed across 17 test suites (INV-1..14 verified).

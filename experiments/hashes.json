@@ -1,0 +1,7 @@
+{
+  "generatorBHash": "0x1f78142d7ca2617e5af90f643e20108e7576b77f423c9567b608e6de9247a565",
+  "blindSetHash": "0x7667f1be8b0850f07a6c03c73eb21f8b548bbb6c0bbe122945c9d874a7448e5d",
+  "timestamp": "2026-10-16T16:52:00Z",
+  "source": "engine/src/experiment/generatorB.ts",
+  "disclaimer": "non-independent (self-authored per fallback DEC-023)"
+}

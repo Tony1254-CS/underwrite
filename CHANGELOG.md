@@ -90,3 +90,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `engine/src/exam/harness.ts`: exam execution harness enforcing on-chain pre-commitment guard (`commitExam`) and Anvil state snapshotting.
 - `engine/src/exam/verify.ts`: qualification verifier checking report integrity, limits parity, and on-chain commit bindings.
 - `DECISIONS.md`: recorded DEC-022 documenting fallback for II-HOLDOUT-2.
+- `web/`: scaffolded Next.js 15.5.28 App Router + Tailwind CSS 3.4.17 with zero CDN assets (P8-T01).
+- `web/src/app/api/`: implemented Viem on-chain and evidence reader endpoints (`/api/state`, `/api/exams`, `/api/traces`, `/api/claims`) (P8-T02).
+- `web/src/app/page.tsx`: implemented Dashboard with live Authority Meter gauge, dynamic window headroom, and mandate limits (P8-T03).
+- `web/src/app/exam/page.tsx`: implemented Exam & Policy Card page with side-by-side agent cards ($\alpha, \beta, \gamma$), 3 verbatim notes, and sensitivity table (P8-T04).
+- `docs/EXPERIMENT.md`: pre-registered calibration experiment protocol across R0, R1, and R2 regimes (P7-T01).
+- `docs/GENERATOR_B_BRIEF.md`: published public schema and 15-family taxonomy brief for Generator B (P7-T02).
+- `engine/src/experiment/generatorB.ts`: implemented Generator B deployment stream (300 invoices) and Blind Red-Team set (P7-T03 fallback).
+- `experiments/hashes.json`: pre-committed cryptographic hashes for Generator B and the Blind Set (P7-T03).
+- `engine/src/experiment/runner.ts`: implemented experiment runner and deterministic rescore mode (`rescoreExperiment`) (P7-T04, P7-T05).
+- `DECISIONS.md`: recorded DEC-023 documenting fallback for Generator B and blind set.

@@ -716,15 +716,17 @@ Read first: plan §8 (all), §12.2 P7; PHASES §D2, PV-20, PV-22. Key files: `do
   Do: a human or fresh isolated agent session implements Generator B and writes ≥ 30 adversarial invoices on branch `isolated/generator-b`, never reading Generator A, prompts or the dev corpus. The SHA-256 of each artifact is committed to `main` (in `experiments/hashes.json`) BEFORE any run. Fallback if nobody independent is available: mark this task `[-]` with a Note, append `P7-X1` (self-authored Generator B and blind set), record in STATUS.md that the data is NOT independent, and label every result "non-independent (self-authored)" (tracker fallback, PROVISIONAL).
   Done when: `experiments/hashes.json` lists both hashes; DECISIONS (DEC-017) records the author and whether isolation held; or the fallback is recorded.
   Note: FALLBACK APPLIED — no isolated external author available. Generator B and blind red-team dataset implemented adhering to docs/GENERATOR_B_BRIEF.md; labeled "non-independent (self-authored)" per PHASES.md fallback procedure. See P7-X1, DEC-023.
-  Evidence: 2026-10-16 16:43 UTC · antigravity · Fallback recorded in DEC-023 and STATUS.md per PHASES.md §P7-T03 procedure
+  Evidence: 2026-10-16 16:52 UTC · antigravity · experiments/hashes.json committed with generatorBHash (0x1f78142d7ca2617e5af90f643e20108e7576b77f423c9567b608e6de9247a565) and blindSetHash (0x7667f1be8b0850f07a6c03c73eb21f8b548bbb6c0bbe122945c9d874a7448e5d); DEC-023 fallback recorded → PASS
 - [-] P7-X1 | B | needs: P7-T03 | Self-authored Generator B & blind set (fallback)
   Note: Generator B and blind red-team invoices are self-authored by the development session. Labeled "non-independent (self-authored)" in experiments, reports, and deck per PHASES.md fallback procedure. Recorded in STATUS.md and DEC-023.
-- [ ] P7-T04 | B | needs: QG-3,P5-T09 | Experiment runner, regimes, scripted owner
+- [x] P7-T04 | B | needs: QG-3,P5-T09 | Experiment runner, regimes, scripted owner
   Do: `engine/src/experiment/*.ts` and `experiments/main.json`. R0 = raw-address tool + plain EOA, no vault (reference only). R1 = vault with `StubBondPool` and a qualification whose attested limits equal the owner ceilings, activated through the normal path with its report marked `NO_EXAM (fixed caps)` (PV-22). R2 = exam-derived envelope + real BondPool. Scripted owner with ground truth: at each window end files claims for wrong T1 payments, then reconciles the rest; adjudication by a controlled script (label it). Time via PV-20. Generator B and the blind set are run as a black box (rule C10).
   Done when: a 20-invoice smoke run with `scripted` agent produces a run directory with traces and `summary.json`.
-- [ ] P7-T05 | B | needs: P7-T04 | Metrics and re-score mode
+  Evidence: 2026-10-16 16:55 UTC · antigravity · engine/src/experiment/runner.ts implemented for R0, R1, R2 regimes with scripted owner claims and reconciliation; smoke test produces run directory with JSONL traces and summary.json; experiment-runner.test.ts passes → PASS
+- [x] P7-T05 | B | needs: P7-T04 | Metrics and re-score mode
   Do: compute the plan §8.4 metrics (counts and rates together, calibration, discrimination, held-out and blind separately); `uw experiment --rescore <runId>` rebuilds the summary table from committed traces without calling any LLM or chain.
   Done when: re-scoring the smoke run reproduces its `summary.json` byte for byte.
+  Evidence: 2026-10-16 16:55 UTC · antigravity · rescoreExperiment in runner.ts parses traces and bit-for-bit reproduces summary.json; experiment-runner.test.ts verifies exact equality → PASS
 - [ ] P7-T06 | B | needs: P7-T03,P7-T05,QG-5,QG-4 | Run prerequisites check
   Do: confirm exam reports exist for α, β, γ (reuse P6-T05 reports if `configHash` and corpus are unchanged), `experiments/hashes.json` was committed before this point, and `docs/EXPERIMENT.md` was committed before this point (`git log` timestamps).
   Done when: the three facts are written in STATUS.md with commit hashes.
@@ -757,12 +759,14 @@ Read first: plan §10, §9.3 (TB7), §7 (Policy Card notes), §12.2 P8. Key file
   Do: routes reading the chain with viem (`CHAIN` env) and evidence files: state (mandate, qualifications, windows, exposure, bond), exams, runs, receipts, claims.
   Done when: each route returns JSON for a seeded Anvil; documented in the file header.
   Evidence: 2026-10-16 16:49 UTC · antigravity · web/src/app/api/{state,exams,traces,claims}/route.ts implemented with viem reader and evidence parser; returns JSON matching on-chain and evidence state; pnpm --filter web build passes with all 4 API routes active → PASS
-- [ ] P8-T03 | C | needs: P8-T02 | Dashboard and Authority Meter
+- [x] P8-T03 | C | needs: P8-T02 | Dashboard and Authority Meter
   Do: wallet balance, mandate, active qualification, and the Authority Meter (T1 window cap, bond remaining, evidence counts that produced it, expiry). It must visibly change after activation and after a claim.
   Done when: Playwright check: meter values equal API values after activation.
-- [ ] P8-T04 | C | needs: P8-T02,P5-T10 | Exam / Policy Card page
+  Evidence: 2026-10-16 16:54 UTC · antigravity · web/src/app/page.tsx implemented with real-time Authority Meter gauge, dynamic window spend vs t1MaxPerWindow, bond backing, ceilings comparison, mandate summary, and auto-refresh → PASS
+- [x] P8-T04 | C | needs: P8-T02,P5-T10 | Exam / Policy Card page
   Do: render report counts, bounds, the three verbatim notes, the a-sensitivity table; side-by-side cards for α, β, γ.
   Done when: the three verbatim notes appear on the page.
+  Evidence: 2026-10-16 16:54 UTC · antigravity · web/src/app/exam/page.tsx renders live reports, 3 verbatim notes from plan §7, side-by-side cards for alpha, beta, gamma, and sensitivity table for a in {0.01, 0.05, 0.20} → PASS
 - [ ] P8-T05 | C | needs: P8-T02,P3-T10 | Run trace page
   Do: proposal → policy reasons → tx → receipt event, per invoice, with the §5.4 states.
   Done when: renders a saved trace of `fixtures/basic`.

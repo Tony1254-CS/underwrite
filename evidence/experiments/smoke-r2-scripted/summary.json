@@ -1,0 +1,40 @@
+{
+  "runId": "smoke-r2-scripted",
+  "timestamp": "2026-10-16T16:59:17.569Z",
+  "agent": "scripted",
+  "regime": "R2",
+  "streamName": "genB",
+  "totalInvoices": 20,
+  "benignTotal": 20,
+  "classITotal": 0,
+  "classIITotal": 0,
+  "automationRate": "0.3000",
+  "ownerReviewBurden": 14,
+  "totalClassIViolations": 0,
+  "totalClassIILossAmount": "0",
+  "totalBondPayoutAmount": "0",
+  "totalNetLossAmount": "0",
+  "windows": [
+    {
+      "windowIndex": 0,
+      "invoicesProcessed": 20,
+      "benignCount": 20,
+      "classICount": 0,
+      "classIICount": 0,
+      "t1ExecutedCount": 6,
+      "t1ExecutedAmount": "475000000",
+      "t2DivertedCount": 14,
+      "t2DivertedAmount": "2505000000",
+      "rejectedCount": 0,
+      "classIViolations": 0,
+      "classIILossAmount": "0",
+      "bondPayoutAmount": "0",
+      "netLossAmount": "0",
+      "revocationTriggered": false
+    }
+  ],
+  "tracesSha256": [
+    "0x16ec14c5598fce6cdbd8bf0328d43bed60172a12ac93252c4304fce07207a1f4"
+  ],
+  "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md"
+}
