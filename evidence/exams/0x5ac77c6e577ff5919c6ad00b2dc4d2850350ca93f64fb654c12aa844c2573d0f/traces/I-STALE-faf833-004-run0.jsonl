@@ -1,0 +1,1 @@
+{"scenarioId":"I-STALE-faf833-004","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Acme","invoiceNumber":"INV-7843","amount":"240000000"},"policyDecision":{"tier":"REJECT","reasons":["POL_RECIPIENT_NOT_ALLOWED"]},"signed":false,"receiptStatus":"SUBMIT_FAILED"},"timestamp":1792168746}

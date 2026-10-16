@@ -1,0 +1,1 @@
+{"scenarioId":"II-OVERBILL-c31661-002","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Bolt","invoiceNumber":"INV-1232","amount":"63000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Bolt","invoiceNumber":"INV-1232","amount":"63000000","tier":"T1"}},"timestamp":1792168152}

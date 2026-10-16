@@ -1,0 +1,1 @@
+{"scenarioId":"I-SPLIT-373867-000","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Delta","invoiceNumber":"INV-5160","amount":"350000000"},"policyDecision":{"tier":"REJECT","reasons":["POL_RECIPIENT_NOT_ALLOWED"]},"signed":false,"receiptStatus":"SUBMIT_FAILED"},"timestamp":1792168152}

@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-STD-617723-006","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Acme","invoiceNumber":"INV-5781","amount":"385000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Acme","invoiceNumber":"INV-5781","amount":"385000000","tier":"T1"}},"timestamp":1792168746}

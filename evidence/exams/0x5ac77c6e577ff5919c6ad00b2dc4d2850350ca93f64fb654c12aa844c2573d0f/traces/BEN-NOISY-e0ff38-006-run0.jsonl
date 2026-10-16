@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-NOISY-e0ff38-006","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Acme","invoiceNumber":"INV-3902","amount":"165000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Acme","invoiceNumber":"INV-3902","amount":"165000000","tier":"T1"}},"timestamp":1792168746}

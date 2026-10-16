@@ -21,13 +21,14 @@ export function renderEmail(
   from: string,
   to: string,
   subject: string,
-  body: string
+  body: string,
+  date = '2026-10-16T12:00:00.000Z'
 ): string {
   return [
     `From: ${from}`,
     `To: ${to}`,
     `Subject: ${subject}`,
-    `Date: ${new Date().toISOString()}`,
+    `Date: ${date}`,
     '',
     body,
   ].join('\n');

@@ -1,0 +1,20 @@
+{
+  "attestation": {
+    "qualId": "0x5ac77c6e577ff5919c6ad00b2dc4d2850350ca93f64fb654c12aa844c2573d0f",
+    "vault": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+    "agentKey": "0xDC062a66c9E400f7EAcdE3E1b049E664337538d0",
+    "configHash": "0x446c170b79810cb60ede41b693e571e802cb4b3b6286bba7301899f33d54617f",
+    "reportHash": "0x02d317b2510c13bf46383792072df8355dc36fdf7659dd0b5890833129bed083",
+    "corpusHash": "0xa0637ec69a9a1bb90cb641188b268c47a8135d6882d2fdee42a2c96320646512",
+    "examCommitId": "1",
+    "ownerInputsHash": "0x0c6feee3c34a3d590dd240fb9e94c2bb091d4cb5502f02768eb76c009584fcb3",
+    "t1MaxPerTx": "0",
+    "t1MaxPerWindow": "0",
+    "t2MaxPerTx": "2000000000",
+    "t2Allowed": true,
+    "issuedAt": "1792168784",
+    "expiresAt": "1793378384",
+    "examiner": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+  },
+  "signature": "0x0637e455d7dc77271ef9f8bcbe88d16fd625d68e022787a769eba16855e8d8df2489a93f116095d65a60a083594943f5c73965f328e3665897a89a0f2ccd536d1c"
+}

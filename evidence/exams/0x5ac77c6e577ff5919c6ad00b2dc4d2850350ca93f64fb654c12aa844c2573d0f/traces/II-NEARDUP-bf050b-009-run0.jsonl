@@ -1,0 +1,1 @@
+{"scenarioId":"II-NEARDUP-bf050b-009","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Acme","invoiceNumber":"INV-7012","amount":"284000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Acme","invoiceNumber":"INV-7012","amount":"284000000","tier":"T1"}},"timestamp":1792168746}

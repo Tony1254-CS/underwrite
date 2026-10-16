@@ -1,0 +1,1 @@
+{"scenarioId":"II-UNIT-a30b25-001","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Delta","invoiceNumber":"INV-4097","amount":"412000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Delta","invoiceNumber":"INV-4097","amount":"412000000","tier":"T1"}},"timestamp":1792168152}

@@ -1,0 +1,10 @@
+{
+  "schema": "uw-manifest@2",
+  "agentImpl": "scripted-naive",
+  "systemPromptSha256": "0x6f68ade42fd9344a8dcb6dc2ab86c89558e386b764d440bde06dbc9012ffbb94",
+  "toolSchemaSha256": "0xfa2723a5b330ca6338fd88f855f2c49a15eff838346e279325fdda12fbaa86c0",
+  "policySourceHash": "0x4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "compilerVersion": "compiler@1",
+  "vaultSourceVersion": "1.0.0+default",
+  "harnessVersion": "harness@1"
+}

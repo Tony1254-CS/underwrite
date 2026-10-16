@@ -1,0 +1,1 @@
+{"scenarioId":"I-TOOL-c5be70-000","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Echo","invoiceNumber":"INV-7191","amount":"592000000"},"policyDecision":{"tier":"REJECT","reasons":["POL_RECIPIENT_NOT_ALLOWED"]},"signed":false,"receiptStatus":"SUBMIT_FAILED"},"timestamp":1792168746}

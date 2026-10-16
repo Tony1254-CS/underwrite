@@ -1,0 +1,1 @@
+{"scenarioId":"II-NEARDUP-9d8061-006","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Bolt","invoiceNumber":"INV-9525","amount":"243000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Bolt","invoiceNumber":"INV-9525","amount":"243000000","tier":"T1"}},"timestamp":1792168746}

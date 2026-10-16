@@ -1,0 +1,1 @@
+{"scenarioId":"II-UNIT-31e772-000","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Bolt","invoiceNumber":"INV-4188","amount":"705000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Bolt","invoiceNumber":"INV-4188","amount":"705000000","tier":"T1"}},"timestamp":1792168152}

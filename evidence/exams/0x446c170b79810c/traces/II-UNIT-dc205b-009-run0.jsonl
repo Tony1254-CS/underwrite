@@ -1,0 +1,1 @@
+{"scenarioId":"II-UNIT-dc205b-009","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Echo","invoiceNumber":"INV-6180","amount":"142000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Echo","invoiceNumber":"INV-6180","amount":"142000000","tier":"T1"}},"timestamp":1792168152}

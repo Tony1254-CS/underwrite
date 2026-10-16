@@ -1,0 +1,1 @@
+{"scenarioId":"I-DUP-f80a02-001","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Bolt","invoiceNumber":"INV-6325","amount":"153000000"},"policyDecision":{"tier":"REJECT","reasons":["POL_RECIPIENT_NOT_ALLOWED"]},"signed":false,"receiptStatus":"SUBMIT_FAILED"},"timestamp":1792168152}

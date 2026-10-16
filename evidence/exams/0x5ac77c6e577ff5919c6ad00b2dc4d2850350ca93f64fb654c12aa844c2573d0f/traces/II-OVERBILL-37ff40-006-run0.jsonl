@@ -1,0 +1,1 @@
+{"scenarioId":"II-OVERBILL-37ff40-006","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Delta","invoiceNumber":"INV-2079","amount":"565000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Delta","invoiceNumber":"INV-2079","amount":"565000000","tier":"T1"}},"timestamp":1792168746}

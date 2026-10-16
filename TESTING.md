@@ -202,3 +202,66 @@ Author: Tony1254-CS
    - Gate QG-4 Status: **PASSED**.
 
 
+
+---
+
+## Gate QG-5 & Phase P5 Verification (P5-T01..P5-T12)
+
+Date: 2026-10-16 16:35 UTC
+Author: antigravity
+
+### Verification Steps & Commands
+
+1. **Compiler Math & Clopper-Pearson Bounds (`engine/src/compiler/cp.ts`, `fixedPoint.ts`, `compile.ts`):**
+   - Exact Clopper-Pearson upper bounds using incomplete beta quantile and closed-form `1 - (1 - c)^(1/n)` for $k=0$.
+   - Tested sanity vectors: `cpUpper(0, 100, 0.95) = 0.029513`, `cpUpper(0, 30, 0.95) = 0.095034`, `cpUpper(0, 30, 0.99) = 0.142304`.
+   - $k > 0$ values cross-checked against binomial CDF bisection.
+   - `compiler@1` pure function: G1-G4 gates, Bonferroni multi-family correction, owner threat weighting, 14-day expiry.
+   - Sanity vector yields exactly 180 USDC ($180,000,000$ base units).
+   - 14 tests passing across `compiler-math.test.ts` and `compiler.test.ts`.
+
+2. **Exam Generator & PRNG (`engine/src/exam/prng.ts`, `renderers.ts`, `generator.ts`):**
+   - Deterministic PRNG via `keccak256(utf8(seed + counter))` per PV-15 / DEC-012.
+   - All 15 families implemented: 3 Benign, 6 Class I, 5 Class II in-distribution, 1 held-out (`II-HOLDOUT-1`), and fallback `II-HOLDOUT-2` (self-authored).
+   - Document renderers for email, text-PDF, and GRN text formats.
+   - 5 tests passing in `engine/test/exam-generator.test.ts`.
+
+3. **Exam Corpora (`engine/src/exam/corpus.ts`):**
+   - Dev corpus: 120 scenarios (40 benign, 30 Class I, 50 Class II in-distribution) written to `scenarios/dev/`.
+   - Eval corpus: 390 scenarios (120 benign, 60 Class I, 150 Class II in-distribution, 60 held-out).
+   - Corpus hashing via `hashCanonicalJson(corpus, 'keccak256')`.
+   - 4 tests passing in `engine/test/exam-corpus.test.ts`.
+
+4. **Exam Scorer & Report Builder (`engine/src/exam/scorer.ts`, `report.ts`):**
+   - Outcome labels: `SAFE_COMPLETE`, `WRONG_PARAMS`, `FALSE_BLOCK`, `ESCALATED`, `CLASS_I_EXECUTED`, `CLASS_I_STOPPED@{agent,policy,signer,contract}`, `CLASS_II_LOSS`, `CLASS_II_STOPPED@{agent,policy}`.
+   - Attribution to stopping layer and worst-of-$r$ run aggregation.
+   - Report builder generates `report.json`, `report.md`, and `policy-card.md`.
+   - Policy Card includes the 3 verbatim notes from plan §7 and sensitivity table for $a \in \{0.01, 0.05, 0.20\}$.
+   - 11 tests passing across `exam-scorer.test.ts` and `exam-report.test.ts`.
+
+5. **Exam Harness & Qualification Verifier (`engine/src/exam/harness.ts`, `verify.ts`):**
+   - On-chain pre-commitment guard: harness refuses to run unless vault holds `commitExam(configHash, corpusHash)` per plan §6.4.
+   - Anvil snapshotting and world state setup.
+   - Verifier checks report hash, configHash, corpusHash, commit ID, owner inputs, envelope recomputation, and on-chain limit parity.
+   - Tamper tests verify: 1-byte change in `report.json` triggers verification failure; limit mismatch triggers verification failure; valid qualification yields PASS.
+   - 5 tests passing across `exam-harness.test.ts` and `exam-verify.test.ts`.
+
+6. **Reproducibility & Cross-Language EIP-712 Check (P5-T13):**
+   - `engine/test/exam-reproducibility.test.ts`:
+     - Test 1: `scripted-naive` run twice on identical corpus yields identical `reportHash` and identical byte content in `report.json`.
+     - Test 2 (PV-07 cross-check): EIP-712 typed data signed in TypeScript with `viem.signTypedData`, submitted to Solidity `UnderwriteVault.activateQualification`, mined in transaction, and confirmed active.
+   - 2 tests passing in `engine/test/exam-reproducibility.test.ts`.
+
+7. **Live On-Chain Verification & Tamper Detection Receipts (Gate QG-5):**
+   - Command: `pnpm uw verify 0x5ac77c6e577ff5919c6ad00b2dc4d2850350ca93f64fb654c12aa844c2573d0f`
+   - Output: `Verification: PASS` (all hashes, compiler limits, and on-chain records match).
+   - Tamper Command: modify `report.json` (`"r": 1` -> `"r": 2`), run `pnpm uw verify 0x5ac7...`
+   - Output: `Mismatches found: [FAIL] On-chain reportHash 0x02d3... does not match recomputed 0xc58b...` -> `Verification: FAIL` (exit code 1).
+   - Restored original `report.json` and re-ran `pnpm uw verify 0x5ac7...` -> `Verification: PASS` (exit code 0).
+
+8. **Full Suite Status:**
+   - Vitest: 151 unit tests passed across 23 test files in `engine` (100% pass).
+   - TypeScript: `pnpm -r typecheck` passed with 0 errors across `engine` and `web`.
+   - Foundry: 101 tests passed across 17 test suites (including stateful invariant tests with 25,600 calls and 0 reverts).
+   - Gate QG-5 Status: **PASSED**.
+

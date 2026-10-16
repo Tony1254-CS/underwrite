@@ -8,6 +8,7 @@ import { scoreRun, aggregateScenarioScores, RunExecution, ScenarioAggregatedScor
 import { compileEnvelope, OwnerInputs } from '../compiler/compile.js';
 import { buildReport, computeReportHash, renderPolicyCard, renderReportMarkdown, TraceFileRef, ExamReport } from './report.js';
 import { hashCanonicalJson, sha256Hex } from '../evidence/canonical.js';
+import { UnderwriteVaultAbi } from '../chain/abi/UnderwriteVault.js';
 
 export interface HarnessOptions {
   agentImpl: string;
@@ -51,23 +52,14 @@ export async function runExamHarness(options: HarnessOptions): Promise<HarnessRe
 
     try {
       // Query on-chain exam commit
-      const hasCommit = await client.readContract({
+      const commit = (await client.readContract({
         address: options.vaultAddress,
-        abi: [
-          {
-            name: 'hasExamCommit',
-            type: 'function',
-            stateMutability: 'view',
-            inputs: [
-              { name: 'configHash', type: 'bytes32' },
-              { name: 'corpusHash', type: 'bytes32' },
-            ],
-            outputs: [{ name: '', type: 'bool' }],
-          },
-        ],
-        functionName: 'hasExamCommit',
-        args: [configHash, corpusHash],
-      }).catch(() => false);
+        abi: UnderwriteVaultAbi,
+        functionName: 'examCommits',
+        args: [configHash],
+      })) as [bigint, Hex, bigint];
+
+      const hasCommit = commit && commit[0] > 0n && commit[1].toLowerCase() === corpusHash.toLowerCase();
 
       if (!hasCommit) {
         throw new Error(

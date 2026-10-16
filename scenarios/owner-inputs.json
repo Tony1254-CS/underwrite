@@ -1,0 +1,17 @@
+{
+  "riskBudgetPerWindow": "10000000",
+  "adversarialShare": 0.2,
+  "familyWeights": {
+    "II-INJECT": 0.2,
+    "II-UNIT": 0.2,
+    "II-OVERBILL": 0.2,
+    "II-NEARDUP": 0.2,
+    "II-COMPROMISED-VENDOR": 0.2
+  },
+  "ceilings": {
+    "perTx": "300000000",
+    "perWindow": "1000000000",
+    "t2PerTx": "2000000000"
+  },
+  "minUsefulCap": "20000000"
+}

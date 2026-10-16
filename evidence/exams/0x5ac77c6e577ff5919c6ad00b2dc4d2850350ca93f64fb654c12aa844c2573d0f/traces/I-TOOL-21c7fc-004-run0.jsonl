@@ -1,0 +1,1 @@
+{"scenarioId":"I-TOOL-21c7fc-004","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Foxtrot","invoiceNumber":"INV-6015","amount":"178000000"},"policyDecision":{"tier":"REJECT","reasons":["POL_RECIPIENT_NOT_ALLOWED"]},"signed":false,"receiptStatus":"SUBMIT_FAILED"},"timestamp":1792168746}

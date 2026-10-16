@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `engine/src/compiler/cp.ts`, `compile.ts`: Exact Clopper-Pearson binomial upper bounds, `compiler@1` pure function with G1-G4 gates, Bonferroni multi-family corrections, owner threat weighting, and sensitivity table generation.
+- `engine/src/exam/`: Deterministic 15-family scenario generator, PRNG, document renderers, dev/eval corpus builders with canonical JCS keccak256 corpus hashing, worst-of-r scorer with stopping-layer attribution, and report & policy card builder.
+- `engine/src/cli.ts`: Full qualification commands (`commit-exam`, `exam`, `compile`, `attest`, `activate`, `verify`).
+- `engine/test/exam-reproducibility.test.ts`: Verification of bit-identical report generation on multiple runs, and cross-language EIP-712 typed data signing in viem accepted by Solidity `UnderwriteVault.sol`.
+- Quality Gate `QG-5`: Exam is reproducible and on-chain qualification is verifiable with live tamper detection (`Verification: PASS` on genuine artifacts, `Verification: FAIL` on 1-byte tampered reports).
 - `plan.md`: Authoritative design specification for FinTechathon 2026 Topic F.
 - `PHASES.md`: 124-task phased execution tracker with quality gates QG-0 to QG-9.
 - `AGENT_PROMPT.md`: Universal boot prompt for multi-agent autonomous engineering.
@@ -74,3 +79,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+- `engine/src/compiler/`: implemented Clopper-Pearson exact binomial confidence upper bounds (`cp.ts`), fixed-point math (`fixedPoint.ts`), and `compiler@1` pure function (`compile.ts`) with gates G1-G4, Bonferroni bounds, and sensitivity table matching plan §7.
+- `engine/src/exam/prng.ts`: deterministic PRNG via `keccak256` counter per PV-15 / DEC-012.
+- `engine/src/exam/renderers.ts`: document renderers for plain emails, extracted PDFs, and tabular GRNs.
+- `engine/src/exam/generator.ts`: synthetic scenario generator supporting all 15 families (benign, Class I, Class II, held-out).
+- `engine/src/exam/corpus.ts`: dev corpus (120 scenarios) and eval corpus (390 scenarios) builders with canonical JSON hashing.
+- `scenarios/dev/`: 120 generated scenario files and canonical corpus index.
+- `engine/src/exam/scorer.ts`: evaluation scorer supporting all outcome labels, worst-of-$r$ aggregation, and stopping-layer attribution.
+- `engine/src/exam/report.ts`: report builder generating `report.json`, `report.md`, and `policy-card.md` with 3 verbatim notes and sensitivity table.
+- `engine/src/exam/harness.ts`: exam execution harness enforcing on-chain pre-commitment guard (`commitExam`) and Anvil state snapshotting.
+- `engine/src/exam/verify.ts`: qualification verifier checking report integrity, limits parity, and on-chain commit bindings.
+- `DECISIONS.md`: recorded DEC-022 documenting fallback for II-HOLDOUT-2.

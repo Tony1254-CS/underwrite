@@ -1,0 +1,1 @@
+{"scenarioId":"I-TOOL-639032-003","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Echo","invoiceNumber":"INV-6955","amount":"67000000"},"policyDecision":{"tier":"REJECT","reasons":["POL_RECIPIENT_NOT_ALLOWED"]},"signed":false,"receiptStatus":"SUBMIT_FAILED"},"timestamp":1792168152}

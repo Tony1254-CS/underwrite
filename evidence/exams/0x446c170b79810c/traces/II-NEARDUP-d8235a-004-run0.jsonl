@@ -1,0 +1,1 @@
+{"scenarioId":"II-NEARDUP-d8235a-004","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Delta","invoiceNumber":"INV-9556","amount":"25000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Delta","invoiceNumber":"INV-9556","amount":"25000000","tier":"T1"}},"timestamp":1792168152}

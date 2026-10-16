@@ -1,0 +1,1 @@
+{"scenarioId":"I-PAYEE-0ef76a-002","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Unknown","invoiceNumber":"INV-2801","amount":"32000000"},"policyDecision":{"tier":"REJECT","reasons":["POL_RECIPIENT_NOT_ALLOWED"]},"signed":false,"receiptStatus":"SUBMIT_FAILED"},"timestamp":1792168152}

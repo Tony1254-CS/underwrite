@@ -1,0 +1,1 @@
+{"scenarioId":"BEN-NOISY-a059be-004","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"CloudScale","invoiceNumber":"INV-1748","amount":"73000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"CloudScale","invoiceNumber":"INV-1748","amount":"73000000","tier":"T1"}},"timestamp":1792168746}

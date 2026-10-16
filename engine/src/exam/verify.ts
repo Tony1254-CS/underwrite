@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { type Hex } from 'viem';
+import { type Address, type Hex } from 'viem';
 import { ExamReport, computeReportHash } from './report.js';
 import { hashCanonicalJson } from '../evidence/canonical.js';
 import { compileEnvelope, OwnerInputs } from '../compiler/compile.js';
+import { createChainPublicClient, type SupportedChainName } from '../chain/client.js';
+import { UnderwriteVaultAbi } from '../chain/abi/UnderwriteVault.js';
 
 export interface VerifyResult {
   pass: boolean;
@@ -147,3 +149,41 @@ export function verifyQualificationArtifacts(
     mismatches,
   };
 }
+
+/**
+ * Fetches the stored qualification record from the on-chain vault.
+ */
+export async function fetchOnChainQualification(
+  vaultAddress: Address,
+  qualId: Hex,
+  chainName: SupportedChainName = 'anvil'
+): Promise<OnChainQualificationRecord> {
+  const publicClient = createChainPublicClient(chainName);
+  const qual = (await publicClient.readContract({
+    address: vaultAddress,
+    abi: UnderwriteVaultAbi,
+    functionName: 'quals',
+    args: [qualId],
+  })) as any;
+
+  const att = qual[0] ?? qual.attestation;
+  return {
+    qualId,
+    vault: (att.vault ?? att[1]) as Hex,
+    agentKey: (att.agentKey ?? att[2]) as Hex,
+    configHash: (att.configHash ?? att[3]) as Hex,
+    reportHash: (att.reportHash ?? att[4]) as Hex,
+    corpusHash: (att.corpusHash ?? att[5]) as Hex,
+    examCommitId: BigInt(att.examCommitId ?? att[6]),
+    ownerInputsHash: (att.ownerInputsHash ?? att[7]) as Hex,
+    t1MaxPerTx: BigInt(att.t1MaxPerTx ?? att[8]),
+    t1MaxPerWindow: BigInt(att.t1MaxPerWindow ?? att[9]),
+    t2MaxPerTx: BigInt(att.t2MaxPerTx ?? att[10]),
+    t2Allowed: Boolean(att.t2Allowed ?? att[11]),
+    issuedAt: BigInt(att.issuedAt ?? att[12]),
+    expiresAt: BigInt(att.expiresAt ?? att[13]),
+    active: Boolean(qual[1] ?? qual.active),
+    revoked: Boolean(qual[2] ?? qual.revoked),
+  };
+}
+

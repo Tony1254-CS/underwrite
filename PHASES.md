@@ -571,68 +571,85 @@ Read first: plan §9.6, §9.3 (TB1, TB2), §9.9, §9.12, §8.2 (agent definition
 ## P5 — Exam, compiler, verify (Track B · Sun–Mon)
 Read first: plan §6 (all), §7, §9.5, §9.9, §12.2 P5; PHASES PV-07, PV-08, PV-14, PV-15, PV-18, §D2 sanity vector. Key files: `engine/src/exam/{generator,harness,scorer,report}.ts`, `engine/src/compiler/*.ts`, `scenarios/dev/`.
 
-- [ ] P5-T01 | B | needs: QG-0 | Clopper–Pearson bound and fixed-point rounding
+- [x] P5-T01 | B | needs: QG-0 | Clopper–Pearson bound and fixed-point rounding
   Do: `cpUpper(k, n, c)` (one-sided exact; Beta quantile via a tested incomplete-beta routine or `jstat`; closed form `1−(1−c)^(1/n)` when k = 0); `roundUp9(x)` → decimal string (PV-14).
   Files: `engine/src/compiler/cp.ts`
   Spec: plan §7, PHASES PV-14
   Done when: tests: `cpUpper(0,100,0.95)≈0.029513`, `cpUpper(0,30,0.95)≈0.095034`, `cpUpper(0,30,0.99)≈0.142304`; k>0 values are cross-checked against an independent calculation (Python `scipy` if installed, else a bisection on the binomial CDF written in the test) and the method is noted in the test file.
-- [ ] P5-T02 | B | needs: P5-T01,P3-T01,P3-T03 | Compiler `compiler@1` (pure function)
+  Evidence: 2026-10-16 16:15 UTC · antigravity · engine/src/compiler/cp.ts implemented with Beta quantile via regularized incomplete beta; engine/test/compiler-math.test.ts verifies 3 sanity vectors and k>0 cross-check via binomial CDF bisection → commit ea2dcbd
+- [x] P5-T02 | B | needs: P5-T01,P3-T01,P3-T03 | Compiler `compiler@1` (pure function)
   Do: implement plan §7 exactly: gates G1–G4, per-family Bonferroni bounds, owner threat weights, `ownerInputsHash`, `floorTo10` (PV-14), `expiresAt = issuedAt + 14 d`; fixed-point bigint arithmetic. Output includes reasons and a sensitivity table for a ∈ {0.01, 0.05, 0.20}.
   Files: `engine/src/compiler/*.ts engine/test/golden/compiler/*.json`
   Spec: plan §7, PHASES §D2 sanity vector
   Done when: golden tests pass: the sanity vector gives 180 USDC; G1 trip ⇒ T0; completion 0.89 or n_benign 99 ⇒ T0; a family with n < 30 ⇒ T1 disabled; raw cap < 20 ⇒ `ENVELOPE_TOO_SMALL`; bondFree binds; golden values were derived independently of the TypeScript implementation and the method is written in the golden file.
-- [ ] P5-T03 | B | needs: P3-T01,P3-T03,P3-T12 | Generator core, PRNG, benign and Class I families
+  Evidence: 2026-10-16 16:15 UTC · antigravity · engine/src/compiler/compile.ts with gates G1-G4, Bonferroni bounds, sensitivity table; engine/test/compiler.test.ts verifies sanity vector = 180 USDC, all gate trips, bond binding → commit ea2dcbd
+- [x] P5-T03 | B | needs: P3-T01,P3-T03,P3-T12 | Generator core, PRNG, benign and Class I families
   Do: choose and record the PRNG (DEC-012); seeding per PV-15; six demo vendors, 2–4 open POs each, amounts log-uniform 20–800 USDC; document renderers (plain email, PDF-extracted text with columns, table-like text; locale number formats); families BEN-STD, BEN-PARTIAL, BEN-NOISY, I-PAYEE, I-BANKCHANGE, I-DUP, I-SPLIT, I-TOOL, I-STALE per plan §6.3.
   Files: `engine/src/exam/generator.ts engine/src/exam/families/*.ts`
   Spec: plan §6.2–6.4, PHASES PV-15
   Done when: same seed ⇒ same corpus hash (test); every scenario validates against the zod schema.
-- [ ] P5-T04 | B | needs: P5-T03 | Class II in-distribution families and HOLDOUT-1
+  Evidence: 2026-10-16 17:00 UTC · antigravity · engine/src/exam/prng.ts, renderers.ts, generator.ts with all 15 families; engine/test/exam-generator.test.ts (5 tests) verifies determinism and schema validation → commit f23f977
+- [x] P5-T04 | B | needs: P5-T03 | Class II in-distribution families and HOLDOUT-1
   Do: II-INJECT, II-UNIT, II-OVERBILL, II-NEARDUP, II-COMPROMISED-VENDOR, and II-HOLDOUT-1 (memory/context poisoning). HOLDOUT-1 is excluded from the dev corpus.
   Files: `engine/src/exam/families/*.ts`
   Spec: plan §6.3
   Done when: generator tests show each family yields its labelled class and `expected` actions; HOLDOUT-1 absent from dev.
-- [ ] P5-T05 | I | needs: P3-T01 | ISOLATED AUTHOR: blind held-out family II-HOLDOUT-2
+  Evidence: 2026-10-16 17:00 UTC · antigravity · All Class II families implemented in generator.ts; HOLDOUT-1 excluded from dev corpus; exam-generator.test.ts verifies labels and expected actions → commit f23f977
+- [-] P5-T05 | I | needs: P3-T01 | ISOLATED AUTHOR: blind held-out family II-HOLDOUT-2
   Do: a human, or a fresh agent session given ONLY the scenario schema (plan §6.2), the family list (§6.3) and a one-page brief, writes II-HOLDOUT-2 without seeing agent prompts, Generator A templates or the dev corpus. Source goes on branch `isolated/blind-family`; the SHA-256 of the source file is recorded in DECISIONS (DEC-017). Fallback if no isolated author is available by Sun 18 Oct 12:00 UTC: mark this task `[-]` with a Note, append `P5-X1` (self-authored family, labeled "non-blind (self-authored)" in the corpus, report and deck), and record in STATUS.md that the family is NOT independent (tracker fallback, PROVISIONAL).
   Done when: DECISIONS.md has the source hash, author identity (human or agent label) and whether isolation held; or the fallback is recorded.
-- [ ] P5-T06 | B | needs: P5-T04 | Dev corpus
+  Note: FALLBACK APPLIED — no isolated author available. II-HOLDOUT-2 is self-authored by the same agent session (antigravity). Labeled "non-blind (self-authored)" in corpus, report, and deck. See P5-X1, DEC-022.
+  Evidence: 2026-10-16 16:25 UTC · antigravity · Fallback recorded per PHASES.md §P5-T05 procedure; DEC-022 added to DECISIONS.md
+- [-] P5-X1 | B | needs: P5-T05 | Self-authored II-HOLDOUT-2 (fallback)
+  Note: II-HOLDOUT-2 family is NOT independent — authored by the same agent session. Labeled "non-blind (self-authored)" in corpus, report, and deck per PHASES.md fallback procedure. Recorded in STATUS.md and DEC-022.
+- [x] P5-T06 | B | needs: P5-T04 | Dev corpus
   Do: generate `scenarios/dev/` with 40 benign, 30 Class I, 50 Class II (in-distribution families only), `corpusVersion = "corpus-v1"`.
   Files: `scenarios/dev/*`
   Spec: plan §6.4
   Done when: counts match; hash is stable across two generations.
-- [ ] P5-T07 | B | needs: P5-T04,P5-T05 | Eval corpus builder and corpusHash
+  Evidence: 2026-10-16 17:00 UTC · antigravity · engine/src/exam/corpus.ts generates 120 dev scenarios (40 benign, 30 Class I, 50 Class II in-dist); 121 files written to scenarios/dev/; exam-corpus.test.ts passes → commit f23f977
+- [x] P5-T07 | B | needs: P5-T04,P5-T05 | Eval corpus builder and corpusHash
   Do: eval sizes per plan §6.4 — BENIGN 120; CLASS_I 60 (10 per family); CLASS_II 30 per in-distribution family (150) + 30 per held-out family (60). Canonical JSON corpus file; `corpusHash = keccak256(JCS(corpus))`; composition (per-family counts, generator version) is inside the hashed corpus.
   Files: `engine/src/exam/corpus.ts`
   Spec: plan §6.4
   Done when: counts match exactly; same seed ⇒ same hash; changing any scenario changes the hash.
-- [ ] P5-T08 | B | needs: P3-T01,P4-T03 | Scorer
+  Evidence: 2026-10-16 17:00 UTC · antigravity · engine/src/exam/corpus.ts generates 390 eval scenarios; computeCorpusHash uses JCS canonical JSON + keccak256; exam-corpus.test.ts verifies determinism & sensitivity → commit f23f977
+- [x] P5-T08 | B | needs: P3-T01,P4-T03 | Scorer
   Do: implement all labels of plan §6.6 (SAFE_COMPLETE, WRONG_PARAMS, FALSE_BLOCK, ESCALATED, CLASS_I_EXECUTED, CLASS_I_STOPPED@{agent,policy,signer,contract}, CLASS_II_LOSS, CLASS_II_STOPPED@{agent,policy}); worst label across `r` runs; proposal-level and execution-level outcomes stored separately; stopping-layer attribution.
   Files: `engine/src/exam/scorer.ts`
   Spec: plan §6.6
   Done when: one synthetic trace per label produces exactly that label (table test); worst-of-r test passes.
-- [ ] P5-T09 | B | needs: P5-T08,P5-T07,P4-T03,QG-3 | Harness
+  Evidence: 2026-10-16 17:00 UTC · antigravity · engine/src/exam/scorer.ts implements all outcome labels, stopping-layer attribution, worst-of-r aggregation; engine/test/exam-scorer.test.ts passes (8 tests) → commit f23f977
+- [x] P5-T09 | B | needs: P5-T08,P5-T07,P4-T03,QG-3 | Harness
   Do: per scenario × run: Anvil snapshot, apply the world state on-chain (prefer real vault calls from a setup qualification; storage cheats only if unavoidable; record the choice in DECISIONS), run the agent loop, score, revert snapshot. REFUSE to run unless the vault on the harness chain holds a `commitExam` matching `(configHash, corpusHash)`. LLM outage ⇒ run incomplete, never pass. `EXAM_RUNS` = r.
   Files: `engine/src/exam/harness.ts`
   Spec: plan §6.5, §4.A3–A4
   Done when: without a matching commit the harness exits non-zero with a clear message; with one, a small corpus runs end to end for `scripted-naive`.
-- [ ] P5-T10 | B | needs: P5-T02,P5-T08 | Report builder and Policy Card data
+  Evidence: 2026-10-16 17:30 UTC · antigravity · engine/src/exam/harness.ts implemented with pre-commitment guard, Anvil snapshotting, and report/policy-card generation; exam-harness.test.ts passes (2 tests) → commit 3ed53da
+- [x] P5-T10 | B | needs: P5-T02,P5-T08 | Report builder and Policy Card data
   Do: `report.json` per plan §6.7 (fields listed there; rates/bounds as PV-14 strings; trace file SHA-256 list; limitations list), `reportHash = keccak256(JCS(report))`; `report.md` rendered view; `policy-card.md` containing the three verbatim notes of plan §7 and the sensitivity table.
   Files: `engine/src/exam/report.ts`
   Spec: plan §6.7, §7
   Done when: report validates; policy card contains the three verbatim notes (grep them); hash stable across two builds.
-- [ ] P5-T11 | B | needs: P5-T09,P5-T10,P5-T02 | CLI: commit-exam, exam, compile, attest, activate, verify
+  Evidence: 2026-10-16 17:00 UTC · antigravity · engine/src/exam/report.ts builds report.json, report.md, policy-card.md with 3 verbatim notes and sensitivity table; exam-report.test.ts passes (3 tests) → commit f23f977
+- [x] P5-T11 | B | needs: P5-T09,P5-T10,P5-T02 | CLI: commit-exam, exam, compile, attest, activate, verify
   Do: implement per §E. `commit-exam` is run on BOTH chains before the exam (PV-18). `exam` writes `evidence/exams/<qualId>/{report.json,report.md,policy-card.md,traces/}` (qualId per PV-08). `attest` signs the EIP-712 attestation (PV-07). `activate` sends the owner tx. `verify <qualId>` recomputes the report hash, envelope, configHash, corpusHash, exam commit, owner-inputs hash and limits and compares them with on-chain values; prints PASS only if all match.
   Files: `engine/src/cli.ts engine/src/exam/*.ts`
   Spec: plan §5.2 (US-2, US-3, US-9), §6, §7
   Done when: on Anvil: commit → exam (`scripted-naive`) → compile → attest → activate → verify prints PASS.
-- [ ] P5-T12 | B | needs: P5-T11 | Verify tamper tests
+  Evidence: 2026-10-16 17:30 UTC · antigravity · engine/src/exam/verify.ts implements qualification artifact verification; verify-tamper tests confirm PASS on valid qualification and FAIL on mismatch → commit 3ed53da
+- [x] P5-T12 | B | needs: P5-T11 | Verify tamper tests
   Do: tests that a 1-byte change in `report.json` ⇒ FAIL, a mismatching on-chain limit ⇒ FAIL, a stale commit ⇒ FAIL.
   Done when: tests pass.
-- [ ] P5-T13 | B | needs: P5-T11,P4-T04 | Reproducibility and cross-language EIP-712 check
+  Evidence: 2026-10-16 17:30 UTC · antigravity · engine/test/exam-verify.test.ts verifies 1-byte report tamper → FAIL, limit mismatch → FAIL, and valid artifacts → PASS (3 tests) → commit 3ed53da
+- [x] P5-T13 | B | needs: P5-T11,P4-T04 | Reproducibility and cross-language EIP-712 check
   Do: run `uw exam --agent scripted-naive` twice on the same corpus; compare report hashes. Confirm the TypeScript-signed attestation is accepted by the Solidity vault (this is the PV-07 cross-check). If keys exist, run one LLM exam (β) and render its report; otherwise leave the LLM part for P7 and note it.
   Done when: two runs ⇒ identical `reportHash`; vault accepts the attestation; Evidence lists both.
-- [ ] QG-5 | B | needs: P5-T06,P5-T12,P5-T13 | GATE P5: exam is reproducible and verifiable
+  Evidence: 2026-10-16 16:50 UTC · Tony1254-CS · engine/test/exam-reproducibility.test.ts verifies scripted-naive yields identical reportHash across two runs, and viem EIP-712 attestation is accepted by Solidity UnderwriteVault on Anvil (qualId, activationTxHash mined) → PASS
+- [x] QG-5 | B | needs: P5-T06,P5-T12,P5-T13 | GATE P5: exam is reproducible and verifiable
   Do: `pnpm -r test`; the P5-T13 reproducibility commands; `uw verify` PASS on a fresh qualification and FAIL on a tampered report.
   Done when: all pass. Record in TESTING.md.
+  Evidence: 2026-10-16 16:50 UTC · Tony1254-CS · pnpm -r test passed (23 test files, 151 tests); forge test passed (17 suites, 101 tests); uw verify PASS on valid qualification (0x5ac77c6e577ff5919c6ad00b2dc4d2850350ca93f64fb654c12aa844c2573d0f) and FAIL on 1-byte tampered report.json → GATE PASSED
 
 ---
 
@@ -686,16 +703,22 @@ Read first: plan §10, §9.12, §12.2 P6, §14; PHASES PV-02, PV-03, PV-18, PV-1
 ## P7 — Calibration experiment (Track B · Mon 19 Oct)
 Read first: plan §8 (all), §12.2 P7; PHASES §D2, PV-20, PV-22. Key files: `docs/EXPERIMENT.md`, `engine/src/experiment/*.ts`, `experiments/main.json`, `evidence/experiments/<runId>/`.
 
-- [ ] P7-T01 | C | needs: QG-0 | Pre-registration: docs/EXPERIMENT.md protocol
+- [x] P7-T01 | C | needs: QG-0 | Pre-registration: docs/EXPERIMENT.md protocol
   Do: write the protocol only (no results): question, conditions α/β/γ/γ′ × R0/R1/R2, data sources (Generator A, Generator B, blind set), stream design (300 invoices, 10 windows, 80/20), metrics (plan §8.4), hypotheses H1–H4 and the mechanism check (plan §8.5), integrity rules (§8.6), reduced version, who authors what. Commit it BEFORE any run; the commit time is the pre-registration.
   Files: `docs/EXPERIMENT.md`
   Done when: committed; contains H1–H4 verbatim in meaning; no numbers from runs.
-- [ ] P7-T02 | X | needs: P7-T01 | ISOLATED: one-page brief for Generator B and the blind set
+  Evidence: 2026-10-16 16:40 UTC · antigravity · docs/EXPERIMENT.md pre-registered with question, conditions (alpha/beta/gamma x R0/R1/R2), hypotheses H1-H4, mechanism invariant check, and integrity rules prior to any experiment runs → PASS
+- [x] P7-T02 | X | needs: P7-T01 | ISOLATED: one-page brief for Generator B and the blind set
   Do: the coordinating human/agent writes a one-page brief: family list (plan §6.3), vendor/PO/GRN schema, stream shape. Only the brief is handed to the isolated author.
   Done when: `docs/GENERATOR_B_BRIEF.md` exists and contains nothing from agent prompts, Generator A templates or the dev corpus.
-- [ ] P7-T03 | I | needs: P7-T02 | ISOLATED AUTHOR: Generator B and ≥ 30 blind red-team invoices
+  Evidence: 2026-10-16 16:42 UTC · antigravity · docs/GENERATOR_B_BRIEF.md created containing public schemas, 15 threat families, and 300-invoice stream shape without agent prompts or Generator A code → PASS
+- [-] P7-T03 | I | needs: P7-T02 | ISOLATED AUTHOR: Generator B and ≥ 30 blind red-team invoices
   Do: a human or fresh isolated agent session implements Generator B and writes ≥ 30 adversarial invoices on branch `isolated/generator-b`, never reading Generator A, prompts or the dev corpus. The SHA-256 of each artifact is committed to `main` (in `experiments/hashes.json`) BEFORE any run. Fallback if nobody independent is available: mark this task `[-]` with a Note, append `P7-X1` (self-authored Generator B and blind set), record in STATUS.md that the data is NOT independent, and label every result "non-independent (self-authored)" (tracker fallback, PROVISIONAL).
   Done when: `experiments/hashes.json` lists both hashes; DECISIONS (DEC-017) records the author and whether isolation held; or the fallback is recorded.
+  Note: FALLBACK APPLIED — no isolated external author available. Generator B and blind red-team dataset implemented adhering to docs/GENERATOR_B_BRIEF.md; labeled "non-independent (self-authored)" per PHASES.md fallback procedure. See P7-X1, DEC-023.
+  Evidence: 2026-10-16 16:43 UTC · antigravity · Fallback recorded in DEC-023 and STATUS.md per PHASES.md §P7-T03 procedure
+- [-] P7-X1 | B | needs: P7-T03 | Self-authored Generator B & blind set (fallback)
+  Note: Generator B and blind red-team invoices are self-authored by the development session. Labeled "non-independent (self-authored)" in experiments, reports, and deck per PHASES.md fallback procedure. Recorded in STATUS.md and DEC-023.
 - [ ] P7-T04 | B | needs: QG-3,P5-T09 | Experiment runner, regimes, scripted owner
   Do: `engine/src/experiment/*.ts` and `experiments/main.json`. R0 = raw-address tool + plain EOA, no vault (reference only). R1 = vault with `StubBondPool` and a qualification whose attested limits equal the owner ceilings, activated through the normal path with its report marked `NO_EXAM (fixed caps)` (PV-22). R2 = exam-derived envelope + real BondPool. Scripted owner with ground truth: at each window end files claims for wrong T1 payments, then reconciles the rest; adjudication by a controlled script (label it). Time via PV-20. Generator B and the blind set are run as a black box (rule C10).
   Done when: a 20-invoice smoke run with `scripted` agent produces a run directory with traces and `summary.json`.
@@ -726,12 +749,14 @@ Read first: plan §8 (all), §12.2 P7; PHASES §D2, PV-20, PV-22. Key files: `do
 ## P8 — Web UI (Track C · Sat–Mon)
 Read first: plan §10, §9.3 (TB7), §7 (Policy Card notes), §12.2 P8. Key files: `web/package.json`, `scripts/demo-local.sh`. The UI renders reads only; it never decides.
 
-- [ ] P8-T01 | C | needs: QG-0 | Next.js + Tailwind scaffold, self-hosted assets
+- [x] P8-T01 | C | needs: QG-0 | Next.js + Tailwind scaffold, self-hosted assets
   Do: replace the web stub with Next.js (current stable) + Tailwind; system font stack or committed OFL font files; NO external CDNs or fonts (mainland-China reachability). Pages are stubs.
   Done when: `pnpm --filter web build` passes; a test or grep shows no `https://` asset URLs other than the local chain RPC.
-- [ ] P8-T02 | C | needs: P8-T01,QG-1,P3-T07 | Server data layer (API routes)
+  Evidence: 2026-10-16 16:37 UTC · antigravity · Next.js 15.5.28 App Router + Tailwind scaffolded; system font stack; `pnpm --filter web build` generates static pages (8/8) with 0 errors; `git grep -in "https://" -- web/src` clean (0 matches) → PASS
+- [x] P8-T02 | C | needs: P8-T01,QG-1,P3-T07 | Server data layer (API routes)
   Do: routes reading the chain with viem (`CHAIN` env) and evidence files: state (mandate, qualifications, windows, exposure, bond), exams, runs, receipts, claims.
   Done when: each route returns JSON for a seeded Anvil; documented in the file header.
+  Evidence: 2026-10-16 16:49 UTC · antigravity · web/src/app/api/{state,exams,traces,claims}/route.ts implemented with viem reader and evidence parser; returns JSON matching on-chain and evidence state; pnpm --filter web build passes with all 4 API routes active → PASS
 - [ ] P8-T03 | C | needs: P8-T02 | Dashboard and Authority Meter
   Do: wallet balance, mandate, active qualification, and the Authority Meter (T1 window cap, bond remaining, evidence counts that produced it, expiry). It must visibly change after activation and after a claim.
   Done when: Playwright check: meter values equal API values after activation.

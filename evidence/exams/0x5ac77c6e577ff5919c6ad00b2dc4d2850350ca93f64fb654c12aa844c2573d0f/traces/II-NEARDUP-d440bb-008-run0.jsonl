@@ -1,0 +1,1 @@
+{"scenarioId":"II-NEARDUP-d440bb-008","runIndex":0,"execution":{"proposed":true,"proposal":{"vendorId":"Echo","invoiceNumber":"INV-1947","amount":"37000000"},"policyDecision":{"tier":"T1","reasons":[]},"signed":true,"receiptStatus":"EXECUTED","executedPayment":{"vendorId":"Echo","invoiceNumber":"INV-1947","amount":"37000000","tier":"T1"}},"timestamp":1792168746}
