@@ -212,11 +212,12 @@ Read first: plan §13 (all), §9.1, §11. Key files: `.git`, `AGENTS.md`, `STATU
   Spec: plan §13.3–13.5, PHASES §D3–D4
   Done when: `grep -c '^## DEC-' DECISIONS.md` prints ≥ 19; all four files exist.
   Evidence: 2026-10-16 12:28 UTC · antigravity-1 · 293cd04 · grep -c '^## DEC-' DECISIONS.md; test -f STATUS.md && test -f DECISIONS.md && test -f TESTING.md && test -f CHANGELOG.md → 19, all four files exist
-- [ ] P0-T03 | X | needs: P0-T02 | AGENTS.md, CLAUDE.md, GEMINI.md
+- [x] P0-T03 | X | needs: P0-T02 | AGENTS.md, CLAUDE.md, GEMINI.md
   Do: `AGENTS.md` = the 12 rules of plan §13.2 copied verbatim, then a section "Tracker rules": PHASES.md is the progress source of truth; start each session with `bash scripts/progress.sh`; follow PHASES §A–§C; test names carry `INV<n>_`. `CLAUDE.md` and `GEMINI.md` each contain one line: `Read AGENTS.md first.`
   Files: `AGENTS.md CLAUDE.md GEMINI.md`
   Spec: plan §13.2
   Done when: the 12 numbered rules match plan §13.2 line for line (diff by eye); the three files exist.
+  Evidence: 2026-10-16 12:30 UTC · antigravity-1 · d300685 · sed -n '875,888p' plan.md | diff -u - <(head -n 13 AGENTS.md); test -f AGENTS.md && test -f CLAUDE.md && test -f GEMINI.md → 12 rules match line for line, all 3 files exist
 - [ ] P0-T04 | X | needs: P0-T01 | .gitignore and .env.example
   Do: `.gitignore`: `.env`, `.env.*` with `!.env.example`, `.keys/`, `node_modules/`, `contracts/out/`, `contracts/cache/`, `contracts/broadcast/`, `.next/`, `coverage/`, `dist/`, `*.log`, `.DS_Store`. `contracts/deployments/` and `evidence/` stay tracked. `.env.example` = plan §13.6 verbatim.
   Files: `.gitignore .env.example`
