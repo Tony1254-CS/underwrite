@@ -25,3 +25,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `contracts/test/Vault.Reconcile.t.sol`: 7 unit tests verifying exposure dynamics, insufficient backing unblocking via reconcile, already reconciled guards, stranger rejection, batch bounding at 50, and claim suspension interaction.
 - `scripts/check_errors.sh`: automated audit script verifying all 24 custom errors are triggered in unit test suites with `vm.expectRevert`.
 - `contracts/test/Vault.Edge.t.sol`: 12 unit tests verifying edge cases from plan §5.5 (exact boundaries, window rollover, single-block payments, T2 revalidation, mid-window ceiling reduction, boundary bursts, reconcile unblocking, and stale commit rejection).
+- `contracts/test/Vault.Fuzz.t.sol`: property-based fuzz tests with 512 runs each verifying INV-2 (window limit), INV-3 (per-tx limits), INV-5 (invoice single-use), and INV-6 (reserve floor preservation).
