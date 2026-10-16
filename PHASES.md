@@ -331,11 +331,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §9.8
   Done when: `forge test --match-test testFuzz_INV` passes with the configured runs.
   Evidence: 2026-10-16 13:55 UTC · antigravity-1 · 097c8d0 · cd contracts && forge test --match-path *Fuzz* passed (4 tests, 512 runs each = 2,048 runs); INV-2, INV-3, INV-5, INV-6 verified → 0
-- [ ] P1-T11 | A | needs: P1-T10 | Invariant tests with a malicious-agent handler
+- [x] P1-T11 | A | needs: P1-T10 | Invariant tests with a malicious-agent handler
   Do: invariant suite whose handler acts as the agent key calling only allowed functions with random arguments (plus owner reconcile and time warps across window boundaries): `invariant_INV1_*` (agent key moves tokens only through allowed paths), `invariant_INV2_*`, `invariant_INV5_*`, `invariant_INV10_*` (against MockBondPool). No `fail_on_revert` shortcuts that hide real failures.
   Files: `contracts/test/invariant/**`
   Spec: plan §9.8
   Done when: `forge test --match-path "*invariant*"` passes.
+  Evidence: 2026-10-16 13:58 UTC · antigravity-1 · e11b007 · cd contracts && forge test --match-path *invariant* passed (256 runs, 25,600 calls, 0 reverts); INV-1, INV-2, INV-5, INV-10 verified → 0
 - [ ] P1-T12 | A | needs: P1-T09,P1-T10,P1-T11 | INV coverage matrix
   Do: ensure each of INV-1…10, 12, 13, 14 has at least one test whose name contains `INV<n>_`. INV-11 is covered in P2.
   Files: `contracts/test/**`
