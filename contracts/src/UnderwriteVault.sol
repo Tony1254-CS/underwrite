@@ -502,11 +502,14 @@ contract UnderwriteVault is VaultErrors {
         if (block.timestamp < r.activatesAt) revert RecipientCoolingDown();
 
         // 8. ExceedsPerTx
-        if (amount > q.effectiveT1MaxPerTx) revert ExceedsPerTx();
+        uint256 currentT1PerTx = q.effectiveT1MaxPerTx < ceilings.perTx ? q.effectiveT1MaxPerTx : ceilings.perTx;
+        if (amount > currentT1PerTx) revert ExceedsPerTx();
 
         // 9. ExceedsWindow
         uint256 windowId = block.timestamp / windowSeconds;
-        if (qualWindowSpent[qualId][windowId] + amount > q.effectiveT1MaxPerWindow) {
+        uint256 currentT1PerWindow =
+            q.effectiveT1MaxPerWindow < ceilings.perWindow ? q.effectiveT1MaxPerWindow : ceilings.perWindow;
+        if (qualWindowSpent[qualId][windowId] + amount > currentT1PerWindow) {
             revert ExceedsWindow();
         }
 
