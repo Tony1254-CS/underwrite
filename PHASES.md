@@ -277,11 +277,12 @@ Read first: plan §5.1–5.5, §9.5 (Attestation, invoiceKey), §9.7 (vault tabl
   Spec: plan §9.7
   Done when: `forge build` passes; a test shows `decimals()==6` and `mint` works.
   Evidence: 2026-10-16 13:12 UTC · antigravity-1 · 11df926 · forge build and test pass; decimals()==6, mint works, MockBondPool controls verified → 0
-- [ ] P1-T02 | A | needs: P1-T01 | Vault skeleton: state, constructor, EIP-712, errors, events
+- [x] P1-T02 | A | needs: P1-T01 | Vault skeleton: state, constructor, EIP-712, errors, events
   Do: all state from plan §9.7; constructor takes owner, examiner, guardian, bondPool (immutable), token (immutable), ceilings, windowSeconds, reserveFloor, challengePeriod, recipientCooldown. EIP-712 domain per PV-07. All 24 custom errors (23 in plan §9.7 + `Vetoed`, see S5). All events named in §9.7. `VERSION()`.
   Files: `contracts/src/UnderwriteVault.sol`
   Spec: plan §9.7, PHASES PV-07, S5
   Done when: compiles; tests show `VERSION()=="1.0.0"` and the domain separator changes with chainId.
+  Evidence: 2026-10-16 13:17 UTC · antigravity-1 · a8b0199 · UnderwriteVault compiles, VERSION()==1.0.0, domain separator changes with chainId → 0
 - [ ] P1-T03 | A | needs: P1-T02 | Owner admin, recipient registry, pause, ownerTransfer
   Do: `addRecipient`, `deactivateRecipient` (sets `activatesAt = now + recipientCooldown`), `setCeilings/setReserve/setChallengePeriod/setCooldown/setExaminer/setGuardian` (lowering applies immediately; raising never lifts an active qualification above its attested values), `pause` (owner or guardian), `unpause` (owner), `ownerTransfer`.
   Files: `contracts/src/UnderwriteVault.sol contracts/test/Vault.Admin.t.sol`
