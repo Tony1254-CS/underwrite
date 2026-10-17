@@ -6,6 +6,83 @@ import { useAuth } from '@/context/AuthContext';
 import { PortalGuard } from '@/components/PortalGuard';
 import { formatUSDC, truncateHash } from '@/lib/format';
 
+// @reskinned: presentation rebuilt on the shared UI kit; logic above this line is unchanged.
+import type { CSSProperties } from 'react';
+import { PageHeader, Panel, Stat, Chip, Notice, Countdown, Hash, Empty, Skeleton, Stamp, Pipeline, AgentLog, ResultReceipt, useNewKeys, usd } from '@/components/ui';
+import type { NodeState } from '@/components/ui';
+import { CheckGlyph, ClockGlyph, CrossGlyph } from '@/components/site/Glyphs';
+
+const TILTS = ['-1.2deg', '1deg', '1.4deg', '-0.9deg', '0.8deg'];
+const VENDOR_STAGES = ['Ingest', 'Inspect', 'Policy', 'Contract', 'Receipt'] as const;
+
+const SCENARIOS: { key: 'T1' | 'T2' | 'T3_UNKNOWN' | 'T3_INJECTION' | 'T3_DUP'; tag: string; name: string; amount: string; note: string }[] = [
+  { key: 'T1', tag: 'Pays at once', name: 'Cloud compute', amount: '$35.00', note: 'Inside the daily limit.' },
+  { key: 'T2', tag: 'Waits for the owner', name: 'GPU upgrade', amount: '$250.00', note: 'Over the limit, so the owner decides.' },
+  { key: 'T3_UNKNOWN', tag: 'Blocked (INV-1)', name: 'Unknown supplier', amount: '$120.00', note: 'Not on the owner’s list.' },
+  { key: 'T3_INJECTION', tag: 'Blocked', name: 'Hostile text', amount: '$49.00', note: 'The memo tries to give orders.' },
+  { key: 'T3_DUP', tag: 'Blocked (INV-3)', name: 'Duplicate INV-001', amount: '$42.50', note: 'Already paid once.' },
+];
+
+function VendorLedger({ invoices, owner }: { invoices: any[]; owner: string }) {
+  const fresh = useNewKeys(invoices.map((i) => i.id));
+  if (invoices.length === 0) return <Empty>No invoices yet. Send one above.</Empty>;
+  return (
+    <div className="tbl-wrap">
+      <table className="tbl">
+        <thead>
+          <tr>
+            <th scope="col">Invoice</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">Customer</th>
+            <th scope="col">PO</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Tier</th>
+            <th scope="col">Status</th>
+            <th scope="col">Settlement</th>
+          </tr>
+        </thead>
+        <tbody>
+          {invoices.map((inv) => (
+            <tr key={inv.id} className={fresh.has(String(inv.id)) ? 'is-new' : ''}>
+              <th scope="row" data-label="Invoice">{inv.invoiceNumber}</th>
+              <td data-label="Supplier">{inv.vendorName || inv.vendorId}</td>
+              <td data-label="Customer">
+                Acme Corp
+                <small>{truncateHash(inv.targetOwnerAddress || owner, 8, 6)}</small>
+              </td>
+              <td data-label="PO">{inv.poNumber || '—'}</td>
+              <td data-label="Amount" className="fig">{usd(inv.amountUSDC)}</td>
+              <td data-label="Tier"><Chip tone={inv.tier === 'T1' ? 'moved' : inv.tier === 'T2' ? 'held' : 'blocked'}>{inv.tier}</Chip></td>
+              <td data-label="Status">
+                {inv.status === 'EXECUTED_T1' ? (
+                  <Chip tone="moved"><CheckGlyph /> Paid (T1)</Chip>
+                ) : inv.status === 'PENDING_T2' ? (
+                  <Chip tone="held" dot><ClockGlyph /> Queued for the owner</Chip>
+                ) : inv.status === 'APPROVED_T2' ? (
+                  <Chip tone="moved"><CheckGlyph /> Owner approved</Chip>
+                ) : inv.status === 'REJECTED_T2' ? (
+                  <Chip tone="blocked"><CrossGlyph /> Owner rejected</Chip>
+                ) : (
+                  <Chip tone="blocked"><CrossGlyph /> Blocked (T3)</Chip>
+                )}
+              </td>
+              <td data-label="Settlement">
+                {inv.txHash ? (
+                  <Hash value={inv.txHash} />
+                ) : inv.status === 'PENDING_T2' ? (
+                  <Link href="/portals/owner" className="text-link">Review in the owner inbox</Link>
+                ) : (
+                  <span className="muted small">{inv.contractResult || 'Reverted'}</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function VendorPortalPage() {
   return (
     <PortalGuard requiredRole="AGENT" portalName="Enterprise Vendor & Supplier Invoicing Portal">
@@ -263,737 +340,204 @@ function VendorPortalContent() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
-      {/* 1. Header & Live Vendor Identity Bar */}
-      <div className="relative rounded-3xl bg-[#060b1c]/80 border border-white/[0.1] backdrop-blur-2xl p-6 md:p-8 overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/10 rounded-full blur-[100px] pointer-events-none" />
+    <div className="stack">
+      <PageHeader
+        eyebrow="Supplier"
+        title="Supplier portal"
+        lede="Send an invoice to your customer. Routine ones inside their limit are paid in seconds; anything else waits for their decision."
+        actions={<Stamp kind="simulated" label="Simulated" meaning="Invoices run in the demo runtime. No chain transaction is sent." />}
+      />
 
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300 font-mono text-[11px] font-bold uppercase tracking-wider">
-              <span>🏢</span>
-              <span>Enterprise Supplier &amp; AP Invoicing Portal</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              Supplier Accounts Payable Desk
-            </h1>
-            <p className="text-slate-300 text-sm max-w-2xl leading-relaxed">
-              Submit digital enterprise invoices directly into the Underwrite autonomous pipeline. Routine valid invoices within policy limits settle on-chain in seconds; out-of-policy requests escalate to the CFO challenge window.
-            </p>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Panel title="Your customer" kicker="Invoices go to">
+          <div className="idcard">
+            <strong>Acme Corp</strong>
+            <span>Sarah Chen, CFO and custodian</span>
+            <Hash value={targetOwnerAddress} start={10} end={8} />
+            <small>Enforced by UnderwriteVault.sol</small>
           </div>
+        </Panel>
 
-          {/* Target Customer & Allowlist Status Cards */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Target Owner Customer Card */}
-            <div className="p-4 rounded-2xl bg-black/60 border border-emerald-500/30 font-mono space-y-2 text-xs min-w-[280px] shadow-lg">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400 text-[10px] uppercase font-bold">Target Customer / Vault:</span>
-                <span className="text-emerald-400 font-bold">Acme Corp</span>
-              </div>
-              <div className="text-white font-bold text-sm">
-                Sarah Chen <span className="text-slate-400 text-xs font-normal">(CFO &amp; Custodian)</span>
-              </div>
-              <div className="text-[11px] text-slate-300 font-mono truncate max-w-[260px]">
-                Vault: <span className="text-emerald-300 font-semibold">{truncateHash(targetOwnerAddress, 10, 8)}</span>
-              </div>
-              <div className="text-[10px] text-slate-400 pt-1 border-t border-white/[0.08] flex items-center justify-between">
-                <span>Enforcement:</span>
-                <span className="text-emerald-400 font-bold">UnderwriteVault.sol</span>
-              </div>
-            </div>
-
-            {/* Supplier Live On-Chain Allowlist Badge with THIS Owner */}
-            <div className="p-4 rounded-2xl bg-black/60 border border-white/[0.1] font-mono space-y-2 text-xs min-w-[280px]">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">Selected Supplier:</span>
-                <span className="text-white font-bold truncate max-w-[150px]">{activeVendor.name}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">Payout Address:</span>
-                <span className="text-cyan-400 font-bold">{truncateHash(activeVendor.payoutAddress)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">Acme Allowlist:</span>
-                {isCurrentVendorInOwnerList ? (
-                  <span className="text-emerald-400 font-bold flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>WHITELISTED (INV-1)</span>
-                  </span>
-                ) : (
-                  <span className="text-rose-400 font-bold flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-rose-500" />
-                    <span>NOT WHITELISTED (T3)</span>
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center justify-between border-t border-white/[0.08] pt-1.5">
-                <span className="text-slate-400">Cooldown State:</span>
-                {isVendorCoolingDown ? (
-                  <span className="text-amber-300 font-bold">
-                    COOLDOWN ({cooldownRemainingSecs}s) → T2
-                  </span>
-                ) : isCurrentVendorInOwnerList ? (
-                  <span className="text-emerald-300 font-bold">CLEARED (T1 READY)</span>
-                ) : (
-                  <span className="text-rose-400 font-bold">REJECTED BY OWNER</span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 4-Step Architecture Workflow Callout */}
-        <div className="mt-6 pt-5 border-t border-white/[0.08]">
-          <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-3 flex items-center gap-2">
-            <span>🔄 Real-World Multi-Stakeholder Execution Lifecycle:</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-mono text-xs">
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] space-y-1">
-              <span className="text-rose-400 font-bold text-[10px] block">STEP 1: VENDOR</span>
-              <div className="text-white font-bold text-xs">Submits Invoice to Owner</div>
-              <div className="text-slate-400 text-[10px]">Vendor addresses Sarah Chen / Acme Corp Treasury Vault directly.</div>
-            </div>
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] space-y-1">
-              <span className="text-purple-400 font-bold text-[10px] block">STEP 2: OWNER AGENT</span>
-              <div className="text-white font-bold text-xs">Ingests &amp; Audits Invoice</div>
-              <div className="text-slate-400 text-[10px]">Owner&apos;s AI agent scans PO, prompt injection firewall &amp; Owner whitelist.</div>
-            </div>
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] space-y-1">
-              <span className="text-amber-400 font-bold text-[10px] block">STEP 3: POLICY TIERING</span>
-              <div className="text-white font-bold text-xs">Decides T0 / T1 / T2 / T3</div>
-              <div className="text-slate-400 text-[10px]">T1: Auto (&le;$180) &bull; T2: CFO Challenge (&le;$500) &bull; T3: Reverted.</div>
-            </div>
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] space-y-1">
-              <span className="text-emerald-400 font-bold text-[10px] block">STEP 4: VAULT EXECUTION</span>
-              <div className="text-white font-bold text-xs">UnderwriteVault.sol Settles</div>
-              <div className="text-slate-400 text-[10px]">Wallet checks invariants, transfers USDC directly or queues for review.</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Real-time Vault Parameters Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/[0.08] font-mono text-xs">
-          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
-            <span className="text-slate-400 text-[10px] uppercase block">T1 Autonomous Cap</span>
-            <span className="text-emerald-400 font-black text-base">$180.00 USDC</span>
-            <span className="text-slate-500 text-[10px] block">Zero human approval needed</span>
-          </div>
-          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
-            <span className="text-slate-400 text-[10px] uppercase block">T2 Owner Escalation</span>
-            <span className="text-amber-400 font-black text-base">$180 – $500 USDC</span>
-            <span className="text-slate-500 text-[10px] block">300s Owner Challenge Window</span>
-          </div>
-          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
-            <span className="text-slate-400 text-[10px] uppercase block">24h Velocity Ceiling</span>
-            <span className="text-cyan-400 font-black text-base">$180.00 USDC</span>
-            <span className="text-slate-500 text-[10px] block">Rolling 24h spend throttle</span>
-          </div>
-          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
-            <span className="text-slate-400 text-[10px] uppercase block">Underwrite Vault Liquidity</span>
-            <span className="text-white font-black text-base">
-              ${state ? state.balances.vaultUSDC : '5,000.00'} USDC
-            </span>
-            <span className="text-emerald-400 text-[10px] block">Solvent &amp; Ready</span>
-          </div>
-        </div>
+        <Panel title="Your standing with them" kicker={activeVendor.name}>
+          <ul className="standing">
+            <li>
+              <span>Payout address</span>
+              <Hash value={activeVendor.payoutAddress} />
+            </li>
+            <li>
+              <span>On their supplier list</span>
+              {isCurrentVendorInOwnerList ? (
+                <Chip tone="moved" dot><CheckGlyph /> Registered (INV-1)</Chip>
+              ) : (
+                <Chip tone="blocked"><CrossGlyph /> Not registered (T3)</Chip>
+              )}
+            </li>
+            <li>
+              <span>Cooldown</span>
+              {isVendorCoolingDown && currentVendorRecord ? (
+                <Chip tone="held"><ClockGlyph /> <Countdown until={currentVendorRecord.activatesAt} /> then T1</Chip>
+              ) : isCurrentVendorInOwnerList ? (
+                <Chip tone="moved"><CheckGlyph /> Cleared, T1 ready</Chip>
+              ) : (
+                <Chip tone="blocked">Refused by the owner</Chip>
+              )}
+            </li>
+          </ul>
+        </Panel>
       </div>
 
-      {/* 2. Interactive 1-Click Operational Presets (The Showcase) */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-slate-400 font-bold flex items-center gap-2">
-            <span>⚡ Quick-Load Test Presets (Demonstrates T0 / T1 / T2 / T3 Governance)</span>
-          </h2>
-          <span className="text-[11px] font-mono text-slate-500">Click any preset to auto-load invoice payload</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 font-mono text-xs">
-          <button
-            type="button"
-            onClick={() => loadScenario('T1')}
-            className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-left transition-all group"
-          >
-            <div className="flex items-center justify-between text-emerald-400 font-bold mb-1">
-              <span>Scenario 1</span>
-              <span className="text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded">T1 AUTO</span>
-            </div>
-            <div className="text-white font-semibold text-xs truncate">Cloud Compute ($35.00)</div>
-            <div className="text-slate-400 text-[10px] mt-1 leading-tight">Instant on-chain settlement (≤ $180 cap)</div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => loadScenario('T2')}
-            className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 text-left transition-all group"
-          >
-            <div className="flex items-center justify-between text-amber-400 font-bold mb-1">
-              <span>Scenario 2</span>
-              <span className="text-[10px] bg-amber-500/20 px-1.5 py-0.5 rounded">T2 QUEUE</span>
-            </div>
-            <div className="text-white font-semibold text-xs truncate">GPU Upgrade ($250.00)</div>
-            <div className="text-slate-400 text-[10px] mt-1 leading-tight">Exceeds T1 cap → Queues for CFO</div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => loadScenario('T3_UNKNOWN')}
-            className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 text-left transition-all group"
-          >
-            <div className="flex items-center justify-between text-rose-400 font-bold mb-1">
-              <span>Scenario 3</span>
-              <span className="text-[10px] bg-rose-500/20 px-1.5 py-0.5 rounded">T3 BLOCK</span>
-            </div>
-            <div className="text-white font-semibold text-xs truncate">Unknown Vendor ($120.00)</div>
-            <div className="text-slate-400 text-[10px] mt-1 leading-tight">Unapproved recipient rejected (INV-1)</div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => loadScenario('T3_INJECTION')}
-            className="p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/30 hover:bg-purple-500/20 text-left transition-all group"
-          >
-            <div className="flex items-center justify-between text-purple-400 font-bold mb-1">
-              <span>Scenario 4</span>
-              <span className="text-[10px] bg-purple-500/20 px-1.5 py-0.5 rounded">INJECTION</span>
-            </div>
-            <div className="text-white font-semibold text-xs truncate">Prompt Attack ($49.00)</div>
-            <div className="text-slate-400 text-[10px] mt-1 leading-tight">Adversarial payload blocked by firewall</div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => loadScenario('T3_DUP')}
-            className="p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-left transition-all group"
-          >
-            <div className="flex items-center justify-between text-blue-400 font-bold mb-1">
-              <span>Scenario 5</span>
-              <span className="text-[10px] bg-blue-500/20 px-1.5 py-0.5 rounded">REPLAY</span>
-            </div>
-            <div className="text-white font-semibold text-xs truncate">Duplicate INV-001 ($42.50)</div>
-            <div className="text-slate-400 text-[10px] mt-1 leading-tight">Single-use hash collision rejected (INV-3)</div>
-          </button>
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Stat label="Pays at once" value={state ? usd(state.qualification.t1MaxPerWindowUSDC) : '$180.00'} unit="USDC" tone="lime" sub="Inside the daily limit, no approval needed" />
+        <Stat label="Waits for the owner" value="$180 to $500" sub="A 300 second challenge window" />
+        <Stat label="Daily limit" value={state ? usd(state.qualification.t1MaxPerWindowUSDC) : '$180.00'} unit="USDC" sub="Rolling 24 hours" />
+        <Stat label="Vault liquidity" value={state ? usd(state.balances.vaultUSDC) : '…'} unit="USDC" sub="Held in the vault contract" />
       </div>
 
-      {/* 3. Main Workspace: Invoice Submission Studio & Live Pipeline */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left: Invoice Composition Form (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
-          <form
-            onSubmit={handleInvoiceSubmission}
-            className="p-6 md:p-8 rounded-3xl bg-[#060b1c]/80 border border-white/[0.1] backdrop-blur-2xl space-y-6 shadow-xl"
-          >
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
-              <div>
-                <h3 className="text-xl font-bold text-white">Invoice Composition Desk</h3>
-                <p className="text-slate-400 text-xs">Configure supplier line-items and financial mandates</p>
-              </div>
-              <span className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-mono text-[11px] font-bold">
-                EIP-712 COMPLIANT
-              </span>
-            </div>
+      <section aria-labelledby="vendor-demos">
+        <div className="sectionhead">
+          <h2 className="h3" id="vendor-demos">Demo scenarios</h2>
+          <p className="muted">One click loads an invoice that triggers each outcome.</p>
+        </div>
+        <ul className="slips slips--5">
+          {SCENARIOS.map((s, i) => (
+            <li key={s.key}>
+              <button type="button" className="slip" style={{ ['--tilt' as string]: TILTS[i] } as CSSProperties} onClick={() => loadScenario(s.key)}>
+                <span className="slip__no">{s.tag}</span>
+                <span className="slip__who">{s.name}</span>
+                <span className="slip__what">{s.note}</span>
+                <span className="slip__amt fig">{s.amount}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-            {/* Target Customer Selection (Who receives this invoice) */}
-            <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-emerald-500/30 space-y-2 font-mono text-xs">
-              <div className="flex items-center justify-between">
-                <label className="font-semibold text-emerald-300 flex items-center gap-2">
-                  <span>🏢 Target Customer / Vault Recipient:</span>
-                </label>
-                <span className="text-[10px] text-slate-400">Owner Whitelist Verified</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-2.5 rounded-xl bg-black/60 border border-white/[0.1] text-white">
-                  <div className="text-[10px] text-slate-400">Company &amp; Custodian</div>
-                  <div className="font-bold text-emerald-400">Acme Corp &bull; Sarah Chen (CFO)</div>
-                </div>
-                <div className="p-2.5 rounded-xl bg-black/60 border border-white/[0.1] text-white">
-                  <div className="text-[10px] text-slate-400">Vault Contract Address</div>
-                  <div className="font-bold text-cyan-300 truncate">{targetOwnerAddress}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Vendor Selector */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-mono font-semibold text-slate-300 mb-1.5">
-                  Issuing Supplier Profile:
-                </label>
-                <select
-                  value={selectedVendorId}
-                  onChange={(e) => setSelectedVendorId(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/[0.15] text-white font-mono text-xs focus:outline-none focus:border-rose-400"
-                >
-                  <option value="cloudcorp_saas">CloudCorp Global Logistics (Active / Registered)</option>
-                  <option value="acme_industrial">Acme Industrial Corp (Active / Registered)</option>
-                  <option value="initech_software">Initech Software Systems (Active / Registered)</option>
-                  <option value="cyberdyne_systems">Cyberdyne AI Compute (Active / Registered)</option>
-                  <option value="custom">⚠️ Custom / Unregistered Supplier (Test INV-1 Rejection)</option>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] items-start">
+        <Panel title="New invoice" kicker="Compose">
+          <form onSubmit={handleInvoiceSubmission} className="form">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="field">
+                <label htmlFor="vp-supplier">Issuing supplier</label>
+                <select id="vp-supplier" className="input" value={selectedVendorId} onChange={(e) => setSelectedVendorId(e.target.value)}>
+                  <option value="cloudcorp_saas">CloudCorp Global Logistics (registered)</option>
+                  <option value="acme_industrial">Acme Industrial Corp (registered)</option>
+                  <option value="initech_software">Initech Software Systems (registered)</option>
+                  <option value="cyberdyne_systems">Cyberdyne AI Compute (registered)</option>
+                  <option value="custom">Custom or unregistered (tests INV-1)</option>
                 </select>
               </div>
-
               {selectedVendorId === 'custom' ? (
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-rose-300 mb-1.5">
-                    Custom Supplier ID:
-                  </label>
-                  <input
-                    type="text"
-                    value={customVendorId}
-                    onChange={(e) => setCustomVendorId(e.target.value)}
-                    placeholder="e.g. shadow_defense_corp"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-rose-500/40 text-rose-300 font-mono text-xs focus:outline-none"
-                  />
+                <div className="field">
+                  <label htmlFor="vp-custom">Custom supplier ID</label>
+                  <input id="vp-custom" className="input" type="text" value={customVendorId} onChange={(e) => setCustomVendorId(e.target.value)} placeholder="e.g. shadow_defense_corp" />
                 </div>
               ) : (
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-300 mb-1.5">
-                    On-Chain Payout Address:
-                  </label>
-                  <input
-                    type="text"
-                    disabled
-                    value={activeVendor.payoutAddress}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-slate-400 font-mono text-xs cursor-not-allowed"
-                  />
+                <div className="field">
+                  <label htmlFor="vp-payout">Payout address</label>
+                  <input id="vp-payout" className="input input--mono" type="text" disabled value={activeVendor.payoutAddress} readOnly />
                 </div>
               )}
             </div>
 
-            {/* Invoice Number & PO Number */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-mono font-semibold text-slate-300 mb-1.5">
-                  Invoice Number:
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={invoiceNumber}
-                  onChange={(e) => setInvoiceNumber(e.target.value)}
-                  placeholder="e.g. INV-2026-001"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/[0.15] text-white font-mono text-xs focus:outline-none focus:border-rose-400"
-                />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="field">
+                <label htmlFor="vp-inv">Invoice number</label>
+                <input id="vp-inv" className="input" type="text" required value={invoiceNumber} onChange={(e) => setInvoiceNumber(e.target.value)} placeholder="e.g. INV-2026-001" />
               </div>
-
-              <div>
-                <label className="block text-xs font-mono font-semibold text-slate-300 mb-1.5">
-                  Purchase Order (PO #):
-                </label>
-                <input
-                  type="text"
-                  value={poNumber}
-                  onChange={(e) => setPoNumber(e.target.value)}
-                  placeholder="e.g. PO-101"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/[0.15] text-white font-mono text-xs focus:outline-none focus:border-rose-400"
-                />
+              <div className="field">
+                <label htmlFor="vp-po">Purchase order</label>
+                <input id="vp-po" className="input" type="text" value={poNumber} onChange={(e) => setPoNumber(e.target.value)} placeholder="e.g. PO-101" />
               </div>
             </div>
 
-            {/* Line Items Table */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-mono font-semibold text-slate-300">
-                  Itemized Service Line Items:
-                </label>
-                <button
-                  type="button"
-                  onClick={addLineItem}
-                  className="text-[11px] font-mono text-rose-400 hover:text-rose-300 underline font-semibold"
-                >
-                  + Add Line Item
-                </button>
+            <fieldset className="lines">
+              <legend>Line items</legend>
+              {lineItems.map((item, idx) => (
+                <div key={idx} className="lines__row">
+                  <input aria-label={`Line ${idx + 1} description`} className="input" type="text" value={item.description} onChange={(e) => handleLineItemChange(idx, 'description', e.target.value)} placeholder="Description" />
+                  <input aria-label={`Line ${idx + 1} quantity`} className="input input--num" type="number" step="any" value={item.quantity} onChange={(e) => handleLineItemChange(idx, 'quantity', e.target.value)} placeholder="Qty" />
+                  <input aria-label={`Line ${idx + 1} unit price`} className="input input--num" type="number" step="any" value={item.unitPrice} onChange={(e) => handleLineItemChange(idx, 'unitPrice', e.target.value)} placeholder="Price" />
+                  <span className="lines__sub fig">{usd(item.subtotal)}</span>
+                  {lineItems.length > 1 ? (
+                    <button type="button" className="iconbtn" onClick={() => removeLineItem(idx)} aria-label={`Remove line ${idx + 1}`}>×</button>
+                  ) : (
+                    <span className="iconbtn iconbtn--ghost" aria-hidden="true" />
+                  )}
+                </div>
+              ))}
+              <div className="lines__foot">
+                <button type="button" className="btn btn--ghost btn--sm" onClick={addLineItem}>Add a line</button>
+                <p>
+                  Total <strong className="fig">{usd(amount)} USDC</strong>
+                </p>
               </div>
+            </fieldset>
 
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                {lineItems.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 font-mono text-xs">
-                    <input
-                      type="text"
-                      value={item.description}
-                      onChange={(e) => handleLineItemChange(idx, 'description', e.target.value)}
-                      placeholder="Description"
-                      className="flex-1 px-3 py-1.5 rounded-lg bg-black/50 border border-white/[0.1] text-white focus:outline-none focus:border-rose-400"
-                    />
-                    <input
-                      type="number"
-                      step="any"
-                      value={item.quantity}
-                      onChange={(e) => handleLineItemChange(idx, 'quantity', e.target.value)}
-                      placeholder="Qty"
-                      className="w-16 px-2 py-1.5 rounded-lg bg-black/50 border border-white/[0.1] text-white text-center focus:outline-none focus:border-rose-400"
-                    />
-                    <input
-                      type="number"
-                      step="any"
-                      value={item.unitPrice}
-                      onChange={(e) => handleLineItemChange(idx, 'unitPrice', e.target.value)}
-                      placeholder="Price"
-                      className="w-20 px-2 py-1.5 rounded-lg bg-black/50 border border-white/[0.1] text-white text-right focus:outline-none focus:border-rose-400"
-                    />
-                    <span className="w-20 text-right font-bold text-emerald-400">
-                      ${item.subtotal.toFixed(2)}
-                    </span>
-                    {lineItems.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeLineItem(idx)}
-                        className="text-slate-500 hover:text-rose-400 px-1"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Total Amount Display */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] font-mono">
-                <span className="text-slate-400 text-xs font-semibold">Total Invoiced Amount (USDC):</span>
-                <span className="text-xl font-black text-white">${amount} USDC</span>
-              </div>
+            <div className="field">
+              <label htmlFor="vp-notes">Memo or delivery note</label>
+              <textarea id="vp-notes" className="input" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Add a note, or paste hostile text to test the agent." />
             </div>
 
-            {/* Description & Memo / Notes (With prompt injection test capability) */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-mono font-semibold text-slate-300 mb-1.5">
-                  Service Memo / Delivery Note:
-                </label>
-                <textarea
-                  rows={2}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Enter invoice memo or test prompt injection strings here..."
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/[0.15] text-white font-mono text-xs focus:outline-none focus:border-rose-400"
-                />
-              </div>
-            </div>
-
-            {/* Submit Action */}
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 text-white font-mono text-sm font-black tracking-wide shadow-lg shadow-rose-500/25 hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-            >
-              {submitting ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Executing Autonomous Pipeline...</span>
-                </>
-              ) : (
-                <>
-                  <span>Submit Invoice to Underwrite Agent</span>
-                  <span>🚀</span>
-                </>
-              )}
+            <button type="submit" className="btn btn--lime" disabled={submitting}>
+              {submitting ? 'The agent is working…' : 'Send the invoice to Acme Corp'}
             </button>
           </form>
-        </div>
+        </Panel>
 
-        {/* Right: Live 5-Stage Execution Visualizer (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="p-6 md:p-8 rounded-3xl bg-[#060b1c]/80 border border-white/[0.1] backdrop-blur-2xl space-y-6 shadow-xl relative overflow-hidden">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <span>Autonomous Pipeline</span>
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-              </h3>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                Stage {pipelineStep}/5
-              </span>
-            </div>
-
-            {/* Step-by-Step Interactive Pipeline */}
-            <div className="space-y-3 font-mono text-xs">
-              {/* Stage 1 */}
-              <div
-                className={`p-3 rounded-xl border transition-all ${
-                  pipelineStep >= 1
-                    ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-200'
-                    : 'bg-white/[0.02] border-white/[0.05] text-slate-500'
-                }`}
-              >
-                <div className="flex items-center justify-between font-bold">
-                  <span>1. Inbound Ingestion</span>
-                  <span>{pipelineStep > 1 ? '✓ COMPLETE' : pipelineStep === 1 ? 'RUNNING...' : 'PENDING'}</span>
+        <Panel title="The agent at work" kicker={submitting ? `Stage ${pipelineStep} of 5` : 'Result'}>
+          {submitting ? (
+            <Pipeline
+              stages={VENDOR_STAGES}
+              label="Invoice stages"
+              states={VENDOR_STAGES.map((_, i): NodeState => (pipelineStep > i + 1 ? 'pass' : pipelineStep === i + 1 ? 'run' : 'idle'))}
+            />
+          ) : lastResult ? (
+            <>
+              <ResultReceipt
+                result={{ ...lastResult, proposed: lastResult.proposed ?? 'Not recorded' }}
+                amount={amount}
+                foot="Simulated · demo rules · no money moves"
+              />
+              {lastResult.agentDecisionDetails && (
+                <div className="audit">
+                  <p className="eyebrow">Owner agent audit · {lastResult.agentEvaluatedBy}</p>
+                  <ul className="marks">
+                    <li className={`mark mark--${lastResult.agentDecisionDetails.vendorAllowedByOwner ? 'ok' : 'bad'}`}>
+                      {lastResult.agentDecisionDetails.vendorAllowedByOwner ? <CheckGlyph /> : <CrossGlyph />}
+                      <span>Allowed by the owner</span>
+                    </li>
+                    <li className={`mark mark--${lastResult.agentDecisionDetails.cooldownCleared ? 'ok' : 'warn'}`}>
+                      {lastResult.agentDecisionDetails.cooldownCleared ? <CheckGlyph /> : <ClockGlyph />}
+                      <span>Cooldown cleared</span>
+                    </li>
+                    <li className={`mark mark--${lastResult.agentDecisionDetails.promptInjectionFree ? 'ok' : 'bad'}`}>
+                      {lastResult.agentDecisionDetails.promptInjectionFree ? <CheckGlyph /> : <CrossGlyph />}
+                      <span>No hostile text</span>
+                    </li>
+                    <li className={`mark mark--${lastResult.agentDecisionDetails.withinT1Cap ? 'ok' : 'warn'}`}>
+                      {lastResult.agentDecisionDetails.withinT1Cap ? <CheckGlyph /> : <ClockGlyph />}
+                      <span>Inside the daily limit</span>
+                    </li>
+                  </ul>
                 </div>
-                <div className="text-[10px] text-slate-400 mt-1">Single-use hash check &amp; line-item parsing</div>
-              </div>
-
-              {/* Stage 2 */}
-              <div
-                className={`p-3 rounded-xl border transition-all ${
-                  pipelineStep >= 2
-                    ? 'bg-purple-500/10 border-purple-500/40 text-purple-200'
-                    : 'bg-white/[0.02] border-white/[0.05] text-slate-500'
-                }`}
-              >
-                <div className="flex items-center justify-between font-bold">
-                  <span>2. AI Agent Semantic Inspection</span>
-                  <span>{pipelineStep > 2 ? '✓ COMPLETE' : pipelineStep === 2 ? 'SCANNING...' : 'PENDING'}</span>
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1">Adversarial prompt-injection filter &amp; PO match</div>
-              </div>
-
-              {/* Stage 3 */}
-              <div
-                className={`p-3 rounded-xl border transition-all ${
-                  pipelineStep >= 3
-                    ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
-                    : 'bg-white/[0.02] border-white/[0.05] text-slate-500'
-                }`}
-              >
-                <div className="flex items-center justify-between font-bold">
-                  <span>3. Deterministic Policy Engine</span>
-                  <span>{pipelineStep > 3 ? '✓ COMPLETE' : pipelineStep === 3 ? 'EVALUATING...' : 'PENDING'}</span>
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1">T0 (Observe) · T1 (Auto ≤$180) · T2 (Challenge) · T3 (Revert)</div>
-              </div>
-
-              {/* Stage 4 */}
-              <div
-                className={`p-3 rounded-xl border transition-all ${
-                  pipelineStep >= 4
-                    ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-200'
-                    : 'bg-white/[0.02] border-white/[0.05] text-slate-500'
-                }`}
-              >
-                <div className="flex items-center justify-between font-bold">
-                  <span>4. Smart Contract Execution</span>
-                  <span>{pipelineStep > 4 ? '✓ COMPLETE' : pipelineStep === 4 ? 'BROADCASTING...' : 'PENDING'}</span>
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1">UnderwriteVault.sol state transition &amp; event emission</div>
-              </div>
-
-              {/* Stage 5 */}
-              <div
-                className={`p-3 rounded-xl border transition-all ${
-                  pipelineStep >= 5
-                    ? 'bg-teal-500/15 border-teal-500/50 text-teal-200'
-                    : 'bg-white/[0.02] border-white/[0.05] text-slate-500'
-                }`}
-              >
-                <div className="flex items-center justify-between font-bold">
-                  <span>5. Cryptographic Settlement Receipt</span>
-                  <span>{pipelineStep >= 5 ? '✓ SETTLED' : 'PENDING'}</span>
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1">Decoded PaymentExecuted event &amp; txHash link</div>
-              </div>
-            </div>
-
-            {/* Live Result Display */}
-            {lastResult && (
-              <div className="p-4 rounded-2xl bg-black/70 border border-white/[0.15] space-y-3 font-mono text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 font-bold">Policy Decision:</span>
-                  <span
-                    className={`px-2.5 py-1 rounded-full font-black text-[11px] ${
-                      lastResult.decided === 'T1_AUTONOMOUS'
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                        : lastResult.decided === 'T2_ESCALATED'
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                        : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                    }`}
-                  >
-                    {lastResult.decided === 'T1_AUTONOMOUS'
-                      ? 'T1 AUTONOMOUS EXECUTION'
-                      : lastResult.decided === 'T2_ESCALATED'
-                      ? 'T2 ESCALATED TO CFO'
-                      : 'T3 PROHIBITED / REVERTED'}
-                  </span>
-                </div>
-
-                <div className="space-y-1 text-[11px]">
-                  <div className="text-slate-400">Reason Codes:</div>
-                  <div className="flex flex-wrap gap-1">
-                    {lastResult.reasonCodes.map((code: string, i: number) => (
-                      <span key={i} className="px-2 py-0.5 rounded bg-white/[0.08] text-slate-200">
-                        {code}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="text-[11px] pt-1 border-t border-white/[0.08]">
-                  <span className="text-slate-400 block">Contract Result:</span>
-                  <span className="text-white font-semibold break-all">{lastResult.contractResult}</span>
-                </div>
-
-                {/* Owner's System Agent Decision Matrix */}
-                {lastResult.agentDecisionDetails && (
-                  <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] space-y-1.5 text-[10px]">
-                    <div className="text-emerald-400 font-bold flex items-center justify-between">
-                      <span>Owner Agent Audit:</span>
-                      <span className="text-[9px] text-slate-400">{lastResult.agentEvaluatedBy}</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1 text-[10px]">
-                      <div className="flex items-center gap-1">
-                        <span>{lastResult.agentDecisionDetails.vendorAllowedByOwner ? '🟢' : '🔴'}</span>
-                        <span className={lastResult.agentDecisionDetails.vendorAllowedByOwner ? 'text-slate-300' : 'text-rose-400'}>
-                          Allowed by Owner
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>{lastResult.agentDecisionDetails.cooldownCleared ? '🟢' : '🟡'}</span>
-                        <span className={lastResult.agentDecisionDetails.cooldownCleared ? 'text-slate-300' : 'text-amber-300'}>
-                          Cooldown Cleared
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>{lastResult.agentDecisionDetails.promptInjectionFree ? '🟢' : '🔴'}</span>
-                        <span className={lastResult.agentDecisionDetails.promptInjectionFree ? 'text-slate-300' : 'text-rose-400'}>
-                          Prompt-Injection Clean
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>{lastResult.agentDecisionDetails.withinT1Cap ? '🟢' : '🟡'}</span>
-                        <span className={lastResult.agentDecisionDetails.withinT1Cap ? 'text-slate-300' : 'text-amber-300'}>
-                          Under $180 T1 Cap
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {lastResult.txHash && (
-                  <div className="text-[11px] pt-1">
-                    <span className="text-slate-400 block">Transaction Hash:</span>
-                    <span className="text-cyan-400 break-all font-mono">{lastResult.txHash}</span>
-                  </div>
-                )}
-
-                {lastResult.decided === 'T2_ESCALATED' && (
-                  <div className="pt-2">
-                    <Link
-                      href="/portals/owner"
-                      className="inline-flex items-center gap-1.5 text-amber-300 hover:text-amber-200 underline font-bold text-xs"
-                    >
-                      <span>Open Owner Portal to Approve or Reject this payment →</span>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Live Pipeline Terminal Output */}
-            <div className="p-3.5 rounded-xl bg-black/90 border border-white/[0.08] font-mono text-[10px] space-y-1 text-slate-400 max-h-40 overflow-y-auto">
-              <div className="text-slate-500 font-bold border-b border-white/[0.08] pb-1">EXECUTION TRACE LOG:</div>
-              {pipelineLogs.length === 0 ? (
-                <div className="text-slate-600 italic">No invoice in active execution. Ready for submission.</div>
-              ) : (
-                pipelineLogs.map((log, idx) => <div key={idx}>{log}</div>)
               )}
-            </div>
-          </div>
-        </div>
+              {lastResult.decided === 'T2_ESCALATED' && (
+                <p className="after">
+                  <Link href="/portals/owner" className="text-link">Open the owner inbox to approve or reject it</Link>
+                </p>
+              )}
+            </>
+          ) : (
+            <Empty>Send an invoice, or load a demo scenario, to watch the agent work.</Empty>
+          )}
+          <AgentLog lines={pipelineLogs} empty="The agent's log appears here." />
+        </Panel>
       </div>
 
-      {/* 4. Real-Time Invoices Ledger (Full Cross-Stakeholder Sync) */}
-      <div className="p-6 md:p-8 rounded-3xl bg-[#060b1c]/80 border border-white/[0.1] backdrop-blur-2xl space-y-4 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
-          <div>
-            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              <span>Enterprise Invoices Ledger</span>
-              <span className="text-xs font-mono font-normal text-slate-400">
-                ({invoices.length} Invoices Recorded)
-              </span>
-            </h3>
-            <p className="text-slate-400 text-xs">
-              Live ledger syncing autonomously across Vendor, Owner CFO, Examiner, and Adjudicator desks
-            </p>
-          </div>
-          <div className="flex items-center gap-2 text-xs font-mono">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-slate-300">Live Polling (2.5s)</span>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left font-mono text-xs">
-            <thead>
-              <tr className="border-b border-white/[0.08] text-slate-400 uppercase text-[10px]">
-                <th className="py-3 px-3">Invoice #</th>
-                <th className="py-3 px-3">Supplier</th>
-                <th className="py-3 px-3">Target Customer</th>
-                <th className="py-3 px-3">PO #</th>
-                <th className="py-3 px-3">Amount</th>
-                <th className="py-3 px-3">Policy Tier</th>
-                <th className="py-3 px-3">Live Status</th>
-                <th className="py-3 px-3">Settlement TxHash / Receipt</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/[0.05]">
-              {invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="py-3 px-3 font-bold text-white">{inv.invoiceNumber}</td>
-                  <td className="py-3 px-3 text-slate-300">{inv.vendorName || inv.vendorId}</td>
-                  <td className="py-3 px-3 text-slate-400">
-                    <span className="text-emerald-400 font-bold">{inv.targetOwnerName ? 'Acme Corp' : 'Acme Corp'}</span>
-                    <span className="text-[10px] text-slate-500 block font-mono">
-                      {truncateHash(inv.targetOwnerAddress || defaultOwnerVault, 8, 6)}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 text-slate-400">{inv.poNumber || '—'}</td>
-                  <td className="py-3 px-3 font-black text-white">${inv.amountUSDC.toFixed(2)}</td>
-                  <td className="py-3 px-3">
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        inv.tier === 'T1'
-                          ? 'bg-emerald-500/20 text-emerald-300'
-                          : inv.tier === 'T2'
-                          ? 'bg-amber-500/20 text-amber-300'
-                          : 'bg-rose-500/20 text-rose-300'
-                      }`}
-                    >
-                      {inv.tier}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3">
-                    {inv.status === 'EXECUTED_T1' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        PAID (T1 AUTO)
-                      </span>
-                    ) : inv.status === 'PENDING_T2' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                        QUEUED FOR CFO (T2)
-                      </span>
-                    ) : inv.status === 'APPROVED_T2' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 text-[10px] font-bold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                        CFO APPROVED
-                      </span>
-                    ) : inv.status === 'REJECTED_T2' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30 text-[10px] font-bold">
-                        CFO REJECTED
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold">
-                        BLOCKED (T3)
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-3 px-3 text-slate-400">
-                    {inv.txHash ? (
-                      <span className="text-cyan-400 font-mono underline hover:text-cyan-300 cursor-pointer">
-                        {truncateHash(inv.txHash)}
-                      </span>
-                    ) : inv.status === 'PENDING_T2' ? (
-                      <Link href="/portals/owner" className="text-amber-400 hover:text-amber-300 underline">
-                        Review in CFO Desk →
-                      </Link>
-                    ) : (
-                      <span className="text-slate-500">{inv.contractResult || 'Reverted on-chain'}</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Panel title="Your invoices" kicker="Live ledger" actions={<><Chip>{invoices.length} recorded</Chip><Chip tone="lime" dot>Live, every 2.5 s</Chip></>}>
+        {loading && invoices.length === 0 ? <Skeleton h={140} /> : <VendorLedger invoices={invoices} owner={defaultOwnerVault} />}
+      </Panel>
     </div>
   );
+
 }

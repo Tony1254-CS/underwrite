@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web/`: Workspace redesign in the landing page's identity (DEC-033, PROVISIONAL, branch `feat/ui-landing-redesign`). Every route outside `/` (dashboard, invoice studio, attack lab, policy card, traces, claims, evidence, verification audit, experiment, five portals, sign-in and register, auth modal, portal guard) was re-rendered; state, effects, fetch calls, intervals and handlers were left as they were.
+  - `web/src/app/(app)/app.css` (new design system for the workspace; light, dark and auto) and `web/src/app/(app)/icon.svg`.
+  - `web/src/components/ui/`: shared kit (`PageHeader`, `Panel`, `Stat`, `Chip`, `Notice`, `Modal`, `Segmented`, `Countdown`, `AuthorityMeter`, `FactsReceipt`, `ResultReceipt`, `Stamp`, ...), `icons.tsx`, `nav.ts` (single navigation source), `AgentBar.tsx` (agent status, "N need you", live toasts, read-only polling of `/api/state` every 4 s), `CommandPalette.tsx` (Ctrl / Cmd + K).
+  - `web/src/app/(app)/experiment/ExperimentView.tsx` (client chart and table; the page itself is now a server component).
+  - Agentic feel: online / revoked / offline pill on every page, toasts for new agent decisions, red authority meter when revoked, live challenge-window and cooldown countdowns, animated four-check pipeline with a printed receipt, row flash for new entries in live tables. All motion honours `prefers-reduced-motion`.
+  - Confirm dialogs before Reset demo and before approving a claim (irreversible).
 - `web/`: Landing page redesign "Your AI clerk starts at $0" (DEC-032, PROVISIONAL, branch `feat/ui-landing-redesign`):
   - New route group `web/src/app/(site)/` (own root layout, `site.css`, `icon.svg`) serving `/`; all existing routes moved unchanged into `web/src/app/(app)/` (URLs identical).
   - `web/src/components/site/`: `Desk` (interactive invoice slips, four-check pipeline, printed receipt, limit meter), `HomeSections`, `SiteHeader`, `SiteFooter`, `ThemeToggle` (Auto / Light / Dark), `CopyButton`, `ScrollFx` (GSAP reveals), `Stamp`, `Glyphs`.
@@ -175,3 +181,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 =======
 
 >>>>>>> p8-web-ui
+
+### Changed
+- `web/`: `Sidebar` is a collapsible rail (sheet on phones), `Header` a top bar (agent bar, theme toggle, persona menu, Reset). Same routes, same persona switching and password challenge.
+- `web/src/app/(app)/experiment/page.tsx`: reads `evidence/experiments/main-run/protocol-summary.json` instead of hard-coded numbers; "Not recorded" when the file is missing.
+- `web/src/app/(app)/traces/page.tsx`: steps without a recorded amount or vendor say "Not recorded" instead of showing an invented value.
+- `web/src/app/(app)/submit/page.tsx`, `web/src/components/PortalGuard.tsx`: links that pointed at `/` (now the landing page) point at `/dashboard`.
+- Scripted and simulated content (exam cards, verify trail, examiner and underwriter desks, evidence artifact list) is labelled with provenance stamps.
+
+### Fixed
+- `web/src/app/(app)/claims/page.tsx`: the "ACTIVE" claims filter never matched anything; it now shows PENDING claims.
+
+### Removed
+- `web/src/app/globals.css` (old glass stylesheet; nothing imports it any more).

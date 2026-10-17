@@ -2,6 +2,8 @@
 
 **Revision 2 (2026-10-17), landing page only:** the "Public Record" art direction in §5 to §8.1 is RETIRED for the landing page. Built and tested, it read like a scientific journal (1,708 words, paper colours, evidence tables) and the owner rejected it. The landing page was redesigned from scratch as an interactive desk ("Your AI clerk starts at $0", ink, white and highlighter-lime, about 240 words); see DEC-032. Everything else in this plan (the audit in §4, the integrity contract in §12, the feature matrix in §13, the accessibility criteria in §11) still stands, but the visual direction for the workspace pages is open again and needs the owner's approval before any work starts.
 
+**Revision 3 (2026-10-17), workspace:** the owner approved the landing page and asked for every other page to follow it. The workspace is now built in the same ink, white and lime identity (DEC-033); this document is the original proposal and its page-by-page sections remain a useful checklist, but the visual direction in it is superseded by DEC-032 and DEC-033.
+
 **Status:** Proposal only. Nothing in this document has been implemented. No source file was changed while preparing it.
 **Prepared:** 17 Oct 2026 (Saturday), for the FinTechathon 2026 Topic F build.
 **Scope:** The Next.js web app in `web/`: its public homepage, every route, and every component. Contracts, engine and CLI are out of scope, except where the UI must stop misrepresenting what they do.

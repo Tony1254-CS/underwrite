@@ -5,6 +5,15 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { PortalGuard } from '@/components/PortalGuard';
 
+// @reskinned: presentation rebuilt on the shared UI kit; logic above this line is unchanged.
+import { PageHeader, Panel, Chip, Empty, Hash, Stamp, Notice, usd } from '@/components/ui';
+
+const EXAM_AGENTS = [
+  { id: 'gamma', name: 'Hardened reasoning', model: 'Gemini 2.5 Pro', tag: 'Defensive enclave' },
+  { id: 'beta', name: 'Standard tool-calling', model: 'Gemini 2.5 Flash', tag: 'Standard LLM' },
+  { id: 'alpha', name: 'Scripted baseline', model: 'Naive script', tag: 'No defence' },
+] as const;
+
 export default function ExaminerPortalPage() {
   return (
     <PortalGuard requiredRole="EXAMINER" portalName="Safety Examiner & Attestation Portal">
@@ -92,185 +101,123 @@ function ExaminerPortalContent() {
   };
 
   return (
-    <div className="space-y-10 pb-16">
-      {/* Portal Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/[0.08]">
-        <div>
-          <div className="flex flex-wrap items-center gap-3.5 mb-2">
-            <span className="text-[11px] font-mono uppercase tracking-[0.2em] font-extrabold text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.3)]">
-              EXAMINATION ENCLAVE
-            </span>
-            <span className="text-[11px] px-3.5 py-1 rounded-full font-mono uppercase tracking-wider font-extrabold bg-white/[0.06] text-white border border-white/[0.12]">
-              ROLE: AI SAFETY EXAMINER
-            </span>
+    <div className="stack">
+      <PageHeader
+        eyebrow="Qualify"
+        title="Examiner desk"
+        lede="Run a candidate agent through the adversarial exam, read the bound, and sign the attestation that lets the owner activate it."
+        actions={
+          <div className="keycard">
+            <p className="eyebrow">Signed-in key</p>
+            <code className="trunc">{user.address}</code>
+            {!isExaminer && (
+              <button type="button" className="btn btn--lime btn--sm" onClick={() => switchRole('EXAMINER')}>
+                Switch to the examiner key
+              </button>
+            )}
           </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-none">
-            Examiner &amp; <span className="text-gradient-cyan">Attestation Desk</span>
-          </h1>
-          <p className="text-slate-300 text-sm md:text-base mt-3 max-w-2xl leading-relaxed">
-            Independent AI actuary workstation. Evaluate candidate agent architectures against the 390-scenario adversarial battery, compute Clopper-Pearson proof bounds, and issue cryptographically signed EIP-712 qualifications.
-          </p>
-        </div>
+        }
+      />
 
-        {/* Current Auth Status Card */}
-        <div className="p-4 rounded-2xl bg-black/60 border border-white/[0.12] backdrop-blur-2xl text-xs font-mono space-y-2">
-          <div className="text-slate-400 text-[10px] uppercase font-bold">Active Authenticated Key</div>
-          <div className="text-indigo-400 font-bold truncate max-w-[260px]">{user.address}</div>
-          {!isExaminer && (
-            <button
-              onClick={() => switchRole('EXAMINER')}
-              className="w-full py-1.5 px-3 rounded-xl bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/40 text-[11px] font-bold transition-all"
-            >
-              Switch to Examiner Key ⚡
-            </button>
-          )}
-        </div>
-      </div>
+      <Notice tone="info">
+        This desk is a walkthrough. The exam result and the signature below are produced by the demo, not by a real exam run or a wallet signature. Real reports are on the Evidence page.
+      </Notice>
 
-      {/* Main Grid: Battery Runner & Proof Bounds */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Step 1: Run Adversarial Battery */}
-        <div className="glass-panel specular-indigo rounded-[32px] p-8 space-y-6">
-          <div className="flex justify-between items-center pb-4 border-b border-white/[0.08]">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
-              <span>1. Run Adversarial Battery (390 Scenarios)</span>
-            </h2>
-            <span className="text-xs font-mono text-indigo-300">Phase P5 / PV-14</span>
-          </div>
-
-          <div className="space-y-4 font-mono text-xs">
-            <div>
-              <label className="text-slate-300 block mb-2 font-bold">Select Target Agent Configuration</label>
-              <div className="space-y-2">
-                {[
-                  { id: 'gamma', name: 'γ Hardened Reasoning (Gemini 2.5 Pro)', tag: 'Defensive Enclave' },
-                  { id: 'beta', name: 'β Standard Tool-Calling (Gemini 2.5 Flash)', tag: 'Standard LLM' },
-                  { id: 'alpha', name: 'α Scripted Baseline (Naive Script)', tag: 'Zero Defense' },
-                ].map((a) => (
+      <div className="grid gap-4 lg:grid-cols-2 items-start">
+        <Panel title="1. Run the exam" kicker="390 scenarios" actions={<Stamp kind="simulated" label="Simulated" meaning="The result is a fixed demo value." />}>
+          <div className="form">
+            <div className="field">
+              <span className="field__label">Choose the agent to examine</span>
+              <div className="choices" role="group" aria-label="Agent to examine">
+                {EXAM_AGENTS.map((a) => (
                   <button
                     key={a.id}
                     type="button"
+                    className={`choice${selectedAgent === a.id ? ' is-on' : ''}`}
+                    aria-pressed={selectedAgent === a.id}
                     onClick={() => {
                       setSelectedAgent(a.id as any);
                       setExamResult(null);
                     }}
-                    className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all ${
-                      selectedAgent === a.id
-                        ? 'bg-indigo-500/20 border-indigo-500/60 text-white font-bold shadow-[0_0_15px_rgba(99,102,241,0.3)]'
-                        : 'bg-black/40 border-white/[0.06] text-slate-400 hover:text-white'
-                    }`}
                   >
-                    <span>{a.name}</span>
-                    <span className="text-[10px] uppercase px-2 py-0.5 rounded bg-white/[0.08] text-slate-300">
-                      {a.tag}
+                    <span>
+                      <strong>{a.name}</strong>
+                      <small>{a.model}</small>
                     </span>
+                    <Chip>{a.tag}</Chip>
                   </button>
                 ))}
               </div>
             </div>
-
-            <button
-              onClick={handleRunBattery}
-              disabled={runningExam}
-              className={`w-full py-3.5 rounded-2xl font-black uppercase text-xs tracking-wider transition-all shadow-xl active:scale-95 ${
-                runningExam
-                  ? 'bg-indigo-700 text-white cursor-wait'
-                  : 'bg-gradient-to-r from-indigo-500 to-blue-600 hover:brightness-110 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]'
-              }`}
-            >
-              {runningExam ? '⚡ Evaluating 390 Invoices...' : 'Execute Adversarial Exam ⚡'}
+            <button type="button" className="btn btn--lime" onClick={handleRunBattery} disabled={runningExam}>
+              {runningExam ? 'Evaluating 390 invoices…' : 'Run the exam'}
             </button>
+            {runningExam && <div className="progress" aria-hidden="true"><i /></div>}
           </div>
 
           {examResult && (
-            <div className="p-5 rounded-2xl bg-black/60 border border-white/[0.08] space-y-3 font-mono text-xs">
-              <div className="flex justify-between items-center pb-2 border-b border-white/[0.06]">
-                <span className="text-slate-400">Exam Outcome:</span>
-                <span className={`font-black ${
-                  examResult.authorizedT1Cap > 0 ? 'text-emerald-400' : 'text-rose-400'
-                }`}>
-                  {examResult.status}
-                </span>
+            <dl className="readout">
+              <div>
+                <dt>Outcome</dt>
+                <dd><Chip tone={examResult.authorizedT1Cap > 0 ? 'moved' : 'blocked'}>{examResult.status}</Chip></dd>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Class I Safety Breaches:</span>
-                <span className={`font-bold ${examResult.classIBreaches === 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {examResult.classIBreaches} / 60
-                </span>
+              <div>
+                <dt>Out-of-bounds breaches</dt>
+                <dd className="fig">{examResult.classIBreaches} of 60</dd>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Clopper-Pearson 99% Bound:</span>
-                <span className="text-cyan-300 font-bold">p ≤ {examResult.clopperPearsonUpperP}</span>
+              <div>
+                <dt>Upper bound (Clopper-Pearson)</dt>
+                <dd className="fig">p ≤ {examResult.clopperPearsonUpperP}</dd>
               </div>
-              <div className="flex justify-between pt-2 border-t border-white/[0.06]">
-                <span className="text-slate-400 font-bold">Max Safe Sized Cap:</span>
-                <span className="text-emerald-400 font-black text-base num-tabular">
-                  ${examResult.authorizedT1Cap.toFixed(2)} USDC
-                </span>
+              <div className="readout__out">
+                <dt>Largest safe limit</dt>
+                <dd className="fig">{usd(examResult.authorizedT1Cap)} a day</dd>
               </div>
-            </div>
+            </dl>
           )}
-        </div>
+        </Panel>
 
-        {/* Step 2: Sign EIP-712 Attestation */}
-        <div className="glass-panel specular-cyan rounded-[32px] p-8 space-y-6">
-          <div className="flex justify-between items-center pb-4 border-b border-white/[0.08]">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
-              <span>2. Sign EIP-712 Qualification Attestation</span>
-            </h2>
-            <span className="text-xs font-mono text-cyan-300">Dual-Key (INV-4)</span>
-          </div>
-
-          <p className="text-xs text-slate-300 font-mono leading-relaxed">
-            Autonomous spending authority requires TWO keys: the Examiner&apos;s signed cryptographic attestation sizing limits, plus the Owner&apos;s on-chain activation transaction.
-          </p>
-
+        <Panel title="2. Sign the attestation" kicker="Two keys: this is the first" actions={<Stamp kind="simulated" label="Simulated" meaning="No EIP-712 signature is produced. The values are random demo data." />}>
+          <p className="muted">Autonomous spending needs two keys: the examiner&rsquo;s signed attestation that sizes the limit, and the owner&rsquo;s activation on the chain.</p>
           <button
+            type="button"
+            className="btn btn--lime"
             onClick={handleSignAttestation}
             disabled={!examResult || examResult.authorizedT1Cap === 0 || signing}
-            className={`w-full py-3.5 rounded-2xl font-black uppercase text-xs tracking-wider transition-all shadow-xl active:scale-95 ${
-              !examResult || examResult.authorizedT1Cap === 0
-                ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                : signing
-                ? 'bg-cyan-700 text-white cursor-wait'
-                : 'bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-600 hover:brightness-110 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)]'
-            }`}
           >
-            {signing ? 'Signing Typed Data (EIP-712)...' : 'Sign Attestation with Examiner Key ✍️'}
+            {signing ? 'Signing…' : 'Sign with the examiner key'}
           </button>
-
           {signedAttestation ? (
-            <div className="p-5 rounded-2xl bg-black/70 border border-cyan-500/40 space-y-3 font-mono text-xs">
-              <div className="text-emerald-400 font-bold flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span>Attestation Signed Successfully</span>
+            <dl className="readout">
+              <div>
+                <dt>Qualification ID</dt>
+                <dd><Hash value={signedAttestation.qualId} start={12} end={8} /></dd>
               </div>
-              <div className="space-y-1 text-[11px]">
-                <div className="text-slate-400">Qualification ID:</div>
-                <div className="text-cyan-300 truncate">{signedAttestation.qualId}</div>
+              <div>
+                <dt>Signature</dt>
+                <dd><Hash value={signedAttestation.signature} start={12} end={8} /></dd>
               </div>
-              <div className="space-y-1 text-[11px]">
-                <div className="text-slate-400">EIP-712 Signature:</div>
-                <div className="text-slate-300 truncate font-mono text-[10px] bg-black/50 p-2 rounded-xl">
-                  {signedAttestation.signature}
-                </div>
+              <div>
+                <dt>Limit per payment and per window</dt>
+                <dd className="fig">{signedAttestation.t1MaxPerTx}</dd>
               </div>
-              <div className="flex justify-between text-[11px] pt-2 border-t border-white/[0.06]">
-                <span className="text-slate-400">Ready for Activation:</span>
-                <Link href="/portals/owner" className="text-emerald-400 hover:underline font-bold">
-                  Owner Portal →
-                </Link>
+              <div>
+                <dt>Valid for</dt>
+                <dd className="fig">{signedAttestation.validityDays} days</dd>
               </div>
-            </div>
+              <div className="readout__out">
+                <dt>Next</dt>
+                <dd>
+                  <Link href="/portals/owner" className="text-link">The owner activates it</Link>
+                </dd>
+              </div>
+            </dl>
           ) : (
-            <div className="py-12 text-center text-xs font-mono text-slate-500 border border-white/[0.08] rounded-2xl bg-black/30">
-              Run the adversarial battery on the left to compute bounds before generating signature.
-            </div>
+            <Empty>Run the exam first. An agent that scores zero authority cannot be signed.</Empty>
           )}
-        </div>
+        </Panel>
       </div>
     </div>
   );
+
 }

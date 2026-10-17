@@ -1,7 +1,7 @@
 /*
  * UNDERWRITE public site: landing page.
  *
- * Loaded ONLY by the (site) route group. The workspace routes use globals.css and are untouched.
+ * Loaded ONLY by the (site) route group. The workspace routes load (app)/app.css.
  *
  * Identity: ink, white, and one highlighter-lime (the colour an auditor marks a line with).
  * Big grotesk type. Paper objects (invoice slips, receipts) that look the same in both themes.

@@ -9,6 +9,10 @@ import {
 } from "@/components/Badges";
 import { truncateHash } from "@/lib/format";
 
+// @reskinned: presentation rebuilt on the shared UI kit; logic above this line is unchanged.
+import { PageHeader, Panel, Chip, Skeleton, Hash, Stamp } from '@/components/ui';
+import { CheckGlyph, CrossGlyph } from '@/components/site/Glyphs';
+
 interface VerificationCheck {
   id: string;
   step: string;
@@ -112,203 +116,88 @@ export default function EvidencePage() {
   };
 
   return (
-    <div className="space-y-10 relative">
-      {/* Background Aurora Glow */}
-      <div className="ambient-aurora-cyan -top-20 -left-20 pointer-events-none opacity-40" />
-      <div className="ambient-aurora-emerald top-96 -right-20 pointer-events-none opacity-30" />
+    <div className="stack">
+      <PageHeader
+        eyebrow="Prove"
+        title="Evidence"
+        lede="Re-check that the limit on the chain matches the exam report it was built from."
+        actions={
+          <>
+            <ControlledBadge />
+            <ScriptedBadge />
+          </>
+        }
+      />
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-6 border-b border-white/[0.08] relative z-10">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white flex items-center gap-3">
-              Evidence <span className="text-gradient-cyan">&amp; Verification</span>
-            </h1>
-            <span className="jewel-pill jewel-pill-emerald font-mono">
-              ZERO-TRUST AUDIT
-            </span>
-          </div>
-          <p className="text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
-            Deterministic cryptographic audit trail, SHA-256 evidence bundle roots, and off-chain proofs.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          <ControlledBadge />
-          <ScriptedBadge />
-        </div>
-      </div>
-
-      {/* FIELD-BY-FIELD VERIFICATION PANEL (Reproducing `uw verify <qualId>`) */}
-      <section className={`glass-panel-elevated rounded-3xl p-6 md:p-10 space-y-8 transition-all duration-500 relative z-10 ${
-        verifyData?.overallPass ? "specular-emerald" : "specular-rose"
-      }`}>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/[0.08] pb-5">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <span className={`w-2.5 h-2.5 rounded-full ${
-                verifyData?.overallPass ? "bg-emerald-400 shadow-glow-emerald" : "bg-rose-400 shadow-glow-rose"
-              }`} />
-              <h2 className="text-xl font-bold text-white tracking-tight">
-                Cryptographic Qualification Verifier (uw verify)
-              </h2>
-            </div>
-            <p className="text-xs text-slate-400 mt-1 font-mono">
-              Executes the exact 5-step verification sequence required by Plan §5.2 and §7.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={handleToggleTamper}
-              className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold transition-all border backdrop-blur-md ${
-                simulateTamper
-                  ? "bg-rose-500/20 text-rose-300 border-rose-500/40 shadow-glow-rose"
-                  : "bg-black/40 text-slate-400 border-white/[0.08] hover:text-white"
-              }`}
-            >
-              Simulate 1-Byte Report Tamper: {simulateTamper ? "ACTIVE (TAMPERED)" : "OFF (GENUINE)"}
+      <Panel
+        title="Verify a qualification"
+        kicker="The same five checks as uw verify"
+        actions={
+          <div className="rowactions">
+            <button type="button" className="btn btn--ghost btn--sm" aria-pressed={simulateTamper} onClick={handleToggleTamper}>
+              {simulateTamper ? 'Tamper test is on' : 'Simulate a 1-byte tamper'}
             </button>
-
-            <button
-              onClick={() => runVerification(simulateTamper)}
-              disabled={verifying}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white text-xs font-mono font-bold transition-all shadow-glow-emerald disabled:opacity-50"
-            >
-              {verifying ? "Verifying..." : "Re-Verify"}
+            <button type="button" className="btn btn--lime btn--sm" onClick={() => runVerification(simulateTamper)} disabled={verifying}>
+              {verifying ? 'Verifying…' : 'Re-verify'}
             </button>
           </div>
-        </div>
-
-        {/* Verification Verdict Banner */}
-        <div
-          className={`p-6 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 backdrop-blur-md ${
-            verifyData?.overallPass
-              ? "bg-emerald-500/10 border-emerald-500/40 shadow-[0_0_24px_rgba(16,185,129,0.2)]"
-              : "bg-rose-500/10 border-rose-500/40 shadow-[0_0_24px_rgba(244,63,94,0.2)]"
-          }`}
-        >
-          <div className="space-y-1.5">
-            <div className="text-xs font-mono uppercase tracking-wider text-slate-300">
-              Audit Status for Qualification:{" "}
-              <span className="text-cyan-300 font-bold">{truncateHash(verifyData?.qualId, 10, 8)}</span>
-            </div>
-            <div className="text-xs font-mono text-slate-400 max-w-2xl leading-relaxed">
-              {verifyData?.overallPass
-                ? "All cryptographic digests, compiler envelopes, and on-chain limits match bit-for-bit."
-                : "Tampered report detected! Cryptographic integrity violation halts authorization."}
-            </div>
-          </div>
-
-          <div
-            className={`text-3xl font-black font-mono tracking-wider px-6 py-2.5 rounded-2xl border flex items-center justify-center shrink-0 ${
-              verifyData?.overallPass
-                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-glow-emerald"
-                : "bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-glow-rose animate-pulse"
-            }`}
-          >
-            {verifyData?.overallPass ? "PASS" : "FAIL"}
-          </div>
-        </div>
-
-        {/* The 5 Field-by-Field Checks */}
-        <div className="space-y-3 font-mono text-xs">
-          {verifyData?.checks.map((check) => (
-            <div
-              key={check.id}
-              className={`p-4 rounded-2xl border transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                check.pass
-                  ? "bg-black/30 border-white/[0.06] hover:bg-white/[0.03]"
-                  : "bg-rose-500/10 border-rose-500/30"
-              }`}
-            >
-              <div className="space-y-1">
-                <div className="font-semibold text-white flex items-center gap-2">
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      check.pass ? "bg-emerald-400 shadow-glow-emerald" : "bg-rose-400 shadow-glow-rose"
-                    }`}
-                  />
-                  {check.step}
-                </div>
-                <div
-                  className={`text-[11px] leading-relaxed ${
-                    check.pass ? "text-slate-400" : "text-rose-300 font-semibold"
-                  }`}
-                >
-                  {check.details}
-                </div>
+        }
+      >
+        {!verifyData ? (
+          <Skeleton h={180} />
+        ) : (
+          <>
+            <div key={`${verifyData.overallPass}-${simulateTamper}`} className={`verdict verdict--${verifyData.overallPass ? 'pass' : 'fail'}`} role="status">
+              <div>
+                <p className="eyebrow">Qualification {truncateHash(verifyData.qualId, 10, 8)}</p>
+                <p className="verdict__text">
+                  {verifyData.overallPass
+                    ? 'Every digest, envelope and on-chain limit matches.'
+                    : 'A tampered report was detected. Authorisation stops here.'}
+                </p>
               </div>
-
-              <span
-                className={`text-[10px] font-bold px-3 py-1 rounded-full border shrink-0 text-center uppercase tracking-wider ${
-                  check.pass
-                    ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-sm"
-                    : "bg-rose-500/20 text-rose-200 border-rose-500/40 shadow-sm"
-                }`}
-              >
-                {check.pass ? "PASS" : "FAIL"}
-              </span>
+              <strong className="verdict__word">{verifyData.overallPass ? 'PASS' : 'FAIL'}</strong>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Evidence Artifacts Registry */}
-      <div className="glass-panel-elevated specular-cyan rounded-3xl overflow-hidden relative z-10">
-        <div className="p-6 md:p-8 border-b border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-glow-cyan" />
-              Pinned Evidence Artifacts (evidence/onchain &amp; exams)
-            </h2>
-            <p className="text-xs text-slate-400 font-mono mt-1">
-              Immutable SHA-256 and Keccak-256 content-addressed bundle proofs
-            </p>
-          </div>
-          <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-glow-emerald animate-pulse" />
-            All 5 Artifacts Cryptographically Linked
-          </span>
-        </div>
+            <ul className="checks">
+              {verifyData.checks.map((check) => (
+                <li key={check.id} className={check.pass ? '' : 'is-fail'}>
+                  <span className="checks__mark" aria-hidden="true">
+                    {check.pass ? <CheckGlyph /> : <CrossGlyph />}
+                  </span>
+                  <div>
+                    <strong>{check.step}</strong>
+                    <p>{check.details}</p>
+                  </div>
+                  <Chip tone={check.pass ? 'moved' : 'blocked'}>{check.pass ? 'PASS' : 'FAIL'}</Chip>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </Panel>
 
-        <div className="divide-y divide-white/[0.05] font-mono text-xs">
+      <Panel
+        title="Pinned artifacts"
+        kicker="evidence/onchain and evidence/exams"
+        actions={<Stamp kind="scripted" label="Example list" meaning="A fixed example list of artifacts. The verification above is the live check." />}
+      >
+        <ul className="artifacts">
           {EVIDENCE_ARTIFACTS.map((art) => (
-            <div
-              key={art.name}
-              className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.04] transition-all group"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <span className="font-bold text-white text-sm group-hover:text-cyan-300 transition-colors">
-                    {art.name}
-                  </span>
-                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/[0.08] text-slate-300 border border-white/[0.12] font-semibold">
-                    {art.category}
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-400 flex items-center gap-3">
-                  <span>Size: <strong className="text-slate-300">{art.size}</strong></span>
-                  <span>•</span>
-                  <span>Ref: <strong className="text-cyan-400">{art.blockOrRun}</strong></span>
-                </div>
-                <div className="text-[11px] text-slate-400 select-all font-mono bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.05] inline-block" title={art.hash}>
-                  <span className="text-slate-500 mr-2">Digest:</span>{art.hash}
-                </div>
+            <li key={art.name}>
+              <div>
+                <p className="artifacts__name">{art.name}</p>
+                <p className="muted small">
+                  {art.category} · {art.size} · {art.blockOrRun}
+                </p>
+                <Hash value={art.hash} start={14} end={10} />
               </div>
-
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="px-3.5 py-1.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-glow-emerald flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
-                  VERIFIED
-                </span>
-              </div>
-            </div>
+              <Chip>Listed</Chip>
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+      </Panel>
     </div>
   );
+
 }

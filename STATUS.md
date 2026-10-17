@@ -1,5 +1,15 @@
 Progress source of truth: PHASES.md
 
+## Handoff, 2026-10-17, Claude (Sonnet 5.5): workspace redesign (UI track, follows the landing page below)
+Branch: `feat/ui-landing-redesign`. NOTHING from this step is committed or pushed.
+State: all 16 workspace routes plus the shared shell are redesigned in the landing page's identity (DEC-033, PROVISIONAL, awaiting owner approval). Page logic is unchanged apart from the items listed in DEC-033 (claims filter fix, experiment page now reads the recorded summary, traces "Not recorded", two confirm dialogs, two link targets). API routes, `lib/`, `context/`, `engine/`, `contracts/` untouched. `web/src/app/globals.css` deleted (unreferenced).
+Tests run this session: isolated `next build` (20/20, types valid), `tsc --noEmit` (no errors in src), `pnpm -r test` (engine 157 of 157), axe-core (0 violations, 16 routes x light/dark x 1440/390/320), 47 behaviour checks (all pass), per-file parity audit against HEAD, reduced-motion check. Details and gaps: TESTING.md section 6.
+Tests NOT run: `forge test`, `forge coverage`, Playwright, screen readers, Safari / Firefox, a real phone. The test scripts live in session scratch space, not in the repo.
+Open items for a human: (1) approve or reject DEC-033 by using the app (the experiment page numbers changed to the recorded ones; check you are happy with that); (2) approve DEC-032 if not done; (3) the earlier P6-T02 Base Sepolia receipt finding.
+Risks of touching current code: pages now use the UI kit (`web/src/components/ui`) and `app.css`; do not add Tailwind class strings or glass styles to them.
+
+---
+
 ## Handoff, 2026-10-17, Claude (Sonnet 5.5): landing page redesign (UI track, separate from PHASES.md tasks)
 Branch: `feat/ui-landing-redesign` (created from `main`; NOTHING committed, nothing pushed, `main` untouched).
 State: the landing page `/` is redesigned and verified (see TESTING.md section 5). All 16 other pages and 8 API routes are verified unchanged (24 of 24 identical to the pre-change production build). DEC-032 is PROVISIONAL: the owner has not yet approved the look. The rest of the UI redesign (`ui-redesign.md`) is NOT started and must not start until the owner approves this landing page.
