@@ -118,7 +118,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `engine/src/chain/abi/`: exported `BondPool.json` and `BondPool.ts`.
 - `DECISIONS.md`: recorded DEC-021 confirming BondPool completion ahead of schedule and cut-line not triggered.
 - `PHASES.md`: Phase 2 Quality Gate QG-2 passed; all 9 Phase 2 tasks complete and 101 contract tests passing across 17 suites.
-<<<<<<< HEAD
 - `engine/src/types/`: implemented Zod schemas for models (`Proposal`, `PolicyDecision`, `TxRecord`, `Manifest`, `QualificationAttestation`, `Scenario`, `Claim`, `Mandate`, `Vendor`, `PurchaseOrder`) and `ReasonCode` enum.
 - `engine/src/types/money.ts` & `invoiceKey.ts`: strict 6-decimal USDC bigint parser and RFC-aligned `normalizeInvoiceNumber` / `computeInvoiceKey`.
 - `engine/src/evidence/canonical.ts`: RFC 8785 canonical JSON serialization (JCS), keccak256/sha256 utilities, CRLF-normalizing file hashing.
@@ -142,9 +141,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `engine/src/agent/replay.ts`: transcript loader and replayer with SHA-256 integrity check and `[REPLAY]` badging.
 - `engine/test/agent-sweep.test.ts`: test suite verifying all 5 required test cases for Phase 4.
 - `PHASES.md`: Phase 4 Quality Gate QG-4 passed; 144 vitest tests passing across 20 suites, 101 foundry tests passing across 17 suites.
-
-
-
 - `engine/src/compiler/`: implemented Clopper-Pearson exact binomial confidence upper bounds (`cp.ts`), fixed-point math (`fixedPoint.ts`), and `compiler@1` pure function (`compile.ts`) with gates G1-G4, Bonferroni bounds, and sensitivity table matching plan §7.
 - `engine/src/exam/prng.ts`: deterministic PRNG via `keccak256` counter per PV-15 / DEC-012.
 - `engine/src/exam/renderers.ts`: document renderers for plain emails, extracted PDFs, and tabular GRNs.
@@ -166,6 +162,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `experiments/hashes.json`: pre-committed cryptographic hashes for Generator B and the Blind Set (P7-T03).
 - `engine/src/experiment/runner.ts`: implemented experiment runner and deterministic rescore mode (`rescoreExperiment`) (P7-T04, P7-T05).
 - `DECISIONS.md`: recorded DEC-023 documenting fallback for Generator B and blind set.
-=======
-
->>>>>>> p8-web-ui
+- `deploy`: Added auto-detection configuration for Railway and cloud PaaS (`railway.json`, `Procfile`, root `package.json` start script, and dynamic Next.js port handling in `web/package.json`).
