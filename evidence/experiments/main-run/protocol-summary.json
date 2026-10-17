@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-10-16T18:30:49.572Z",
-  "protocolId": "protocol-1792175449574",
+  "timestamp": "2026-10-17T09:59:22.425Z",
+  "protocolId": "protocol-1792231162427",
   "streamSize": 330,
   "results": {
     "alpha_R0": {
-      "runId": "protocol-1792175449574-alpha_R0",
+      "runId": "protocol-1792231162427-alpha_R0",
       "agent": "alpha",
       "regime": "R0",
       "summary": {
-        "runId": "protocol-1792175449574-alpha_R0",
-        "timestamp": "2026-10-16T18:30:49.656Z",
+        "runId": "protocol-1792231162427-alpha_R0",
+        "timestamp": "2026-10-17T09:59:22.468Z",
         "agent": "alpha",
         "regime": "R0",
         "streamName": "stream-s2-plus-blind",
@@ -209,16 +209,16 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\alpha_R0",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\alpha_R0",
       "rescoreMatch": true
     },
     "alpha_R1": {
-      "runId": "protocol-1792175449574-alpha_R1",
+      "runId": "protocol-1792231162427-alpha_R1",
       "agent": "alpha",
       "regime": "R1",
       "summary": {
-        "runId": "protocol-1792175449574-alpha_R1",
-        "timestamp": "2026-10-16T18:30:50.201Z",
+        "runId": "protocol-1792231162427-alpha_R1",
+        "timestamp": "2026-10-17T09:59:22.611Z",
         "agent": "alpha",
         "regime": "R1",
         "streamName": "stream-s2-plus-blind",
@@ -418,16 +418,16 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\alpha_R1",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\alpha_R1",
       "rescoreMatch": true
     },
     "alpha_R2": {
-      "runId": "protocol-1792175449574-alpha_R2",
+      "runId": "protocol-1792231162427-alpha_R2",
       "agent": "alpha",
       "regime": "R2",
       "summary": {
-        "runId": "protocol-1792175449574-alpha_R2",
-        "timestamp": "2026-10-16T18:30:50.538Z",
+        "runId": "protocol-1792231162427-alpha_R2",
+        "timestamp": "2026-10-17T09:59:22.700Z",
         "agent": "alpha",
         "regime": "R2",
         "streamName": "stream-s2-plus-blind",
@@ -627,16 +627,16 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\alpha_R2",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\alpha_R2",
       "rescoreMatch": true
     },
     "beta_R0": {
-      "runId": "protocol-1792175449574-beta_R0",
+      "runId": "protocol-1792231162427-beta_R0",
       "agent": "beta",
       "regime": "R0",
       "summary": {
-        "runId": "protocol-1792175449574-beta_R0",
-        "timestamp": "2026-10-16T18:30:51.552Z",
+        "runId": "protocol-1792231162427-beta_R0",
+        "timestamp": "2026-10-17T09:59:22.789Z",
         "agent": "beta",
         "regime": "R0",
         "streamName": "stream-s2-plus-blind",
@@ -836,16 +836,16 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\beta_R0",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\beta_R0",
       "rescoreMatch": true
     },
     "beta_R1": {
-      "runId": "protocol-1792175449574-beta_R1",
+      "runId": "protocol-1792231162427-beta_R1",
       "agent": "beta",
       "regime": "R1",
       "summary": {
-        "runId": "protocol-1792175449574-beta_R1",
-        "timestamp": "2026-10-16T18:30:51.976Z",
+        "runId": "protocol-1792231162427-beta_R1",
+        "timestamp": "2026-10-17T09:59:22.845Z",
         "agent": "beta",
         "regime": "R1",
         "streamName": "stream-s2-plus-blind",
@@ -1045,16 +1045,16 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\beta_R1",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\beta_R1",
       "rescoreMatch": true
     },
     "beta_R2": {
-      "runId": "protocol-1792175449574-beta_R2",
+      "runId": "protocol-1792231162427-beta_R2",
       "agent": "beta",
       "regime": "R2",
       "summary": {
-        "runId": "protocol-1792175449574-beta_R2",
-        "timestamp": "2026-10-16T18:30:52.745Z",
+        "runId": "protocol-1792231162427-beta_R2",
+        "timestamp": "2026-10-17T09:59:22.919Z",
         "agent": "beta",
         "regime": "R2",
         "streamName": "stream-s2-plus-blind",
@@ -1254,16 +1254,16 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\beta_R2",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\beta_R2",
       "rescoreMatch": true
     },
     "gamma_R0": {
-      "runId": "protocol-1792175449574-gamma_R0",
+      "runId": "protocol-1792231162427-gamma_R0",
       "agent": "gamma",
       "regime": "R0",
       "summary": {
-        "runId": "protocol-1792175449574-gamma_R0",
-        "timestamp": "2026-10-16T18:30:53.361Z",
+        "runId": "protocol-1792231162427-gamma_R0",
+        "timestamp": "2026-10-17T09:59:22.989Z",
         "agent": "gamma",
         "regime": "R0",
         "streamName": "stream-s2-plus-blind",
@@ -1463,16 +1463,16 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\gamma_R0",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\gamma_R0",
       "rescoreMatch": true
     },
     "gamma_R1": {
-      "runId": "protocol-1792175449574-gamma_R1",
+      "runId": "protocol-1792231162427-gamma_R1",
       "agent": "gamma",
       "regime": "R1",
       "summary": {
-        "runId": "protocol-1792175449574-gamma_R1",
-        "timestamp": "2026-10-16T18:30:53.726Z",
+        "runId": "protocol-1792231162427-gamma_R1",
+        "timestamp": "2026-10-17T09:59:23.069Z",
         "agent": "gamma",
         "regime": "R1",
         "streamName": "stream-s2-plus-blind",
@@ -1672,16 +1672,16 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\gamma_R1",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\gamma_R1",
       "rescoreMatch": true
     },
     "gamma_R2": {
-      "runId": "protocol-1792175449574-gamma_R2",
+      "runId": "protocol-1792231162427-gamma_R2",
       "agent": "gamma",
       "regime": "R2",
       "summary": {
-        "runId": "protocol-1792175449574-gamma_R2",
-        "timestamp": "2026-10-16T18:30:54.197Z",
+        "runId": "protocol-1792231162427-gamma_R2",
+        "timestamp": "2026-10-17T09:59:23.209Z",
         "agent": "gamma",
         "regime": "R2",
         "streamName": "stream-s2-plus-blind",
@@ -1881,7 +1881,7 @@
         ],
         "disclaimer": "Calibration experiment results per plan §8 and docs/EXPERIMENT.md. Labeled non-independent per DEC-023."
       },
-      "runDir": "D:\\bbb\\china\\evidence\\experiments\\main-run\\gamma_R2",
+      "runDir": "G:\\Projects\\UNDERWRITE\\evidence\\experiments\\main-run\\gamma_R2",
       "rescoreMatch": true
     }
   },

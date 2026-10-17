@@ -437,8 +437,46 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Consequences**: Perfectly matches the real-world B2B procurement workflow, establishes explicit economic accountability between specific business owners and suppliers, and provides judges with transparent audit visibility into the autonomous agent's decision-making process.
 - **Status**: ACCEPTED
 
+---
 
+## DEC-032 — Landing page redesign: "Your AI clerk starts at $0" (route-group split)
 
+- **Context**: Owner feedback on the landing page (DEC-029, built on the DEC-025 glass look): it felt AI-generated. A first redesign draft ("Public Record": paper colours, serif type, 1,708 words, evidence tables) was rejected as reading like a scientific journal. Requirement restated: modern, conversion-focused, human-designed, light and dark themes, purposeful animation (GSAP / Motion), and no change to any existing functionality.
+- **Options**:
+  1. Restyle the existing shared shell (sidebar, header, glass backgrounds stay).
+  2. One root layout that hides its chrome when the path is `/`.
+  3. Next.js route groups with two root layouts: `(site)` for `/`, `(app)` for every existing route.
+- **Decision**: Option 3.
+  - `web/src/app/(app)/` holds every existing route unchanged (pure renames in git). The only content change is the CSS import path in the moved `layout.tsx` (`./globals.css` to `../globals.css`). URLs, API routes, components and context are untouched.
+  - `web/src/app/(site)/` is the new landing: own root layout, own `site.css`, light and dark themes (follows the OS, three-way toggle, no flash), self-hosted fonts in `web/public/fonts` (Bricolage Grotesque, Atkinson Hyperlegible Next and Mono, all OFL, 178 KB, two preloaded).
+  - Landing concept: an interactive desk. Four invoice slips run through the four real checks (agent, policy, contract, funds), stop at the first "no", and print a receipt (PAID / HELD / BLOCKED). Rules and reason codes mirror the app (T1 cap $180, `VENDOR_UNKNOWN`, `DUPLICATE_INVOICE`, `EXCEEDS_T1_PER_TX`); money is bigint. It is client-only and labelled SIMULATED, so it does not touch the shared demo runtime.
+  - Identity: ink, white and one highlighter-lime; poster-size grotesk headings; paper objects identical in both themes. About 240 words on the page (was 1,708); the evidence matrix, role table and limits moved out of the page (the detail already lives on /experiment, /evidence and /exam; limits are a footer disclosure).
+  - Every figure about the experiment is read from `evidence/experiments/main-run/protocol-summary.json` at request time. If the file is missing the page says "Not recorded".
+  - Motion: GSAP (new dependency, imported dynamically after first paint, landing page only) for receipt printing and scroll reveals; CSS for the rest; `prefers-reduced-motion` removes all of it with no loss of information.
+  - `next.config.mjs` now honours an optional `NEXT_DIST_DIR` so a second server can run beside `next start` without overwriting its build. Default is unchanged (`.next`).
+- **Consequences**: The landing and the workspace look different until the rest of the redesign is approved (a deliberate, temporary seam; "Open the demo" crosses it with a full page load). Supersedes the landing part of DEC-029 and, for `/` only, the look from DEC-025. The `ui-redesign.md` "Public Record" direction is retired for the landing page. Fonts under `public/fonts` are served app-wide (harmless static files). One new dependency (`gsap`).
+- **Status**: PROVISIONAL (awaiting owner approval; branch `feat/ui-landing-redesign`, not committed).
 
+## DEC-033 — Workspace redesign: every other page moves to the landing page's identity
 
-
+- **Context**: Owner approved the landing page (DEC-032) and asked for every remaining page to follow it, with three conditions: no existing feature may change, work quickly, and a proper agentic feel with real animation. DEC-032 left a deliberate seam (landing in the new look, workspace in the DEC-025 glass look).
+- **Options**:
+  1. Restyle the old glass CSS in place (keeps `globals.css` and Tailwind classes everywhere).
+  2. Rewrite each page from scratch on a new component set.
+  3. Keep each page's logic byte-identical (state, hooks, effects, fetch calls, handlers) and replace only the rendered JSX, on a shared UI kit and one stylesheet.
+- **Decision**: Option 3.
+  - Same identity as `/`: ink, white and one highlighter-lime; Bricolage Grotesque and Atkinson Hyperlegible; Light / Dark / Auto (same `uw-theme` key, so the choice carries across both groups); paper objects identical in both themes. New stylesheet `web/src/app/(app)/app.css` (the landing's tokens, buttons, stamps, slips, four-check pipeline and receipt, plus the workspace shell and page blocks). Only the Tailwind `utilities` layer is kept, for a few grid helpers; there is no Tailwind base reset. `web/src/app/globals.css` (old glass CSS) is deleted: nothing imported it any more.
+  - Shared kit `web/src/components/ui/` (`index.tsx`, `icons.tsx`, `nav.ts`, `AgentBar.tsx`, `CommandPalette.tsx`): `PageHeader`, `Panel`, `Stat`, `Chip`, `Notice`, `Modal`, `Segmented`, `Countdown`, `AuthorityMeter`, `FactsReceipt` / `ResultReceipt`, `Stamp`, and so on. Navigation lives once in `nav.ts` (rail, palette and dashboard all read it). Sidebar is now a collapsible rail (sheet on phones); Header is a top bar with the persona menu, theme toggle and Reset.
+  - Agentic presence, all read-only on existing endpoints: `AgentBar` polls the existing `GET /api/state` every 4 seconds and shows online / revoked / offline, "N need you" and (wide screens) limit and exposure; new agent decisions raise a toast; the authority meter turns red when authority is revoked; challenge windows and cooldowns have live countdowns; the pipeline animates while an invoice is evaluated and the receipt prints. Ctrl / Cmd + K opens a command palette.
+  - Motion: CSS for entrances, bars, flashes; GSAP (already a dependency from DEC-032) for receipt printing. `prefers-reduced-motion` removes all of it with no loss of information.
+  - Code rule: each page keeps its state, effects, fetch calls, intervals, handlers and `useState` initial values unchanged. Verified by diffing every `fetch` URL and method, interval, timeout, storage key, event wiring and handler name against `HEAD` (see TESTING.md section 6).
+  - Deliberate behaviour changes, all small and listed here so none is a surprise:
+    1. `/claims`: the "ACTIVE" filter compared `status === 'ACTIVE'`, which no claim ever has, so it always showed nothing. It now means PENDING (one line).
+    2. `/experiment`: the page printed hard-coded constants that did not match the recorded run. It is now a server page that reads `evidence/experiments/main-run/protocol-summary.json` (same loader as the landing page) and shows "Not recorded" if the file is missing. The numbers on this page therefore changed to the recorded ones.
+    3. `/traces`: fallbacks that invented an amount or vendor for steps whose transcript has none now say "Not recorded" / "Amount not recorded".
+    4. Dialogs added before irreversible actions: Reset demo, and Approve claim on the adjudication desk (payout and revocation in one transaction). Cancel leaves everything untouched.
+    5. Links: the invoice studio keeps its "View authority meter" and "Check the live authority meter" links. Both pointed at `/`, which is the landing page since DEC-029; they now point at `/dashboard`, where the meter is. The PortalGuard "back" link likewise goes to `/dashboard` instead of `/` (the public home page is still one click away from the rail brand and the palette).
+    6. Scripted or simulated content stays on the page but is now labelled with a stamp (AGENTS rule 12): exam card figures, trace-style trail on `/verify`, examiner and underwriter desks (deposit / withdraw remain confirmation-only), artifact list on `/evidence` ("Listed", not "Verified").
+  - Untouched by design: `web/src/app/api/*`, `web/src/lib/*` (except the two new files from DEC-032), `web/src/context/AuthContext.tsx`, `engine/`, `contracts/`.
+- **Consequences**: The whole web app now shares one look and one stylesheet per route group (`site.css`, `app.css`). Old pages' Tailwind class strings are gone from the JSX, so any future page should use the kit, not utility classes. The rail and top bar replace the DEC-028 hover-expanding sidebar and DEC-029 navbar visually (same routes, same persona switching and password challenge). Supersedes the look from DEC-025 for the workspace and the seam note in DEC-032.
+- **Status**: PROVISIONAL (awaiting owner approval; branch `feat/ui-landing-redesign`, not committed).
