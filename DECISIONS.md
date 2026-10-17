@@ -437,8 +437,22 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Consequences**: Perfectly matches the real-world B2B procurement workflow, establishes explicit economic accountability between specific business owners and suppliers, and provides judges with transparent audit visibility into the autonomous agent's decision-making process.
 - **Status**: ACCEPTED
 
+---
 
+## DEC-032 — Landing page redesign: "Your AI clerk starts at $0" (route-group split)
 
-
-
-
+- **Context**: Owner feedback on the landing page (DEC-029, built on the DEC-025 glass look): it felt AI-generated. A first redesign draft ("Public Record": paper colours, serif type, 1,708 words, evidence tables) was rejected as reading like a scientific journal. Requirement restated: modern, conversion-focused, human-designed, light and dark themes, purposeful animation (GSAP / Motion), and no change to any existing functionality.
+- **Options**:
+  1. Restyle the existing shared shell (sidebar, header, glass backgrounds stay).
+  2. One root layout that hides its chrome when the path is `/`.
+  3. Next.js route groups with two root layouts: `(site)` for `/`, `(app)` for every existing route.
+- **Decision**: Option 3.
+  - `web/src/app/(app)/` holds every existing route unchanged (pure renames in git). The only content change is the CSS import path in the moved `layout.tsx` (`./globals.css` to `../globals.css`). URLs, API routes, components and context are untouched.
+  - `web/src/app/(site)/` is the new landing: own root layout, own `site.css`, light and dark themes (follows the OS, three-way toggle, no flash), self-hosted fonts in `web/public/fonts` (Bricolage Grotesque, Atkinson Hyperlegible Next and Mono, all OFL, 178 KB, two preloaded).
+  - Landing concept: an interactive desk. Four invoice slips run through the four real checks (agent, policy, contract, funds), stop at the first "no", and print a receipt (PAID / HELD / BLOCKED). Rules and reason codes mirror the app (T1 cap $180, `VENDOR_UNKNOWN`, `DUPLICATE_INVOICE`, `EXCEEDS_T1_PER_TX`); money is bigint. It is client-only and labelled SIMULATED, so it does not touch the shared demo runtime.
+  - Identity: ink, white and one highlighter-lime; poster-size grotesk headings; paper objects identical in both themes. About 240 words on the page (was 1,708); the evidence matrix, role table and limits moved out of the page (the detail already lives on /experiment, /evidence and /exam; limits are a footer disclosure).
+  - Every figure about the experiment is read from `evidence/experiments/main-run/protocol-summary.json` at request time. If the file is missing the page says "Not recorded".
+  - Motion: GSAP (new dependency, imported dynamically after first paint, landing page only) for receipt printing and scroll reveals; CSS for the rest; `prefers-reduced-motion` removes all of it with no loss of information.
+  - `next.config.mjs` now honours an optional `NEXT_DIST_DIR` so a second server can run beside `next start` without overwriting its build. Default is unchanged (`.next`).
+- **Consequences**: The landing and the workspace look different until the rest of the redesign is approved (a deliberate, temporary seam; "Open the demo" crosses it with a full page load). Supersedes the landing part of DEC-029 and, for `/` only, the look from DEC-025. The `ui-redesign.md` "Public Record" direction is retired for the landing page. Fonts under `public/fonts` are served app-wide (harmless static files). One new dependency (`gsap`).
+- **Status**: PROVISIONAL (awaiting owner approval; branch `feat/ui-landing-redesign`, not committed).

@@ -1,5 +1,15 @@
 Progress source of truth: PHASES.md
 
+## Handoff, 2026-10-17, Claude (Sonnet 5.5): landing page redesign (UI track, separate from PHASES.md tasks)
+Branch: `feat/ui-landing-redesign` (created from `main`; NOTHING committed, nothing pushed, `main` untouched).
+State: the landing page `/` is redesigned and verified (see TESTING.md section 5). All 16 other pages and 8 API routes are verified unchanged (24 of 24 identical to the pre-change production build). DEC-032 is PROVISIONAL: the owner has not yet approved the look. The rest of the UI redesign (`ui-redesign.md`) is NOT started and must not start until the owner approves this landing page.
+Tests run this session: `pnpm -r test` (engine 157 of 157 passed), isolated `next build` (clean, 20/20), axe-core (0 violations), 32 behaviour checks, 18 truth checks. Tests NOT run: `forge test`, `forge coverage`, Playwright, screen readers, Safari / Firefox, real phone.
+Open items for a human: (1) approve or reject DEC-032 by looking at the page; (2) the earlier finding that two Base Sepolia hashes in `evidence/onchain/receipts` return null from the public RPC while P6-T02 is still open; the landing page now says the testnet broadcast "has not been run yet"; (3) the verification scripts should be committed under `web/tests/` so the result is reproducible; (4) the landing page and the workspace look different until the redesign continues (deliberate seam).
+Uncommitted working-tree changes that pre-date this session (evidence summaries, `contracts/deployments/31337.json`) were left exactly as found.
+
+---
+
+## Previous handoff
 ## Handoff — 2026-10-17 04:12 UTC, antigravity
 Last verified working state: 110 / 126 tasks completed (88%); Target Owner Whitelisting & Owner's Inbound System Agent Audit Architecture completed (DEC-031); Vendor portal explicitly targets Sarah Chen / Acme Corp Treasury Vault (`0x70997970C51812dc3A010C7d01b50e0d17dc79C8`); Dynamic allowlist status pill with cooldown calculation; 4-step execution lifecycle diagram added; Owner Portal updated with live Inbound Agent Audit Ledger showing all incoming invoices, Owner agent decisions (T0-T3), and real-time vendor allowlist toggle buttons (`Revoke ✕` / `Reactivate ✓`) with instant on-chain rejection (`INV-1: RecipientNotAllowed / RecipientInactive`); Next.js 15 production build clean (20/20 routes, 0 type errors); 157 unit/integration tests passed across 25 test files; Production server active on http://localhost:3000.
 Active phase: P6 Testnet Deployment (Track A+B) & P9 Final Polish (Track C)

@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `web/`: Landing page redesign "Your AI clerk starts at $0" (DEC-032, PROVISIONAL, branch `feat/ui-landing-redesign`):
+  - New route group `web/src/app/(site)/` (own root layout, `site.css`, `icon.svg`) serving `/`; all existing routes moved unchanged into `web/src/app/(app)/` (URLs identical).
+  - `web/src/components/site/`: `Desk` (interactive invoice slips, four-check pipeline, printed receipt, limit meter), `HomeSections`, `SiteHeader`, `SiteFooter`, `ThemeToggle` (Auto / Light / Dark), `CopyButton`, `ScrollFx` (GSAP reveals), `Stamp`, `Glyphs`.
+  - `web/src/lib/deskModel.ts` (bigint money, rules mirroring the app's tiers and reason codes) and `web/src/lib/siteEvidence.ts` (reads the experiment summary at request time; "Not recorded" when absent).
+  - Self-hosted fonts in `web/public/fonts` with OFL licences; `gsap` dependency.
+- `web/next.config.mjs`: optional `NEXT_DIST_DIR` (default `.next`, unchanged).
 - `web/`: Target Owner Whitelisting & Owner's Inbound System Agent Audit Architecture (DEC-031):
   - `web/src/app/portals/vendor/page.tsx`: Explicitly targets Business Owner Sarah Chen / Acme Corp Treasury Vault (`0x70997970C51812dc3A010C7d01b50e0d17dc79C8`). Added dynamic allowlist status badge against that specific Owner, 300s security cooldown calculator, interactive 4-step AP lifecycle diagram (`Vendor` $\to$ `Owner Agent` $\to$ `Policy Tiering` $\to$ `UnderwriteVault`), and Owner Agent audit breakdown checklist. Added Target Customer column to Enterprise Invoices Ledger.
   - `web/src/app/portals/owner/page.tsx`: Added **Owner's Inbound Agent Audit Ledger** displaying incoming vendor invoices, Owner agent decisions ($T_0, T_1, T_2, T_3$), and audit checklist. Added real-time vendor allowlist toggle buttons (`Revoke ✕` / `Reactivate ✓`) in the Whitelist Registry.
