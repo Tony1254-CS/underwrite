@@ -1,13 +1,36 @@
 {
   "chainId": 84532,
-  "vault": "0xbB63C296eb88567318C36fa29a26be77D8695b84",
-  "bondPool": "0x2860F0aB28D7ADa29CFB4D74B60bCD29C414BD20",
-  "token": "0x6065991f617AF84f4BC48B9B42A14c2CEfFfBF58",
-  "owner": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-  "examiner": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
-  "underwriter": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
-  "adjudicator": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
-  "guardian": "0xADefD9b8589cCf5604b65C0397c4d7817bfF6752",
+  "vault": "0x8a1B3BCA25B47A0f375a649b12494a1E011eD1B0",
+  "bondPool": "0xB97Be73323731209e183Bc02a0F5d23e36Cc5902",
+  "token": "0x2e71d44170F788E892b4283c0a179bae8B8936F3",
+  "owner": "0x04Be79C38792ccC922bA9CC757D61B1801e9e373",
+  "examiner": "0xe25de67dEc39AB5D7f894D963FF73B48e664F6DB",
+  "underwriter": "0x2F43D120dE22A21ee73d7Be073237B263461eEBa",
+  "adjudicator": "0x14966B9bCe2f636aB1d8ef19656Bed914829ddf5",
+  "guardian": "0x3aB902c1710B9B59c8eb9D0ca4593207E65fF425",
   "version": "1.0.0",
-  "solc": "0.8.28"
+  "solc": "0.8.28",
+  "deploymentTransactions": {
+    "MockUSDC": {
+      "address": "0x2e71d44170f788e892b4283c0a179bae8b8936f3",
+      "txHash": "0x2289b55f808e430a6449359ab0bc1cb0c9f3340342bdd56abf9e239885beb7f6",
+      "blockNumber": 48315184
+    },
+    "BondPool": {
+      "address": "0xb97be73323731209e183bc02a0f5d23e36cc5902",
+      "txHash": "0x645ab04975f1ea23ef66ac784b1e8d83f8efd29ed9b71c105f0a99041213f320",
+      "blockNumber": 48315185
+    },
+    "UnderwriteVault": {
+      "address": "0x8a1b3bca25b47a0f375a649b12494a1e011ed1b0",
+      "txHash": "0xf138bed8bc5cbc3c95e9bbbe2cbf908ed6aec814f9a0fa67e618e34c94433094",
+      "blockNumber": 48315187
+    }
+  },
+  "sourceVerification": {
+    "MockUSDC": "https://base-sepolia.blockscout.com/address/0x2e71d44170f788e892b4283c0a179bae8b8936f3?tab=contract",
+    "BondPool": "https://base-sepolia.blockscout.com/address/0xb97be73323731209e183bc02a0f5d23e36cc5902?tab=contract",
+    "UnderwriteVault": "https://repo.sourcify.dev/contracts/full_match/84532/0x8a1B3BCA25B47A0f375a649b12494a1E011eD1B0/"
+  },
+  "rpcVerifiedAt": "2026-10-19T08:31:48.150Z"
 }

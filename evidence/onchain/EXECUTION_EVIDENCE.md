@@ -1,38 +1,25 @@
 # UNDERWRITE — On-Chain Execution Evidence
 
-> **Formal Execution Log for Scenes 1–6 (Base Sepolia / Anvil)**  
-> Generated deterministically by `engine/src/evidence/onchainEvidence.ts` per Plan §14 and Phase P6-T12.
+> **RPC-verified execution log (Base Sepolia / explicitly labeled local Anvil)**  
+> Generated from stored receipt records by `engine/src/evidence/onchainEvidence.ts`.
 
-## Verification Standard (PV-09 / REQ-07)
-- Every transaction receipt was observed directly from blockchain execution.
-- Success outcomes require matching decoded events (`PaymentExecuted`, `ClaimPaid`, `QualificationRevoked`).
-- Security attack attempts must strictly revert with typed Solidity custom errors (`RecipientNotAllowed`, `RecipientCoolingDown`, `DuplicateInvoice`).
+## Verification Standard
+- Every Base Sepolia row has a non-zero transaction hash resolved through RPC.
+- Successful actions require a matching decoded contract event.
+- Simulated or local-only actions are explicitly labeled and are not represented as public-chain evidence.
 
 ## Execution Summary Table
 
 | Scene | Function | Expected Outcome | Tx Hash | Explorer Link | Decoded Event / Error | Block |
 |---|---|---|---|---|---|---|
-| Scene 1 — Earn | `commitExam` | ExamCommitted | `0x3a8f1025...` | [View Tx](https://sepolia.basescan.org/tx/0x3a8f1025b39c4d8e75a183749b5c2a10df4e28019ab7c3104e8d02f7918a5e31) | `ExamCommitted(configHash, corpusHash, commitIndex=1)` | 18459201 |
-| Scene 1 — Earn | `activate` | QualificationActivated | `0x8e71b29a...` | [View Tx](https://sepolia.basescan.org/tx/0x8e71b29a430c5e9128ab37482910c4f82057de9a31b4028fa67120dbca850123) | `QualificationActivated(qualId=0x5ac7..., agentKey=0x9126..., t1WindowCap=$500)` | 18459205 |
-| Scene 2 — Work | `pay` | PaymentExecuted | `0x12a9c402...` | [View Tx](https://sepolia.basescan.org/tx/0x12a9c4028bfe753901a823b47c9501a2839b028df19c83021948572018ea3b91) | `PaymentExecuted(paymentId=1, recipient=Acme Industrial, amount=$150.00)` | 18459212 |
-| Scene 2 — Work | `pay` | PaymentExecuted | `0x95c8120f...` | [View Tx](https://sepolia.basescan.org/tx/0x95c8120fa284729104b2938472a192837492018a382910c48201948a73920184) | `PaymentExecuted(paymentId=2, recipient=Beta Supplies, amount=$200.00)` | 18459216 |
-| Scene 2 — Work | `requestPayment` | PaymentRequested | `0x71a93820...` | [View Tx](https://sepolia.basescan.org/tx/0x71a9382019c8201948b201948a73920184729104b2938472a192837492018a38) | `PaymentRequested(pendingId=1, amount=$1200.00, unlockTime=18459516)` | 18459220 |
-| Scene 3 — Attack | `pay (Attack A)` | Halted by Policy Firewall | `0x00000000...` | [View Tx](#) | `POL_RECIPIENT_NOT_ALLOWED (Tx not submitted; $0.00 moved)` | 18459225 |
-| Scene 3 — Attack | `pay (Attack B)` | RecipientCoolingDown | `0x49c82018...` | [View Tx](https://sepolia.basescan.org/tx/0x49c82018a382910c48201948a73920184729104b2938472a192837492018a382) | `revert RecipientCoolingDown(cooldownEndsAt=18459525)` | 18459226 |
-| Scene 3 — Attack | `pay (Attack C)` | RecipientNotAllowed | `0x38b2910c...` | [View Tx](https://sepolia.basescan.org/tx/0x38b2910c48201948a73920184729104b2938472a192837492018a38249c82018) | `revert RecipientNotAllowed(recipient=0x9999...9999)` | 18459230 |
-| Scene 3 — Attack | `pay (Attack D)` | DuplicateInvoice | `0x1948a739...` | [View Tx](https://sepolia.basescan.org/tx/0x1948a73920184729104b2938472a192837492018a38249c8201838b2910c4820) | `revert DuplicateInvoice(invoiceKey=0x01a8...)` | 18459232 |
-| Scene 4 — Residual | `pay` | PaymentExecuted | `0x8201948a...` | [View Tx](https://sepolia.basescan.org/tx/0x8201948a73920184729104b2938472a192837492018a38249c8201838b2910c4) | `PaymentExecuted(paymentId=3, amount=$170.00, PO=PO-1-04) [CONTROLLED OVERBILL]` | 18459240 |
-| Scene 5 — Consequence | `fileClaim` | ClaimFiled | `0x729104b2...` | [View Tx](https://sepolia.basescan.org/tx/0x729104b2938472a192837492018a38249c8201838b2910c48201948a73920184) | `ClaimFiled(claimId=1, paymentId=3, lossAmount=$170.00)` | 18459245 |
-| Scene 5 — Consequence | `approveClaim` | ClaimPaid & QualificationRevoked | `0x938472a1...` | [View Tx](https://sepolia.basescan.org/tx/0x938472a192837492018a38249c8201838b2910c48201948a73920184729104b2) | `ClaimPaid(claimId=1, payout=$165.00) & QualificationRevoked(qualId=0x5ac7..., reason=CLAIM)` | 18459248 |
-| Scene 5 — Consequence | `pay (Revoked Agent)` | NoActiveQualification | `0x28374920...` | [View Tx](https://sepolia.basescan.org/tx/0x2837492018a38249c8201838b2910c48201948a73920184729104b2938472a19) | `revert NoActiveQualification() [Authority Meter: 0]` | 18459250 |
-| Scene 6 — Learn | `commitExam (gamma-prime)` | ExamCommitted | `0x492018a3...` | [View Tx](https://sepolia.basescan.org/tx/0x492018a38249c8201838b2910c48201948a73920184729104b2938472a192837) | `ExamCommitted(commitIndex=2, includes incident:1)` | 18459260 |
-| Scene 6 — Learn | `activate (gamma-prime)` | QualificationActivated | `0x8a38249c...` | [View Tx](https://sepolia.basescan.org/tx/0x8a38249c8201838b2910c48201948a73920184729104b2938472a19283749201) | `QualificationActivated(qualId=0x7f82..., t1WindowCap=$500) [Drift Defense Active]` | 18459265 |
+| Scene 1 — Earn | `commitExam` | ExamCommitted | `0x3fd70ecf8a582df153abf99eaf900c2dad569cb3c813617329155640b6b7f58f` | [View Tx](https://sepolia.basescan.org/tx/0x3fd70ecf8a582df153abf99eaf900c2dad569cb3c813617329155640b6b7f58f) | `ExamCommitted(configHash=0x07711e2d0f1c8fdfcb6db33d55fd19b2acc75fa4ffe36b17654c4a1d64f5342e, corpusHash=0xa0637ec69a9a1bb90cb641188b268c47a8135d6882d2fdee42a2c96320646512, commitId=5)` | 48315456 |
+| Scene 1 — Earn | `activateQualification` | QualificationActivated | `0x9e3bef8566dd60885a2b63c39a2c96f8d05879a101bf24ef3963267b1eef9d8c` | [View Tx](https://sepolia.basescan.org/tx/0x9e3bef8566dd60885a2b63c39a2c96f8d05879a101bf24ef3963267b1eef9d8c) | `QualificationActivated(qualId=0x303f1ad2e95898e7d07cad084339da1d84a6455c19e7d5db86b679680e1bb4a2, agentKey=0x0Fb2a52212Dc88CE6c29f1Ee91042ACB3eaE0B16, t1=0, t2MaxPerTx=2000000000)` | 48315457 |
+| Scene 2 — Work | `requestPayment` | PaymentRequested | `0x20a245ff8141a3be094dce092db2da67583f529b1eae713b0898bb0a1b3594f6` | [View Tx](https://sepolia.basescan.org/tx/0x20a245ff8141a3be094dce092db2da67583f529b1eae713b0898bb0a1b3594f6) | `PaymentRequested(id=2, recipient=0x1111111111111111111111111111111111111111, amount=35000000, readyAt=1792399504)` | 48315458 |
+| Scene 2 — Work | `executePending` | PaymentExecuted | `0xf19d5e201545fbe71c83c0dbd62af34a398a0414979bdaccd30fe2de827ad712` | [View Tx](https://sepolia.basescan.org/tx/0xf19d5e201545fbe71c83c0dbd62af34a398a0414979bdaccd30fe2de827ad712) | `PaymentExecuted(paymentId=1, recipient=0x1111111111111111111111111111111111111111, amount=35000000, invoiceKey=0x6c2c9798300b5eac3dda3c6769589743dd77c5ff772200fc1abd410947bb799d, tier=2)` | 48315611 |
 
-**Total Recorded Execution Receipts:** 15
-
----
+**Total Recorded Execution Receipts:** 4
 
 ## Provenance & Integrity Statement
-- **CHAIN ID 84532:** Base Sepolia Testnet
-- **CHAIN ID 31337:** Ephemeral Anvil Deterministic Harness
-- All simulated red-team attacks carry explicit provenance labels per AGENTS.md rule 12.
+- **CHAIN ID 84532:** Base Sepolia Testnet.
+- **CHAIN ID 31337:** Ephemeral Anvil harness, only when explicitly labeled.
+- Receipt status and decoded events are checked before a Base Sepolia record is written.

@@ -13,12 +13,12 @@ import { BondPool } from "../src/BondPool.sol";
  *         Funds the vault and bond pool, registers the 6 demo vendors, and writes deployment info.
  */
 contract DeployScript is Script {
-    uint256 public deployerPk = 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80; // Account 0
-    uint256 public ownerPk = 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d; // Account 1
-    uint256 public examinerPk = 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a; // Account 2
-    uint256 public underwriterPk = 0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6; // Account 3
-    uint256 public adjudicatorPk = 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a; // Account 4
-    uint256 public guardianPk = 0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b9d88b2b0b4acdaf; // Account 6
+    uint256 private constant ANVIL_DEPLOYER_PK = 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
+    uint256 private constant ANVIL_OWNER_PK = 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d;
+    uint256 private constant ANVIL_EXAMINER_PK = 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a;
+    uint256 private constant ANVIL_UNDERWRITER_PK = 0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6;
+    uint256 private constant ANVIL_ADJUDICATOR_PK = 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a;
+    uint256 private constant ANVIL_GUARDIAN_PK = 0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b9d88b2b0b4acdaf;
 
     uint256 public constant DEDUCTIBLE = 5e6; // 5 USDC
     uint256 public constant PER_CLAIM_CAP = 500e6; // 500 USDC
@@ -28,12 +28,15 @@ contract DeployScript is Script {
     uint256 public constant VENDOR_CAP = 500e6; // 500 USDC
 
     function run() external returns (address vaultAddr, address bondPoolAddr, address tokenAddr) {
-        uint256 pk = vm.envOr("DEPLOYER_PRIVATE_KEY", deployerPk);
-        uint256 oPk = vm.envOr("OWNER_PRIVATE_KEY", ownerPk);
-        uint256 exPk = vm.envOr("EXAMINER_PRIVATE_KEY", examinerPk);
-        uint256 uPk = vm.envOr("UNDERWRITER_PRIVATE_KEY", underwriterPk);
-        uint256 adjPk = vm.envOr("ADJUDICATOR_PRIVATE_KEY", adjudicatorPk);
-        uint256 gPk = vm.envOr("GUARDIAN_PRIVATE_KEY", guardianPk);
+        bool local = block.chainid == 31337;
+        uint256 pk = local ? vm.envOr("DEPLOYER_PRIVATE_KEY", ANVIL_DEPLOYER_PK) : vm.envUint("DEPLOYER_PRIVATE_KEY");
+        uint256 oPk = local ? vm.envOr("OWNER_PRIVATE_KEY", ANVIL_OWNER_PK) : vm.envUint("OWNER_PRIVATE_KEY");
+        uint256 exPk = local ? vm.envOr("EXAMINER_PRIVATE_KEY", ANVIL_EXAMINER_PK) : vm.envUint("EXAMINER_PRIVATE_KEY");
+        uint256 uPk =
+            local ? vm.envOr("UNDERWRITER_PRIVATE_KEY", ANVIL_UNDERWRITER_PK) : vm.envUint("UNDERWRITER_PRIVATE_KEY");
+        uint256 adjPk =
+            local ? vm.envOr("ADJUDICATOR_PRIVATE_KEY", ANVIL_ADJUDICATOR_PK) : vm.envUint("ADJUDICATOR_PRIVATE_KEY");
+        uint256 gPk = local ? vm.envOr("GUARDIAN_PRIVATE_KEY", ANVIL_GUARDIAN_PK) : vm.envUint("GUARDIAN_PRIVATE_KEY");
 
         address deployer = vm.addr(pk);
         address owner = vm.addr(oPk);

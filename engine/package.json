@@ -8,7 +8,10 @@
     "test": "vitest run",
     "lint": "eslint src test",
     "typecheck": "tsc --noEmit",
-    "uw": "tsx src/cli.ts"
+    "uw": "tsx src/cli.ts",
+    "testnet:fund": "tsx scripts/fund-testnet-roles.ts",
+    "testnet:record-deployment": "tsx scripts/record-testnet-deployment.ts",
+    "testnet:evidence": "tsx scripts/run-testnet-evidence.ts"
   },
   "dependencies": {
     "viem": "^2.23.5",

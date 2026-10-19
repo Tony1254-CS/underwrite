@@ -16,7 +16,7 @@ RPC_URL="${RPC_URL_BASE_SEPOLIA:-https://sepolia.base.org}"
 CHAIN_ID=84532
 
 echo "=== UNDERWRITE Base Sepolia Deployment ==="
-echo "RPC URL: $RPC_URL"
+echo "RPC URL configured (value redacted)"
 
 # Verify Chain ID
 REMOTE_CHAIN_ID=$(cast chain-id --rpc-url "$RPC_URL")
@@ -26,11 +26,13 @@ if [ "$REMOTE_CHAIN_ID" != "$CHAIN_ID" ]; then
 fi
 echo "Verified Chain ID: $REMOTE_CHAIN_ID"
 
-# Verify Deployer private key
-if [ -z "${DEPLOYER_PRIVATE_KEY:-}" ]; then
-  echo "ERROR: DEPLOYER_PRIVATE_KEY is not set in environment or .env"
-  exit 1
-fi
+# Every live broadcaster must use an explicitly configured test-only key.
+for key_name in DEPLOYER_PRIVATE_KEY OWNER_PRIVATE_KEY EXAMINER_PRIVATE_KEY UNDERWRITER_PRIVATE_KEY ADJUDICATOR_PRIVATE_KEY GUARDIAN_PRIVATE_KEY; do
+  if [ -z "${!key_name:-}" ]; then
+    echo "ERROR: $key_name is not set in environment or .env"
+    exit 1
+  fi
+done
 
 DEPLOYER_ADDR=$(cast wallet address --private-key "$DEPLOYER_PRIVATE_KEY")
 BALANCE=$(cast balance "$DEPLOYER_ADDR" --rpc-url "$RPC_URL")
@@ -42,6 +44,18 @@ if [ "$BALANCE" = "0" ]; then
   echo "Please request testnet ETH from a Base Sepolia faucet (e.g. https://www.alchemy.com/faucets/base-sepolia) to: $DEPLOYER_ADDR"
   exit 1
 fi
+
+for role in OWNER UNDERWRITER; do
+  key_name="${role}_PRIVATE_KEY"
+  role_addr=$(cast wallet address --private-key "${!key_name}")
+  role_balance=$(cast balance "$role_addr" --rpc-url "$RPC_URL")
+  echo "$role Address: $role_addr"
+  echo "$role Balance: $role_balance wei"
+  if [ "$role_balance" = "0" ]; then
+    echo "ERROR: $role needs Base Sepolia ETH for deployment initialization transactions"
+    exit 1
+  fi
+done
 
 cd "$REPO_ROOT/contracts"
 
@@ -58,7 +72,11 @@ if [ ! -f "$DEPLOY_FILE" ]; then
 fi
 
 echo "Deployment complete! Verifying deployed contracts..."
-VAULT_ADDR=$(node -pe "require('$DEPLOY_FILE').vault")
+VAULT_ADDR=$(sed -n 's/^[[:space:]]*"vault":[[:space:]]*"\([^"]*\)".*/\1/p' "$DEPLOY_FILE" | head -n 1)
+if [ -z "$VAULT_ADDR" ]; then
+  echo "ERROR: Could not read vault address from $DEPLOY_FILE"
+  exit 1
+fi
 VERSION=$(cast call "$VAULT_ADDR" "VERSION()(string)" --rpc-url "$RPC_URL")
 
 echo "Vault Address: $VAULT_ADDR"
@@ -70,3 +88,6 @@ if [ "$VERSION" != "\"1.0.0\"" ] && [ "$VERSION" != "1.0.0" ]; then
 fi
 
 echo "=== SUCCESS: UnderwriteVault v1.0.0 verified on Base Sepolia ==="
+
+cd "$REPO_ROOT"
+pnpm --filter engine testnet:record-deployment
