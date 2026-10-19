@@ -2,7 +2,7 @@ import hashlib
 import json
 from pathlib import Path
 
-import fitz
+import pymupdf
 from PIL import Image
 from pptx import Presentation
 
@@ -27,7 +27,7 @@ def main() -> None:
     }
     for relative, expected in expected_pages.items():
         path = ROOT / relative
-        document = fitz.open(path)
+        document = pymupdf.open(path)
         assert len(document) == expected, f"{relative}: expected {expected} pages, got {len(document)}"
         blank = [index + 1 for index, page in enumerate(document) if len(page.get_text().strip()) < 20]
         assert not blank, f"{relative}: blank or nearly blank pages {blank}"

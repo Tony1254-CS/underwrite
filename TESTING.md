@@ -19,6 +19,7 @@ None.
 
 ## Verification Log
 
+- 2026-10-19 10:19 UTC | full light-capture rebuild | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-competition-package.ps1 -CaptureLightScreens -WebBaseUrl http://127.0.0.1:3001` -> PASS; all six routes captured with asserted `data-theme=light`, all canonical artifacts rebuilt, and subsequent submission QA passed. The custom base URL is now honored by the capture tool.
 - 2026-10-19 10:13 UTC | competition package build | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-competition-package.ps1` -> PASS; generated 15-page technical dossier, 12-page security self-assessment, 8-page evidence dossier, 13-slide PDF and editable 13-slide PPTX; emitted SHA-256 artifact manifest.
 - 2026-10-19 10:13 UTC | submission artifact QA | `python scripts/qa_submission.py` -> `SUBMISSION QA PASSED`; all expected page/slide counts matched; no blank PDF pages; six required light-mode captures present; legacy dark capture directory absent; 5 artifact hashes matched; 4 receipt hashes/status/events matched; execution decoded as `executePending(2)` with `PaymentExecuted`, Tier 2.
 - 2026-10-19 10:13 UTC | PDF interactivity | QA observed 4 clickable explorer links in the evidence PDF and 2 in the deck PDF. Technical/security PDFs are reference dossiers and contain no external PDF link annotations.
