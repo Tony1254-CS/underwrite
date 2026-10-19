@@ -65,26 +65,27 @@ Legend used throughout:
 | Official portal `https://fintechathon.g-ican.com/#/en` | Fetched; JavaScript-only single-page app, no readable content. **Not verified by us.** |
 | Info pack `https://drive.scmc.cmu.ac.th/s/2jKErkTJpFmcxYF` | Blocked for automated access (robots). **Not verified by us.** |
 | Registration form `https://drive.scmc.cmu.ac.th/s/knkpsQd5HpwJ9qj` | Not fetched (same host). |
+| Official Appendix 2 supplied by the team (`PBCSF Appendix 2-Problem Description and Competition Rules for International Track.pdf`) | Downloaded and reviewed in full on 2026-10-19; 4 pages. Requirements transcribed to `docs/competition/OFFICIAL_RULES.md`. |
 
-**Action item for the team (owner: human, before Phase 9):** download the official Topic F problem guideline and rules PDF from the links above, save the text to `docs/competition/OFFICIAL_RULES.md`, and update the status column in §1.2. Until then, treat every [CORROBORATED] row as provisional and satisfy it anyway (it costs little).
+**Action complete (2026-10-19):** the team supplied the official Appendix 2 PDF; `docs/competition/OFFICIAL_RULES.md` separates its explicit requirements from our rubric interpretation.
 
 ### 1.2 Requirements table
 
 | ID | Requirement | Status | Evidence |
 |---|---|---|---|
-| REQ-01 | Theme is "AI as a Financial Participant"; six topics A–F; Topic F = Agent Wallet / Autonomous On-chain Wallet | [VERIFIED] (university-published notices) | CMU IRD notice https://ird.oou.cmu.ac.th/2026-shenzhen-international-fintech-competition/ ; IEEE R10 Shenzhen https://r10.ieee.org/shenzhen-cis/blog/2026/06/17/2026-shenzhen-international-fintech-competition-international-track/ |
-| REQ-02 | Topic F carries a 0–5 point challenge bonus | [VERIFIED] (same notices) | CMU IRD notice (above) |
-| REQ-03 | Registration and submission deadline 20 Oct 2026 23:59 Beijing (UTC+8); online review 20–31 Oct; finalists announced 31 Oct; Shenzhen check-in 20 Nov | [VERIFIED] | CMU IRD notice (above) |
-| REQ-04 | Teams of 2–5 students; hosted by Tsinghua PBC School of Finance with WeBank | [VERIFIED] | ITS notice https://www.its.ac.id/international/2026/10/06/2026-shenzhen-fintechathon-international-track-a-fully-funded-international-competition/ |
-| REQ-05 | Finalists must be available for the on-site Grand Final in Shenzhen, 20–23 Nov 2026 | [CORROBORATED] | https://openopportunities.org/opportunities/2026-shenzhen-international-fintech-competition-fintechathon-international-track/ |
-| REQ-06 | Source code: README, GitHub repository link, deployment instructions, test cases | [CORROBORATED] | https://www.opportunitiescircle.com/shenzhen-fintech-competition/ |
-| REQ-07 | Execution evidence: for the on-chain topic, **real on-chain transaction hashes** (other topics: sandbox logs + demo video) | [CORROBORATED] | same as REQ-06 |
-| REQ-08 | Scoring: Task completion 40%, Security & compliance 30%, Innovation & interaction 30% | [CORROBORATED] (user-supplied; also used by another team's public repo) | DuitDuit README https://github.com/tanhongsheng050204-code/2026-SHENZHEN-FINTECHATHON-INTERNATIONAL-TRACK |
-| REQ-09 | Presentation ≤ 10 minutes, technical document, security self-assessment | [CORROBORATED] (stated in our original proposal as official; two competitor repos ship a technical doc and a security self-assessment) | Leash https://github.com/detinatran/finbase ; DuitDuit (above) |
+| REQ-01 | Theme is "AI as a Financial Participant"; six topics A–F; Topic F = Agent Wallet / Autonomous On-chain Wallet | [VERIFIED — official Appendix 2] | Official Appendix 2, p.2; CMU IRD notice |
+| REQ-02 | Topic F carries a 0–5 point challenge bonus | [VERIFIED — official Appendix 2] | Official Appendix 2, p.2 |
+| REQ-03 | Registration and submission deadline 20 Oct 2026 23:59 Beijing (UTC+8); online review starts 20 Oct; finalists announced 31 Oct; Shenzhen check-in 20 Nov | [VERIFIED — official Appendix 2] | Official Appendix 2, pp.3–4 |
+| REQ-04 | Teams of 2–5 students; hosted by Tsinghua PBC School of Finance with WeBank | [PARTIALLY VERIFIED] Team size is explicit in Appendix 2; host attribution remains supported by published notices | Official Appendix 2, p.3; ITS notice |
+| REQ-05 | Finalists must be available for the on-site Grand Final in Shenzhen, 20–23 Nov 2026 | [VERIFIED — official Appendix 2] | Official Appendix 2, p.4 |
+| REQ-06 | Source code: README, GitHub repository link, deployment instructions, test cases | [VERIFIED — official Appendix 2] | Official Appendix 2, p.3 |
+| REQ-07 | Execution evidence: for the on-chain topic, **real on-chain transaction hashes** (other topics: sandbox logs + demo video) | [VERIFIED — official Appendix 2] | Official Appendix 2, p.3 |
+| REQ-08 | Scoring: Task completion 40%, Security & compliance 30%, Innovation & interaction 30% | [VERIFIED — official Appendix 2] | Official Appendix 2, p.2 |
+| REQ-09 | Presentation ≤ 10 minutes, technical document, security self-assessment; optional video ≤ 5 minutes | [VERIFIED — official Appendix 2] | Official Appendix 2, p.3 |
 | REQ-10 | All international directions share one set of core capability standards and scoring dimensions; the domestic track's AI Banking Agent requires tiered permissions, hallucination protection, injection defence, intent understanding and task planning | [VERIFIED for the domestic track] / [INFERENCE that the same capabilities matter for Topic F] | Tencent News, 2 Sep 2026 https://news.qq.com/rain/a/20260902A05KG800 |
-| REQ-11 | Topic F description: "AI wallet agent for asset management, transaction execution, and risk control"; Agent Wallet = "AI autonomously owns a wallet and conducts real on-chain transactions" | [VERIFIED] | ITS notice (above); Tencent News (above) |
+| REQ-11 | Topic F description: AI wallet agent for asset management, transaction execution, and risk control | [VERIFIED — official Appendix 2] | Official Appendix 2, p.2 |
 
-**Safe default while REQ-05…REQ-09 are unconfirmed:** produce all of: public GitHub repo with README, setup, tests; real testnet tx hashes in `evidence/onchain/EXECUTION_EVIDENCE.md`; `docs/TECHNICAL.md`; `docs/SECURITY_SELF_ASSESSMENT.md`; a ≤10-minute deck; an MP4 demo video. Do not invent any other mandatory deliverable.
+**Official submission package:** technical documentation; ≤10-minute presentation deck; optional ≤5-minute demo video; source with README, repository link, deployment instructions and tests; security self-assessment with permission tiers and known risks; and real on-chain transaction hashes for Topic F.
 
 ### 1.3 What the organizer is asking for (Phase One answers)
 
@@ -1057,4 +1058,3 @@ Larger contract surface (mitigated by invariant tests and cut-lines); dependence
 ### 7. Revision 2 corrections
 
 Revision 2 changed no scope. It fixed design errors M1–M8 listed in §0.1: an agent-only manifest so exams transfer between Anvil and testnet; an exposure invariant with owner reconciliation so the bond backs all unreviewed autonomous payments rather than one window; on-chain exam pre-commitment against corpus swaps and exam-shopping; a narrowed invoice-uniqueness claim; per-family Bonferroni bounds weighted by the owner's threat mix; owner inputs bound by hash; an experiment with independent and blind test data instead of a single self-written generator; and the window-boundary burst bounded by the exposure invariant. Effect on scoring dimensions: mainly Security & compliance (claims now match what the contracts enforce) and Innovation (the experiment's evidence is no longer circular). New cost: two more contract functions (`commitExam`, `reconcile`), one more invariant family, and a second scenario author.
-

@@ -1,5 +1,18 @@
 Progress source of truth: PHASES.md
 
+## Handoff, 2026-10-19, Codex: professional competition submission package
+State: rebuilt the competition-facing documentation around verified evidence and the official Appendix 2 rubric. Canonical deliverables are `docs/deck/UNDERWRITE_PITCH_DECK.pdf` (13 slides plus editable PPTX), `docs/UNDERWRITE_TECHNICAL_DOSSIER.pdf` (15 pages), `docs/UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf` (12 pages), and `docs/ONCHAIN_EVIDENCE.pdf` (8 pages). The submission master, official-rules brief, claim ledger, speaker notes, light-only demo/recording guides, machine-readable transaction manifest, artifact hashes, build script, and automated submission QA are complete.
+
+Evidence discipline: every public-chain statement uses the real four-transaction Base Sepolia Tier-2 path. Payment execution is asserted only with receipt success plus the decoded `PaymentExecuted` event. The experiment is labeled controlled, non-independent, and self-authored under DEC-023. No Tier-1 public-chain, mainnet, audit, production, customer-loss, or uniqueness claim is made.
+
+Visual standard: all six embedded product captures are light mode under `docs/professional/assets/screens-light/`; the legacy dark capture directory was removed. Deck screenshots carry scripted/simulated labels. QR images and PDF/PPTX hyperlinks resolve to the public execution evidence.
+
+Verification: baseline `forge test` = 101/101 passed across 17 suites (256 invariant runs / 25,600 calls / 0 handler reverts); engine tests = 159/159 across 26 files; engine typecheck passed. `scripts/build-competition-package.ps1` completed. `python scripts/qa_submission.py` passed page-count, nonblank-page, editable-slide, light-capture, artifact-digest, receipt-digest, and receipt/event checks.
+
+Open human items: replace bracketed team identity/contact/repository/video fields in `docs/competition/SUBMISSION_DRAFT.md`; record the optional ≤5-minute video; verify public links logged out; attach registration/identity/enrollment documents; rehearse below 10 minutes; submit by 20 Oct 2026 21:59 Bangladesh time. The three legacy PDF names remain locked by an open viewer and could not be overwritten without killing the user’s browser. The canonical named files above are final; after closing those old PDF tabs run `powershell -ExecutionPolicy Bypass -File scripts/sync-legacy-doc-names.ps1` if legacy filenames are desired.
+
+---
+
 ## Handoff, 2026-10-19, Codex: real Base Sepolia deployment and Topic F evidence
 State: MockUSDC, BondPool, and UnderwriteVault are deployed on Base Sepolia from locally generated throwaway keys. Deployment receipts/bytecode were RPC-verified. MockUSDC and BondPool source are verified on Blockscout; UnderwriteVault is an exact-match Sourcify verification (Blockscout submission is temporarily rate-limited). Six recipients are active, the vault/bond are funded with controlled MockUSDC, and an honest gamma T2 qualification produced one controlled 35 USDC `PaymentExecuted` event.
 

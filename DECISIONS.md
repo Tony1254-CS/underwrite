@@ -462,7 +462,7 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Context**: The current gamma exam report grants `t1MaxPerTx = 0` and `t1MaxPerWindow = 0`, while allowing T2. The competition requires real on-chain hashes, and the repository previously contained fabricated receipt fixtures.
 - **Decision**: Deploy the real contracts on Base Sepolia and demonstrate only the authority actually earned: a CONTROLLED 35 MockUSDC T2 request followed by execution after the 300-second challenge period. Never manufacture T1 authority or claim a transaction without both a successful receipt and its matching decoded event.
 - **Consequences**: The four submitted rows are real and reproducible, but P6-T06's requested three T1 payments remain incomplete. The fabricated fixtures are removed.
-- **Status**: PROVISIONAL pending owner acceptance of the reduced but truthful testnet scope.
+- **Status**: ACCEPTED (owner approved the evidence-led rebuild using the truthful Tier-2 scope).
 
 ## DEC-033 — Workspace redesign: every other page moves to the landing page's identity
 
@@ -487,3 +487,16 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
   - Untouched by design: `web/src/app/api/*`, `web/src/lib/*` (except the two new files from DEC-032), `web/src/context/AuthContext.tsx`, `engine/`, `contracts/`.
 - **Consequences**: The whole web app now shares one look and one stylesheet per route group (`site.css`, `app.css`). Old pages' Tailwind class strings are gone from the JSX, so any future page should use the kit, not utility classes. The rail and top bar replace the DEC-028 hover-expanding sidebar and DEC-029 navbar visually (same routes, same persona switching and password challenge). Supersedes the look from DEC-025 for the workspace and the seam note in DEC-032.
 - **Status**: PROVISIONAL (awaiting owner approval; branch `feat/ui-landing-redesign`, not committed).
+
+## DEC-035 — Evidence-led competition publication system and light-only captures
+
+- **Context**: The original PDFs and deck were text-heavy, visually weak, and contained claims that could be read as independent, production, Tier-1 public-chain, or uniqueness evidence. The owner approved a complete professional rebuild and subsequently required light mode for every screenshot.
+- **Decision**:
+  - Canonical submission files use explicit product names: `UNDERWRITE_PITCH_DECK`, `UNDERWRITE_TECHNICAL_DOSSIER`, `UNDERWRITE_SECURITY_SELF_ASSESSMENT`, and `ONCHAIN_EVIDENCE`.
+  - Competition claims are governed by `docs/competition/CLAIM_LEDGER.md`; machine evidence is governed by the on-chain and artifact manifests.
+  - Public execution language requires a successful receipt and matching decoded event. The submitted payment is described only as a controlled Base Sepolia Tier-2 transaction.
+  - Experimental results are always labeled controlled, non-independent, and self-authored under DEC-023.
+  - Every embedded product screenshot is light mode. Scripted, simulated, replayed, and controlled views are labeled.
+  - The pitch is a visual 13-slide narrative with a sub-10-minute talk track; technical depth remains in separate designed dossiers.
+- **Consequences**: The package is reproducible through `scripts/build-competition-package.ps1` and validated by `scripts/qa_submission.py`. Legacy short PDF names are compatibility aliases only; canonical files are authoritative. Production, audit, independent-evaluation, customer-fund, mainnet, and Tier-1 public-chain claims remain prohibited unless new evidence supports them.
+- **Status**: ACCEPTED (owner approved full rebuild and explicitly approved the light-mode screenshot rule).

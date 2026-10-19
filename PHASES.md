@@ -821,9 +821,10 @@ Read first: plan §10, §9.3 (TB7), §7 (Policy Card notes), §12.2 P8. Key file
 ## P9 — Documentation and submission (Tracks C + human · Mon–Tue; submit by Tue 20 Oct 18:00 BD)
 Read first: plan §14, §1.2, §3.2–3.4, §13.7, §12.2 P9, §2, §15, §16. Key files: `README.md`, `docs/TECHNICAL.md`, `docs/SECURITY_SELF_ASSESSMENT.md`, `docs/DEMO_SCRIPT.md`, `docs/competition/OFFICIAL_RULES.md`.
 
-- [ ] P9-T01 | H | needs: none | HUMAN: download the official rules PDF
+- [x] P9-T01 | H | needs: none | HUMAN: download the official rules PDF
   Do: human downloads the Topic F guideline and rules from the links in plan §1.1, gives the text to an agent; agent saves `docs/competition/OFFICIAL_RULES.md` and updates the status column of plan §1.2 (the only plan.md edit allowed). If a requirement differs from what we built, add tasks `P9-X*`.
   Done when: the file exists; §1.2 statuses updated; differences listed in STATUS.md.
+  Evidence: 2026-10-19 · team supplied official 4-page Appendix 2; full PDF reviewed; `docs/competition/OFFICIAL_RULES.md` rebuilt; plan §1.2 statuses updated from corroborated to official where supported → PASS
 - [x] P9-T02 | C | needs: QG-3 | README.md
   Do: what it is (3 sentences from plan §0), 2-minute local quick start without keys (`pnpm demo:local`), testnet evidence link, test commands, repo map. Finalize after QG-8.
   Done when: every command in it was run by you and works.

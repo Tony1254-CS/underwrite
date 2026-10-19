@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Competition publication system
+- Rebuilt the submission as four designed, evidence-led artifacts: a 13-slide editable pitch deck, 15-page technical dossier, 12-page security self-assessment, and 8-page on-chain evidence dossier.
+- Added a form-ready submission master, official Appendix 2 rules brief, claim ledger, speaker notes, light-only demo script and recording guide.
+- Added reproducible document generation, SHA-256 artifact manifest, and automated PDF/PPTX/screenshot/evidence QA.
+- Added clickable Base Sepolia explorer links and QR evidence in the deck and evidence dossier.
+
+### Documentation integrity
+- Replaced unsupported uniqueness, independent-evaluation, Tier-1 public-chain, audit, and production implications with evidence-scoped language.
+- Classified the experiment as controlled, non-independent, and self-authored under DEC-023.
+- Enforced light-mode product captures across all competition artifacts and removed legacy dark screenshot assets.
+- Added a machine-readable on-chain manifest with receipt hashes, decoded-event requirements, transaction continuity, and explicit public-testnet limitations.
+
 ### Base Sepolia evidence
 - Base Sepolia deployment and controlled Topic F evidence: RPC-verified MockUSDC, BondPool, and UnderwriteVault deployments; verified source metadata; honest gamma T2 qualification; `PaymentRequested` and matching `PaymentExecuted` receipts with explorer links.
 - Secure testnet wallet bootstrap, role funding, deployment recorder, and reproducible evidence runner. Secrets remain only in the gitignored local `.env`.
