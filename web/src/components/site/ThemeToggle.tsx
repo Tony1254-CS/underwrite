@@ -20,15 +20,15 @@ const EVENT = "uw-theme-change";
  * A tiny inline script in the layout applies the saved choice before first paint.
  */
 export function ThemeToggle() {
-  const [pref, setPref] = useState<Pref>("system");
+  const [pref, setPref] = useState<Pref>("light");
 
   useEffect(() => {
     const read = () => {
       try {
         const saved = window.localStorage.getItem(STORAGE_KEY);
-        setPref(saved === "light" || saved === "dark" ? saved : "system");
+        setPref(saved === "dark" ? "dark" : saved === "system" ? "system" : "light");
       } catch {
-        setPref("system");
+        setPref("light");
       }
     };
     read();
@@ -40,11 +40,11 @@ export function ThemeToggle() {
   const apply = (next: Pref) => {
     const root = document.documentElement;
     root.classList.add("theme-switching");
-    if (next === "system") root.removeAttribute("data-theme");
-    else root.setAttribute("data-theme", next);
+    if (next === "system") root.setAttribute("data-theme", "system");
+    else if (next === "dark") root.setAttribute("data-theme", "dark");
+    else root.setAttribute("data-theme", "light");
     try {
-      if (next === "system") window.localStorage.removeItem(STORAGE_KEY);
-      else window.localStorage.setItem(STORAGE_KEY, next);
+      window.localStorage.setItem(STORAGE_KEY, next);
     } catch {
       /* the choice still applies for this visit */
     }

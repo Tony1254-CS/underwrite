@@ -19,12 +19,12 @@ export const viewport: Viewport = {
   ],
 };
 
-// Same key as the public site, so a Light/Dark choice carries across both. Applied before first paint.
-const THEME_INIT = `(function(){try{var t=window.localStorage.getItem('uw-theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
+// Same key as the public site, so a Light/Dark choice carries across both. Defaults to light mode.
+const THEME_INIT = `(function(){try{var t=window.localStorage.getItem('uw-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}else if(t==='system'){document.documentElement.setAttribute('data-theme','system');}else{document.documentElement.setAttribute('data-theme','light');}}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <link rel="preload" href="/fonts/BricolageGrotesque-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/AtkinsonHyperlegibleNext-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
