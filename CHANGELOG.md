@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a form-ready submission master, official Appendix 2 rules brief, claim ledger, speaker notes, light-only demo script and recording guide.
 - Added reproducible document generation, SHA-256 artifact manifest, and automated PDF/PPTX/screenshot/evidence QA.
 - Added clickable Base Sepolia explorer links and QR evidence in the deck and evidence dossier.
+- Added a numbered `submission/` folder with final attachments, source/link sheet, email draft, private-document checklist, package hashes, and a reproducible packaging script. The official registration workbook is copied only into the gitignored private area.
 
 ### Documentation integrity
 - Replaced unsupported uniqueness, independent-evaluation, Tier-1 public-chain, audit, and production implications with evidence-scoped language.

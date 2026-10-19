@@ -9,7 +9,9 @@ Visual standard: all six embedded product captures are light mode under `docs/pr
 
 Verification: baseline `forge test` = 101/101 passed across 17 suites (256 invariant runs / 25,600 calls / 0 handler reverts); engine tests = 159/159 across 26 files; engine typecheck passed. `scripts/build-competition-package.ps1` completed. `python scripts/qa_submission.py` passed page-count, nonblank-page, editable-slide, light-capture, artifact-digest, receipt-digest, and receipt/event checks.
 
-Open human items: replace bracketed team identity/contact/repository/video fields in `docs/competition/SUBMISSION_DRAFT.md`; record the optional ≤5-minute video; verify public links logged out; attach registration/identity/enrollment documents; rehearse below 10 minutes; submit by 20 Oct 2026 21:59 Bangladesh time. The three legacy PDF names remain locked by an open viewer and could not be overwritten without killing the user’s browser. The canonical named files above are final; after closing those old PDF tabs run `powershell -ExecutionPolicy Bypass -File scripts/sync-legacy-doc-names.ps1` if legacy filenames are desired.
+Packaging: `submission/` contains numbered, ready-to-send public attachments, a source/link sheet, email draft and SHA-256 list. The official blank registration workbook was copied to the gitignored `submission/private/` area; passports and enrollment documents must also remain private and must never be committed.
+
+Open human items: complete the registration workbook; replace bracketed team identity/contact/repository/video fields in `submission/07_SOURCE_AND_LINKS.md` and the email draft; record the optional ≤5-minute video; verify public links logged out; attach registration/identity/enrollment documents; rehearse below 10 minutes; submit by 20 Oct 2026 21:59 Bangladesh time. The three legacy PDF names remain locked by an open viewer and could not be overwritten without killing the user’s browser. The canonical named files above are final; after closing those old PDF tabs run `powershell -ExecutionPolicy Bypass -File scripts/sync-legacy-doc-names.ps1` if legacy filenames are desired.
 
 ---
 
