@@ -1,0 +1,72 @@
+[Script Info]
+Title: UNDERWRITE Product Film
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,43,&H0011110F,&H0011110F,&H00FFFFFF,&H18FFFFFF,-1,0,0,0,100,100,0,0,3,1,0,2,260,260,62,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.75,0:00:06.00,Default,,0,0,0,,An AI agent can read an invoice, reason about a payment, and\Nask for a transaction.
+Dialogue: 0,0:00:06.00,0:00:08.85,Default,,0,0,0,,But none of that makes it a safe custody authority.
+Dialogue: 0,0:00:08.85,0:00:17.88,Default,,0,0,0,,If the same model can choose the payee, the amount, the token,\Nand the limit, one manipulated document can become an irreversible financial action.
+Dialogue: 0,0:00:19.75,0:00:22.65,Default,,0,0,0,,UNDERWRITE separates intelligence from authority.
+Dialogue: 0,0:00:22.65,0:00:25.10,Default,,0,0,0,,The model proposes a business action.
+Dialogue: 0,0:00:25.10,0:00:28.61,Default,,0,0,0,,Evidence decides how much autonomy it has earned.
+Dialogue: 0,0:00:28.61,0:00:32.24,Default,,0,0,0,,Deterministic policy resolves the vendor and route.
+Dialogue: 0,0:00:32.24,0:00:34.57,Default,,0,0,0,,The contract enforces the boundary.
+Dialogue: 0,0:00:34.57,0:00:38.60,Default,,0,0,0,,And a collateralized bond stands behind the residual exposure.
+Dialogue: 0,0:00:40.75,0:00:47.58,Default,,0,0,0,,This working product centers on the Authority Meter: not a confidence\Nscore, but the amount the agent may spend without a person.
+Dialogue: 0,0:00:47.58,0:00:53.18,Default,,0,0,0,,In this controlled demonstration, three configurations take\Nthe same adversarial exam.
+Dialogue: 0,0:00:53.18,0:00:55.44,Default,,0,0,0,,A naive script receives zero.
+Dialogue: 0,0:00:55.44,0:00:58.07,Default,,0,0,0,,A basic model receives forty dollars.
+Dialogue: 0,0:00:58.07,0:01:00.95,Default,,0,0,0,,A hardened model receives one hundred and eighty.
+Dialogue: 0,0:01:00.95,0:01:06.34,Default,,0,0,0,,These are scripted demo values; the real reports remain\Nseparately verifiable.
+Dialogue: 0,0:01:06.34,0:01:08.47,Default,,0,0,0,,The examiner signs the evidence.
+Dialogue: 0,0:01:08.47,0:01:10.18,Default,,0,0,0,,The owner activates it.
+Dialogue: 0,0:01:10.18,0:01:12.81,Default,,0,0,0,,The agent cannot raise its own limit.
+Dialogue: 0,0:01:15.25,0:01:18.18,Default,,0,0,0,,Now watch the product handle three invoices.
+Dialogue: 0,0:01:18.18,0:01:25.36,Default,,0,0,0,,A routine thirty-five-dollar invoice resolves to an approved supplier and\Nfollows the Tier One route in the controlled local runtime.
+Dialogue: 0,0:01:25.36,0:01:29.42,Default,,0,0,0,,A two-hundred-and-fifty-dollar upgrade exceeds autonomous\Nauthority.
+Dialogue: 0,0:01:29.42,0:01:34.42,Default,,0,0,0,,It becomes Tier Two: held for the owner and checked again\Nbefore execution.
+Dialogue: 0,0:01:34.42,0:01:39.93,Default,,0,0,0,,A hostile instruction replaces the payee, while a replay\Nreuses an invoice identity.
+Dialogue: 0,0:01:39.93,0:01:41.56,Default,,0,0,0,,Both are rejected.
+Dialogue: 0,0:01:41.56,0:01:46.23,Default,,0,0,0,,The model never supplies a raw address, token, calldata, or\Nlimit.
+Dialogue: 0,0:01:46.23,0:01:49.42,Default,,0,0,0,,It proposes a vendor identifier and amount.
+Dialogue: 0,0:01:49.42,0:01:51.80,Default,,0,0,0,,Trusted software decides the rest.
+Dialogue: 0,0:01:54.25,0:01:57.17,Default,,0,0,0,,Prompt defenses are not the security boundary.
+Dialogue: 0,0:01:57.17,0:02:01.65,Default,,0,0,0,,The Attack Lab assumes the application is bypassed and the\Nagent key is stolen.
+Dialogue: 0,0:02:01.65,0:02:05.02,Default,,0,0,0,,The request reaches the local EVM contract directly.
+Dialogue: 0,0:02:05.02,0:02:07.58,Default,,0,0,0,,An unregistered recipient reverts.
+Dialogue: 0,0:02:07.58,0:02:09.64,Default,,0,0,0,,A duplicate invoice reverts.
+Dialogue: 0,0:02:09.64,0:02:15.63,Default,,0,0,0,,A new supplier remains in a three-hundred-second cooldown,\Nblocking an immediate payee switch.
+Dialogue: 0,0:02:15.63,0:02:19.25,Default,,0,0,0,,In this simulated scenario, zero funds move.
+Dialogue: 0,0:02:19.25,0:02:22.28,Default,,0,0,0,,Model failure does not erase the settlement boundary.
+Dialogue: 0,0:02:24.75,0:02:29.72,Default,,0,0,0,,Controls bound authority, but cannot prove every permitted\Ninvoice is correct.
+Dialogue: 0,0:02:29.72,0:02:34.64,Default,,0,0,0,,When an error is discovered, the owner files a claim with\Ncryptographic evidence.
+Dialogue: 0,0:02:34.64,0:02:42.62,Default,,0,0,0,,Approval performs two consequences atomically: the bond reimburses the\Nvault within its terms, and the qualification is revoked.
+Dialogue: 0,0:02:42.62,0:02:44.68,Default,,0,0,0,,The next payment is refused.
+Dialogue: 0,0:02:44.68,0:02:49.61,Default,,0,0,0,,Recovery remains bounded by the deductible, payout caps, and\Nbond capacity.
+Dialogue: 0,0:02:52.25,0:02:54.29,Default,,0,0,0,,Now the public-chain evidence.
+Dialogue: 0,0:02:54.29,0:02:59.86,Default,,0,0,0,,This is real Base Sepolia activity using controlled MockUSDC\Nand addresses.
+Dialogue: 0,0:02:59.86,0:03:01.98,Default,,0,0,0,,The exam commitment is recorded.
+Dialogue: 0,0:03:01.98,0:03:07.72,Default,,0,0,0,,The qualification is activated with zero Tier One authority\Nand bounded Tier Two capability.
+Dialogue: 0,0:03:07.72,0:03:13.78,Default,,0,0,0,,Then the agent requests thirty-five MockUSDC, starting a\Nthree-hundred-second challenge period.
+Dialogue: 0,0:03:13.78,0:03:18.91,Default,,0,0,0,,After the delay, the final transaction calls execute pending\Nwith request ID two.
+Dialogue: 0,0:03:18.91,0:03:25.12,Default,,0,0,0,,The receipt succeeds, with a matching Payment Executed event\Nfor payment ID one, Tier Two.
+Dialogue: 0,0:03:25.12,0:03:31.40,Default,,0,0,0,,The IDs are separate counters; recipient, amount, invoice\Nidentity and calldata match.
+Dialogue: 0,0:03:31.40,0:03:38.38,Default,,0,0,0,,This is public testnet settlement—not mainnet, not customer\Nactivity, and not a Tier One public-chain claim.
+Dialogue: 0,0:03:42.25,0:03:48.76,Default,,0,0,0,,Every layer remains inspectable: proposal, policy, contract\Nresult and whether funds moved.
+Dialogue: 0,0:03:48.76,0:03:51.81,Default,,0,0,0,,Changing one byte breaks the evidence digest.
+Dialogue: 0,0:03:51.81,0:03:59.74,Default,,0,0,0,,In a controlled, self-authored evaluation, three agents processed the\Nsame three hundred and thirty invoices under three regimes.
+Dialogue: 0,0:03:59.74,0:04:05.65,Default,,0,0,0,,UNDERWRITE recorded zero Class One violations on this corpus,\Nwhile moving more work to review.
+Dialogue: 0,0:04:05.65,0:04:15.45,Default,,0,0,0,,One unseen Class Two error caused a one-hundred-and-seventy MockUSDC loss;\Nthe bond reimbursed one hundred and sixty-five, leaving five net.
+Dialogue: 0,0:04:18.25,0:04:27.13,Default,,0,0,0,,The current rerun passes one hundred and one contract tests, one hundred\Nand fifty-nine engine tests, and twenty-five thousand six hundred invariant calls.
+Dialogue: 0,0:04:27.13,0:04:32.53,Default,,0,0,0,,This remains a testnet prototype and security self-assessment,\Nnot an independent audit.
+Dialogue: 0,0:04:32.53,0:04:34.85,Default,,0,0,0,,Do not give an AI a blank check.
+Dialogue: 0,0:04:34.85,0:04:38.65,Default,,0,0,0,,Make authority earnable, enforceable, and revocable.

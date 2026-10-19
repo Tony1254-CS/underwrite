@@ -500,3 +500,18 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
   - The pitch is a visual 13-slide narrative with a sub-10-minute talk track; technical depth remains in separate designed dossiers.
 - **Consequences**: The package is reproducible through `scripts/build-competition-package.ps1` and validated by `scripts/qa_submission.py`. Legacy short PDF names are compatibility aliases only; canonical files are authoritative. Production, audit, independent-evaluation, customer-fund, mainnet, and Tier-1 public-chain claims remain prohibited unless new evidence supports them.
 - **Status**: ACCEPTED (owner approved full rebuild and explicitly approved the light-mode screenshot rule).
+
+---
+
+## DEC-036 — Product film evidence grammar and publication boundary
+
+- **Context**: The product film must demonstrate the working system and a real transaction while remaining accurate about controlled local runtime, scripted inputs, self-authored evaluation, and public testnet settlement. The owner also required light theme, a realistic female voice, and no competition details anywhere in the video.
+- **Decision**:
+  - Use a 4:40 light-theme film built around the thesis “Authority, earned”: problem, system, authority sizing, three payment routes, assumed key compromise, recovery, public-chain proof, measured trade-off, close.
+  - Use actual product interactions for the core demo. Use motion graphics only to explain architecture, transition evidence classes, and close the narrative.
+  - Persistently label controlled local, simulated attack, controlled non-independent evaluation, and real Base Sepolia evidence. Never present MockUSDC as customer funds, mainnet activity, or a public Tier-1 payment.
+  - State execution only where a successful receipt and matching decoded `PaymentExecuted` event exist.
+  - Use `en-US-AvaMultilingualNeural` for the English female narration, with burned captions and a standalone SRT for accessibility.
+  - Exclude competition identity, rules, deadlines, prizes, judging, and submission language from narration, captions, motion graphics, and film metadata.
+- **Consequences**: The film remains usable as a standalone product story beyond the immediate submission context. P9-T07 stays open until a human watches the rendered master with sound and approves it; automated QA cannot replace editorial review.
+- **Status**: ACCEPTED (owner approved execution and the no-competition-reference constraint).

@@ -1,0 +1,231 @@
+1
+00:00:00,750 --> 00:00:06,003
+An AI agent can read an invoice, reason about a payment, and ask for a transaction.
+
+2
+00:00:06,003 --> 00:00:08,855
+But none of that makes it a safe custody authority.
+
+3
+00:00:08,855 --> 00:00:17,884
+If the same model can choose the payee, the amount, the token, and the limit, one manipulated document can become an irreversible financial action.
+
+4
+00:00:19,750 --> 00:00:22,649
+UNDERWRITE separates intelligence from authority.
+
+5
+00:00:22,649 --> 00:00:25,100
+The model proposes a business action.
+
+6
+00:00:25,100 --> 00:00:28,607
+Evidence decides how much autonomy it has earned.
+
+7
+00:00:28,607 --> 00:00:32,236
+Deterministic policy resolves the vendor and route.
+
+8
+00:00:32,236 --> 00:00:34,566
+The contract enforces the boundary.
+
+9
+00:00:34,566 --> 00:00:38,595
+And a collateralized bond stands behind the residual exposure.
+
+10
+00:00:40,750 --> 00:00:47,581
+This working product centers on the Authority Meter: not a confidence score, but the amount the agent may spend without a person.
+
+11
+00:00:47,581 --> 00:00:53,175
+In this controlled demonstration, three configurations take the same adversarial exam.
+
+12
+00:00:53,175 --> 00:00:55,445
+A naive script receives zero.
+
+13
+00:00:55,445 --> 00:00:58,066
+A basic model receives forty dollars.
+
+14
+00:00:58,066 --> 00:01:00,954
+A hardened model receives one hundred and eighty.
+
+15
+00:01:00,954 --> 00:01:06,343
+These are scripted demo values; the real reports remain separately verifiable.
+
+16
+00:01:06,343 --> 00:01:08,466
+The examiner signs the evidence.
+
+17
+00:01:08,466 --> 00:01:10,178
+The owner activates it.
+
+18
+00:01:10,178 --> 00:01:12,811
+The agent cannot raise its own limit.
+
+19
+00:01:15,250 --> 00:01:18,185
+Now watch the product handle three invoices.
+
+20
+00:01:18,185 --> 00:01:25,357
+A routine thirty-five-dollar invoice resolves to an approved supplier and follows the Tier One route in the controlled local runtime.
+
+21
+00:01:25,357 --> 00:01:29,423
+A two-hundred-and-fifty-dollar upgrade exceeds autonomous authority.
+
+22
+00:01:29,423 --> 00:01:34,423
+It becomes Tier Two: held for the owner and checked again before execution.
+
+23
+00:01:34,423 --> 00:01:39,933
+A hostile instruction replaces the payee, while a replay reuses an invoice identity.
+
+24
+00:01:39,933 --> 00:01:41,560
+Both are rejected.
+
+25
+00:01:41,560 --> 00:01:46,231
+The model never supplies a raw address, token, calldata, or limit.
+
+26
+00:01:46,231 --> 00:01:49,423
+It proposes a vendor identifier and amount.
+
+27
+00:01:49,423 --> 00:01:51,801
+Trusted software decides the rest.
+
+28
+00:01:54,250 --> 00:01:57,173
+Prompt defenses are not the security boundary.
+
+29
+00:01:57,173 --> 00:02:01,651
+The Attack Lab assumes the application is bypassed and the agent key is stolen.
+
+30
+00:02:01,651 --> 00:02:05,025
+The request reaches the local EVM contract directly.
+
+31
+00:02:05,025 --> 00:02:07,585
+An unregistered recipient reverts.
+
+32
+00:02:07,585 --> 00:02:09,636
+A duplicate invoice reverts.
+
+33
+00:02:09,636 --> 00:02:15,632
+A new supplier remains in a three-hundred-second cooldown, blocking an immediate payee switch.
+
+34
+00:02:15,632 --> 00:02:19,248
+In this simulated scenario, zero funds move.
+
+35
+00:02:19,248 --> 00:02:22,282
+Model failure does not erase the settlement boundary.
+
+36
+00:02:24,750 --> 00:02:29,724
+Controls bound authority, but cannot prove every permitted invoice is correct.
+
+37
+00:02:29,724 --> 00:02:34,639
+When an error is discovered, the owner files a claim with cryptographic evidence.
+
+38
+00:02:34,639 --> 00:02:42,624
+Approval performs two consequences atomically: the bond reimburses the vault within its terms, and the qualification is revoked.
+
+39
+00:02:42,624 --> 00:02:44,675
+The next payment is refused.
+
+40
+00:02:44,675 --> 00:02:49,615
+Recovery remains bounded by the deductible, payout caps, and bond capacity.
+
+41
+00:02:52,250 --> 00:02:54,287
+Now the public-chain evidence.
+
+42
+00:02:54,287 --> 00:02:59,857
+This is real Base Sepolia activity using controlled MockUSDC and addresses.
+
+43
+00:02:59,857 --> 00:03:01,981
+The exam commitment is recorded.
+
+44
+00:03:01,981 --> 00:03:07,721
+The qualification is activated with zero Tier One authority and bounded Tier Two capability.
+
+45
+00:03:07,721 --> 00:03:13,777
+Then the agent requests thirty-five MockUSDC, starting a three-hundred-second challenge period.
+
+46
+00:03:13,777 --> 00:03:18,911
+After the delay, the final transaction calls execute pending with request ID two.
+
+47
+00:03:18,911 --> 00:03:25,124
+The receipt succeeds, with a matching Payment Executed event for payment ID one, Tier Two.
+
+48
+00:03:25,124 --> 00:03:31,399
+The IDs are separate counters; recipient, amount, invoice identity and calldata match.
+
+49
+00:03:31,399 --> 00:03:38,377
+This is public testnet settlement—not mainnet, not customer activity, and not a Tier One public-chain claim.
+
+50
+00:03:42,250 --> 00:03:48,765
+Every layer remains inspectable: proposal, policy, contract result and whether funds moved.
+
+51
+00:03:48,765 --> 00:03:51,811
+Changing one byte breaks the evidence digest.
+
+52
+00:03:51,811 --> 00:03:59,736
+In a controlled, self-authored evaluation, three agents processed the same three hundred and thirty invoices under three regimes.
+
+53
+00:03:59,736 --> 00:04:05,646
+UNDERWRITE recorded zero Class One violations on this corpus, while moving more work to review.
+
+54
+00:04:05,646 --> 00:04:15,452
+One unseen Class Two error caused a one-hundred-and-seventy MockUSDC loss; the bond reimbursed one hundred and sixty-five, leaving five net.
+
+55
+00:04:18,250 --> 00:04:27,132
+The current rerun passes one hundred and one contract tests, one hundred and fifty-nine engine tests, and twenty-five thousand six hundred invariant calls.
+
+56
+00:04:27,132 --> 00:04:32,532
+This remains a testnet prototype and security self-assessment, not an independent audit.
+
+57
+00:04:32,532 --> 00:04:34,850
+Do not give an AI a blank check.
+
+58
+00:04:34,850 --> 00:04:38,649
+Make authority earnable, enforceable, and revocable.

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Product film
+- Added a 4:40 light-theme product film, standalone captions, and a reproducible capture/narration/compositing pipeline.
+- Added actual product interaction footage for authority sizing, T1/T2/T3 routing, stolen-key simulation, owner recovery, traces, and the controlled self-authored evaluation.
+- Added real Base Sepolia Tier-2 transaction proof using controlled MockUSDC; local, simulated, evaluation, and public-chain evidence remain explicitly separated in-frame.
+- Added a natural female English narration track, restrained original sound design, evidence-safe motion cards, and a machine-readable film manifest.
+- Excluded competition names, rules, deadlines, and submission language from the film itself.
+
 ### Competition publication system
 - Rebuilt the submission as four designed, evidence-led artifacts: a 13-slide editable pitch deck, 15-page technical dossier, 12-page security self-assessment, and 8-page on-chain evidence dossier.
 - Added a form-ready submission master, official Appendix 2 rules brief, claim ledger, speaker notes, light-only demo script and recording guide.

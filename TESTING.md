@@ -19,6 +19,16 @@ None.
 
 ## Verification Log
 
+- 2026-10-20 02:46 +06 | final product film master | `python video/render_film.py` -> PASS; rendered 9 scenes to `artifacts/video/UNDERWRITE_PRODUCT_FILM.mp4`, 1920x1080, 30 fps, H.264/AAC, 280.5 seconds; generated burned ASS captions, standalone SRT, original ambient bed, and machine-readable film manifest.
+- 2026-10-20 02:47 +06 | film decode | FFmpeg full video+audio decode to null -> PASS; 8,416 frames decoded through 00:04:40.53 with no decode error.
+- 2026-10-20 02:52 +06 | film audio | clean timestamp re-encode plus FFmpeg `loudnorm` analysis -> integrated -16.29 LUFS, true peak -1.73 dBTP, loudness range 3.30 LU; no backward-timestamp warnings in the final encode and the full post-encode decode passed.
+- 2026-10-20 02:47 +06 | film visual QA | FFmpeg 16-point contact sheet (one sample every 18 seconds) -> PASS by visual inspection; all sampled frames are light-theme, readable, and free of blank/error states. Public-chain proof is visibly separated from controlled local and simulated views.
+- 2026-10-20 02:48 +06 | film language QA | case-insensitive scan of final narration, burned captions, sidecar captions, and film manifest for competition name/details, contest, judge, prize, deadline, and submission terms -> PASS; no matches.
+- 2026-10-20 01:58 +06 | pre-film evidence QA | `python scripts/qa_submission.py` -> `SUBMISSION QA PASSED`; all four public receipts successful and decoded event requirements satisfied.
+- 2026-10-20 02:03 +06 | pre-film contracts | `cd contracts; forge test` -> 17 suites, 101/101 tests passed; 256 invariant runs / 25,600 calls / 0 handler reverts.
+- 2026-10-20 02:06 +06 | pre-film workspace | `pnpm -r test` -> engine 159/159 passed; generated experiment-summary changes produced by the test were restored to the pre-test repository state.
+- 2026-10-20 02:09 +06 | pre-film web build | `pnpm --filter web build` -> Next.js 15.5.28 production build completed; all 20 routes generated and no type/build error reported.
+
 - 2026-10-19 10:25 UTC | final submission folder | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-submission.ps1` -> PASS after canonical submission QA; four packaged PDFs byte-for-byte matched their canonical sources; SHA-256 list generated; official registration workbook copied to `submission/private/` and confirmed ignored by Git.
 - 2026-10-19 10:19 UTC | full light-capture rebuild | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-competition-package.ps1 -CaptureLightScreens -WebBaseUrl http://127.0.0.1:3001` -> PASS; all six routes captured with asserted `data-theme=light`, all canonical artifacts rebuilt, and subsequent submission QA passed. The custom base URL is now honored by the capture tool.
 - 2026-10-19 10:13 UTC | competition package build | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-competition-package.ps1` -> PASS; generated 15-page technical dossier, 12-page security self-assessment, 8-page evidence dossier, 13-slide PDF and editable 13-slide PPTX; emitted SHA-256 artifact manifest.

@@ -11,6 +11,14 @@ coverage/
 dist/
 *.log
 *.tsbuildinfo
+__pycache__/
+*.py[cod]
+
+# Product-film render intermediates (final master and sidecars stay trackable)
+artifacts/video/audio/
+artifacts/video/build/
+artifacts/video/captures/
+artifacts/video/review/
 
 # Foundry Outputs
 contracts/out/

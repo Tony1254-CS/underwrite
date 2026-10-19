@@ -1,5 +1,16 @@
 Progress source of truth: PHASES.md
 
+## Handoff, 2026-10-20, Codex: UNDERWRITE product film draft
+State: the 4:40.53 light-theme product film is rendered at `artifacts/video/UNDERWRITE_PRODUCT_FILM.mp4` (1920x1080, 30 fps, H.264/AAC). It uses the `en-US-AvaMultilingualNeural` female voice, burned captions plus a standalone SRT, original restrained ambient sound design, actual product interaction footage, and a real Base Sepolia transaction view. Competition names, rules, deadlines, and submission language do not appear in the film.
+
+Evidence discipline: controlled local product flows, simulated attacks, the self-authored evaluation, and the real Base Sepolia Tier-2 transaction are labeled separately in-frame. The public-chain claim is limited to controlled MockUSDC testnet activity. Execution is described only with the successful receipt and matching decoded `PaymentExecuted` event. The closing frame says security self-assessment, not independent audit.
+
+Verification: full master decode completed without errors; duration 280.53 seconds; sampled 16-point visual contact sheet passed; measured integrated loudness -16.29 LUFS and true peak -1.73 dBTP; forbidden competition-reference scan of narration, burned captions, sidecar captions, and film manifest returned no matches. `python scripts/qa_submission.py` passed; `forge test` passed 101/101 with 25,600 invariant calls and 0 handler reverts; `pnpm -r test` passed 159/159; `pnpm --filter web build` completed all 20 routes.
+
+Human gate: P9-T07 remains open. A human must watch the final MP4 with sound, approve voice pronunciation/pacing and visual taste, then upload or publish it. Automated generation is not treated as human review. Render intermediates are gitignored; source, final master, captions, manifest, and production documentation are retained.
+
+---
+
 ## Handoff, 2026-10-19, Codex: professional competition submission package
 State: rebuilt the competition-facing documentation around verified evidence and the official Appendix 2 rubric. Canonical deliverables are `docs/deck/UNDERWRITE_PITCH_DECK.pdf` (13 slides plus editable PPTX), `docs/UNDERWRITE_TECHNICAL_DOSSIER.pdf` (15 pages), `docs/UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf` (12 pages), and `docs/ONCHAIN_EVIDENCE.pdf` (8 pages). The submission master, official-rules brief, claim ledger, speaker notes, light-only demo/recording guides, machine-readable transaction manifest, artifact hashes, build script, and automated submission QA are complete.
 
