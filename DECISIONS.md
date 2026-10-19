@@ -457,6 +457,13 @@ Authority order: `plan.md` > `PHASES.md` > `DECISIONS.md`.
 - **Consequences**: The landing and the workspace look different until the rest of the redesign is approved (a deliberate, temporary seam; "Open the demo" crosses it with a full page load). Supersedes the landing part of DEC-029 and, for `/` only, the look from DEC-025. The `ui-redesign.md` "Public Record" direction is retired for the landing page. Fonts under `public/fonts` are served app-wide (harmless static files). One new dependency (`gsap`).
 - **Status**: PROVISIONAL (awaiting owner approval; branch `feat/ui-landing-redesign`, not committed).
 
+## DEC-034 — Honest testnet evidence uses T2 only
+
+- **Context**: The current gamma exam report grants `t1MaxPerTx = 0` and `t1MaxPerWindow = 0`, while allowing T2. The competition requires real on-chain hashes, and the repository previously contained fabricated receipt fixtures.
+- **Decision**: Deploy the real contracts on Base Sepolia and demonstrate only the authority actually earned: a CONTROLLED 35 MockUSDC T2 request followed by execution after the 300-second challenge period. Never manufacture T1 authority or claim a transaction without both a successful receipt and its matching decoded event.
+- **Consequences**: The four submitted rows are real and reproducible, but P6-T06's requested three T1 payments remain incomplete. The fabricated fixtures are removed.
+- **Status**: PROVISIONAL pending owner acceptance of the reduced but truthful testnet scope.
+
 ## DEC-033 — Workspace redesign: every other page moves to the landing page's identity
 
 - **Context**: Owner approved the landing page (DEC-032) and asked for every remaining page to follow it, with three conditions: no existing feature may change, work quickly, and a proper agentic feel with real animation. DEC-032 left a deliberate seam (landing in the new look, workspace in the DEC-025 glass look).

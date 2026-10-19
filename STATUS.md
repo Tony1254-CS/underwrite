@@ -1,5 +1,18 @@
 Progress source of truth: PHASES.md
 
+## Handoff, 2026-10-19, Codex: real Base Sepolia deployment and Topic F evidence
+State: MockUSDC, BondPool, and UnderwriteVault are deployed on Base Sepolia from locally generated throwaway keys. Deployment receipts/bytecode were RPC-verified. MockUSDC and BondPool source are verified on Blockscout; UnderwriteVault is an exact-match Sourcify verification (Blockscout submission is temporarily rate-limited). Six recipients are active, the vault/bond are funded with controlled MockUSDC, and an honest gamma T2 qualification produced one controlled 35 USDC `PaymentExecuted` event.
+
+Canonical evidence: `evidence/onchain/EXECUTION_EVIDENCE.md` contains exactly four real rows: ExamCommitted, QualificationActivated, PaymentRequested, PaymentExecuted. Final payment tx: `0xf19d5e201545fbe71c83c0dbd62af34a398a0414979bdaccd30fe2de827ad712`. Fifteen prior fabricated receipt fixtures were removed. No real money was used; MockUSDC and all activity are CONTROLLED Base Sepolia testnet evidence.
+
+Tests run this session: `forge test` 101/101 passed; targeted `forge fmt --check script/Deploy.s.sol` passed; engine TypeScript check passed; engine tests 159/159 passed before the final evidence broadcast. Final regression rerun is recorded in TESTING.md.
+
+Open items: P6-T03 remains partial until UnderwriteVault also appears verified on Blockscout (Sourcify exact match already passes). P6-T05 is partial because the old `uw verify <report-directory-qualId>` command does not map the new testnet commit-derived qualId; do not claim a verify PASS. P6-T06 still lacks the full specified 3 T1 + 1 T2 + 1 flag sequence; the honest gamma report grants zero T1, so only the T2 path was executed. P6-T07–T11 remain open. Do not fabricate T1 authority or hashes to close them.
+
+Public testnet accounts: DEPLOYER `0x2Fb0E0568c5AD0BD5C84dAE0b5b58a441B1CAec2`; OWNER `0x04Be79C38792ccC922bA9CC757D61B1801e9e373`; EXAMINER `0xe25de67dEc39AB5D7f894D963FF73B48e664F6DB`; UNDERWRITER `0x2F43D120dE22A21ee73d7Be073237B263461eEBa`; ADJUDICATOR `0x14966B9bCe2f636aB1d8ef19656Bed914829ddf5`; GUARDIAN `0x3aB902c1710B9B59c8eb9D0ca4593207E65fF425`; AGENT `0x0Fb2a52212Dc88CE6c29f1Ee91042ACB3eaE0B16`.
+
+---
+
 ## Handoff, 2026-10-17, Claude (Sonnet 5.5): workspace redesign (UI track, follows the landing page below)
 Branch: `feat/ui-landing-redesign`. NOTHING from this step is committed or pushed.
 State: all 16 workspace routes plus the shared shell are redesigned in the landing page's identity (DEC-033, PROVISIONAL, awaiting owner approval). Page logic is unchanged apart from the items listed in DEC-033 (claims filter fix, experiment page now reads the recorded summary, traces "Not recorded", two confirm dialogs, two link targets). API routes, `lib/`, `context/`, `engine/`, `contracts/` untouched. `web/src/app/globals.css` deleted (unreferenced).

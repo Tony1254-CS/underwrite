@@ -72,7 +72,7 @@ Evaluated across 330 invoices (300 Generator B + 30 Blind Red-Team Set):
 | **Presentation Deck** | `docs/deck/deck.md` (`.pdf`, `.html`) | 10-minute Marp slide deck with data source verification checklist |
 | **Demo Script & Rehearsal** | `docs/DEMO_SCRIPT.md` | Scene-by-scene walkthrough for Scenes 1–6 (Earn, Work, Attack, Residual, Consequence, Learn) |
 | **Empirical Experiment Report** | `docs/EXPERIMENT.md` | Pre-registered protocol, empirical 3x3 matrix, H1–H4 hypothesis verdicts |
-| **On-Chain Evidence** | `evidence/onchain/EXECUTION_EVIDENCE.md` | Testnet and Anvil execution receipts, decoded events, transaction hashes |
+| **On-Chain Evidence** | `evidence/onchain/EXECUTION_EVIDENCE.md` | Four real Base Sepolia receipts with decoded matching events and transaction hashes |
 | **Qualification Evidence** | `evidence/exams/` | Machine-readable `report.json`, EIP-712 attestations, and traces for $\alpha, \beta, \gamma$ |
 
 ---
@@ -95,7 +95,7 @@ cd contracts && forge test
 ### Engine & TypeScript Verification
 ```bash
 pnpm -r test
-# 157 unit and integration tests passed across 25 files
+# 159 unit and integration tests passed across 26 files
 ```
 
 ### Cryptographic Qualification Verification

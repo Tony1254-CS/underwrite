@@ -19,6 +19,14 @@ None.
 
 ## Verification Log
 
+- 2026-10-19 08:52 UTC | uncommitted testnet-evidence work | `forge test` -> 17 suites, 101/101 tests passed; invariant suite 256 runs / 25,600 calls / 0 handler reverts. One pre-existing unused-local compiler warning in `Vault.Qualification.t.sol`.
+- 2026-10-19 08:52 UTC | uncommitted testnet-evidence work | `forge fmt --check src script test` -> exit 0; `pnpm --filter engine exec tsc --noEmit` -> exit 0; `pnpm --filter engine test` -> 26 files, 159/159 tests passed.
+- 2026-10-19 08:52 UTC | Base Sepolia chain 84532 | deployments RPC-verified: MockUSDC `0x2e71d44170F788E892b4283c0a179bae8B8936F3`, BondPool `0xB97Be73323731209e183Bc02a0F5d23e36Cc5902`, UnderwriteVault `0x8a1B3BCA25B47A0f375a649b12494a1E011eD1B0`; vault `VERSION()` = `1.0.0`; source verification: MockUSDC/BondPool Blockscout full, UnderwriteVault Sourcify exact match.
+- 2026-10-19 08:52 UTC | Base Sepolia controlled evidence | successful matching events: ExamCommitted `0x3fd70ecf8a582df153abf99eaf900c2dad569cb3c813617329155640b6b7f58f`; QualificationActivated `0x9e3bef8566dd60885a2b63c39a2c96f8d05879a101bf24ef3963267b1eef9d8c`; PaymentRequested `0x20a245ff8141a3be094dce092db2da67583f529b1eae713b0898bb0a1b3594f6`; PaymentExecuted `0xf19d5e201545fbe71c83c0dbd62af34a398a0414979bdaccd30fe2de827ad712`. Amount: 35,000,000 MockUSDC base units; tier 2; CONTROLLED testnet.
+- 2026-10-19 08:52 UTC | evidence integrity | `node scripts/build-evidence.mjs` -> 4 RPC-verified rows; receipt directory count = 4; `.env` confirmed ignored by `.gitignore`. Fifteen fabricated legacy fixtures deleted.
+- 2026-10-19 08:48 UTC | demo-state reads | vault token balance 4,965,000,000; BondPool token balance 2,000,000,000; six registered recipients returned active with cooldown timestamps elapsed.
+- 2026-10-19 08:49 UTC | known incomplete gate | `pnpm uw verify 0x08b4...79c0` -> FAIL because that historical report-directory qualId is not the new commit-derived on-chain qualId. This is recorded as an open P6-T05 mapping issue; no PASS is claimed.
+
 - 2026-10-16 12:25 UTC | commit: a9f6329 | `git rev-parse --is-inside-work-tree; pnpm -v; forge --version; anvil --version; cast --version` -> true, 12.8.1, forge 1.8.5, anvil 1.8.5, cast 1.8.5. All required tools detected and verified.
 - 2026-10-16 12:28 UTC | commit: 293cd04 | `grep -c '^## DEC-' DECISIONS.md; test -f STATUS.md && test -f DECISIONS.md && test -f TESTING.md && test -f CHANGELOG.md` -> 19, all four files exist.
 - 2026-10-16 12:30 UTC | commit: d300685 | `sed -n '875,888p' plan.md | diff -u - <(head -n 13 AGENTS.md); test -f AGENTS.md && test -f CLAUDE.md && test -f GEMINI.md` -> 12 rules match line for line; all 3 files exist.

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Base Sepolia evidence
+- Base Sepolia deployment and controlled Topic F evidence: RPC-verified MockUSDC, BondPool, and UnderwriteVault deployments; verified source metadata; honest gamma T2 qualification; `PaymentRequested` and matching `PaymentExecuted` receipts with explorer links.
+- Secure testnet wallet bootstrap, role funding, deployment recorder, and reproducible evidence runner. Secrets remain only in the gitignored local `.env`.
+- `uw evidence build` now generates the execution table only from non-zero RPC-verified receipts with matching decoded events.
+
+### Removed
+- Fifteen obsolete fabricated Base Sepolia receipt fixtures; the submission evidence now contains only four real, RPC-verified records.
+
+### Security
+- Live deployment refuses Foundry's public development keys and requires explicit per-role keys.
+- Evidence generation refuses unverified Base Sepolia rows and never marks a payment executed without a success receipt plus matching `PaymentExecuted` event.
+
 ### Added
 - `web/`: Workspace redesign in the landing page's identity (DEC-033, PROVISIONAL, branch `feat/ui-landing-redesign`). Every route outside `/` (dashboard, invoice studio, attack lab, policy card, traces, claims, evidence, verification audit, experiment, five portals, sign-in and register, auth modal, portal guard) was re-rendered; state, effects, fetch calls, intervals and handlers were left as they were.
   - `web/src/app/(app)/app.css` (new design system for the workspace; light, dark and auto) and `web/src/app/(app)/icon.svg`.
@@ -188,4 +200,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - `web/src/app/globals.css` (old glass stylesheet; nothing imports it any more).
-

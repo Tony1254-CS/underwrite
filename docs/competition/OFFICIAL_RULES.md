@@ -40,10 +40,12 @@
 ---
 
 ## 4. Mandatory Deliverables Checklist
-- [x] Public GitHub repository with README, setup guide, and tests.
+- [ ] Public GitHub repository with README, setup guide, and tests (anonymous visibility still needs a human check).
 - [x] Real on-chain execution evidence (`evidence/onchain/EXECUTION_EVIDENCE.md`).
 - [x] Technical specification document (`docs/TECHNICAL.md`, `.pdf`, `.html`).
 - [x] Security self-assessment report (`docs/SECURITY_SELF_ASSESSMENT.md`, `.pdf`, `.html`).
 - [x] Presentation deck ($\le 10$ minutes) (`docs/deck/deck.md`, `.pdf`, `.html`).
 - [ ] Self-contained demo video (MP4, with subtitles) recorded by team human.
 - [x] Pre-registration and empirical experiment results (`docs/EXPERIMENT.md`).
+
+See `docs/competition/SUBMISSION_CHECKLIST.md` for the email address, required identity documents, exact subject format, and final human checks.

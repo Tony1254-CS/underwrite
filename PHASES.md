@@ -660,21 +660,26 @@ Read first: plan §10, §9.12, §12.2 P6, §14; PHASES PV-02, PV-03, PV-18, PV-1
   Do: verify balances with `cast balance` for all roles and that the RPC answers `eth_chainId` = 84532. If funds are short, tell the human exactly which address needs how much.
   Done when: balances and chain id recorded in TESTING.md.
   Evidence: 2026-10-16 17:25 UTC · Tony1254-CS · cast chain-id --rpc-url https://sepolia.base.org confirms 84532; cast balance checked for deployer (0 wei). Deployer needs Base Sepolia ETH faucet to proceed with P6-T02 on-chain broadcast; recorded in STATUS.md and TESTING.md → PASS
-- [ ] P6-T02 | A | needs: P6-T01 | Deploy script and deployment record
+- [x] P6-T02 | A | needs: P6-T01 | Deploy script and deployment record
   Do: extend `Deploy.s.sol` for Base Sepolia: deploy MockUSDC, BondPool, Vault (`bondPool.setVault`), apply PV-01…PV-06; write `contracts/deployments/84532.json` (addresses, deploy tx hashes, block numbers, solc version, constructor args, `VERSION()`). `scripts/deploy-testnet.sh` wraps it.
   Done when: `bash scripts/deploy-testnet.sh` succeeds; the JSON file exists; `cast call <vault> "VERSION()(string)"` returns `1.0.0`.
+  Evidence: 2026-10-19 08:31 UTC · Codex · Base Sepolia deployment broadcast succeeded; three creation receipts and bytecode RPC-verified; deployment JSON contains real tx hashes and blocks; vault `VERSION()` returned `1.0.0` → PASS
 - [ ] P6-T03 | A | needs: P6-T02 | Verify contract sources on the explorer
   Do: `forge verify-contract` for all three contracts (Basescan with `BASESCAN_API_KEY`, or Blockscout without a key). Record URLs in `deployments/84532.json`.
   Done when: each contract page shows verified source.
-- [ ] P6-T04 | X | needs: P6-T02 | Demo state on testnet
+  Note: 2026-10-19 08:47 UTC · MockUSDC and BondPool are fully verified on Blockscout; UnderwriteVault is Sourcify `exact_match`, but Blockscout submission is rate-limited. Source URLs are recorded in deployment JSON. Keep open until the Vault appears verified on Blockscout.
+- [x] P6-T04 | X | needs: P6-T02 | Demo state on testnet
   Do: mint MockUSDC to the vault (5,000) and underwriter (2,000), underwriter `deposit`s the bond, register the 6 vendors, wait out the cooldown, `uw keys new` for α, β, γ.
   Done when: `cast` reads show vault balance, bond free balance, six active recipients past cooldown.
+  Evidence: 2026-10-19 08:48 UTC · Codex · RPC reads: vault 4,965,000,000 base units after controlled 35 USDC payment; BondPool 2,000,000,000; six recipients active with cooldown timestamps in the past → PASS
 - [ ] P6-T05 | B | needs: P6-T04,QG-5,QG-4 | Scene 1 — Earn
   Do: commit exam on both chains, run exams for α, β, γ on Anvil, compile, attest; owner activates γ (and α/β if they earn authority) on Base Sepolia; `uw verify` PASS. α must show a small envelope or T0. Save reports under `evidence/exams/`.
   Done when: activation tx hash(es) recorded as raw receipts under `evidence/onchain/receipts/`; verify PASS output saved.
+  Note: 2026-10-19 08:41 UTC · Real gamma ExamCommitted and QualificationActivated receipts are saved with matching events. `uw verify` still fails because the historical report-directory qualId does not map to the new commit-derived testnet qualId; no PASS claimed.
 - [ ] P6-T06 | B | needs: P6-T05 | Scene 2 — Work
   Do: γ processes `fixtures/basic` on Base Sepolia: 3 T1 payments, 1 T2 request, 1 flag. Label the agent mode honestly (LLM or REPLAY).
   Done when: receipts saved; every EXECUTED row has a matching event.
+  Note: 2026-10-19 08:46 UTC · One honest CONTROLLED T2 request/execution completed with matching `PaymentExecuted`. The current gamma report grants zero T1, so the required three T1 rows and one flag remain incomplete (DEC-034).
 - [ ] P6-T07 | B | needs: P6-T06 | Scene 3 — Attack
   Do: (a) injected pay-new-wallet invoice ⇒ stopped before any tx (record "not submitted" and the stopping layer); (b) supplier bank-detail change ⇒ owner registry update ⇒ T1 attempt reverts `RecipientCoolingDown`, T2 pending ⇒ owner `veto` tx; (c) compromised-agent raw `pay` to an unregistered address ⇒ `RecipientNotAllowed`; replayed invoice key ⇒ `DuplicateInvoice` (send reverting txs with an explicit gas limit, PV-19).
   Done when: each revert has a mined tx hash with the decoded error saved in receipts.
