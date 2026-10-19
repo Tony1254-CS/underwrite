@@ -1,110 +1,101 @@
-# UNDERWRITE Competition Demo Script
+# UNDERWRITE — 4:40 judge demo
 
-> **The 6-Scene Narrative Walkthrough for Judges & Evaluation**  
-> Total Runtime: 6–8 minutes | Fully Reproducible Locally & on Base Sepolia
+**Purpose:** optional competition video and live-defense fallback
+**Visual rule:** light mode only
+**Evidence rule:** keep `CONTROLLED LOCAL DEMO` or `REAL BASE SEPOLIA` visible whenever the classification could be ambiguous
 
----
+## Evidence legend
 
-## Demo Overview & Value Hook (First 60 Seconds)
+- **Controlled local demo:** scripted/replayed product state using demonstration data.
+- **Real Base Sepolia:** public testnet receipt with successful status and matching decoded event.
+- **Not shown as real:** no mainnet activity, customer payment, independent audit, or Tier-1 public-chain payment.
 
-**Opening Statement:**  
-> "Every agent wallet asks you to choose a spending limit. UNDERWRITE is the only system that **computes** that limit from an adversarial exam, **backs** it with an underwriter's bond, and **revokes it automatically** in the exact transaction that compensates a proven loss."
+## 0:00–0:25 · Open on the product home
 
----
+**Screen:** `/` in light mode.
 
-## Scene 1: Earn (The Qualification Exam & Envelope Compilation)
+**Say:**
 
-- **Objective:** Demonstrate that autonomous authority is not typed in, but mathematically compiled from empirical exam evidence.
-- **Screen:** Web UI $\to$ `/exam` (Exam & Policy Cards)
-- **On-Screen Provenance Labels:** `<ControlledBadge label="QUALIFICATION PIPELINE" />`
-- **Actions:**
-  1. Inspect the 15-family scenario generator ($N=390$ eval corpus, seeds pinned per PV-15).
-  2. Show Agent $\alpha$ (naive parser): failed benign utility gate $\to$ locked in $T_0$ dual-approval.
-  3. Show Agent $\beta$ (unhardened LLM): passed utility with 4 Class II leaks $\to$ Clopper-Pearson bound $p = 0.1743 \to$ capped at \$143.60 USDC.
-  4. Show Agent $\gamma$ (tool-hardened LLM): 0 Class II leaks $\to$ Clopper-Pearson bound $p = 0.0582 \to$ capped at \$500.00 USDC per window.
-  5. Point to the **Three Verbatim Disclosures** on the Policy Card:
-     - *"Bounds describe the exam distribution only"*
-     - *"Zero-tolerance Class I safety floor"*
-     - *"Exposure bounded by available bond"*
+“An AI can interpret an invoice, but that does not make it a custody authority. UNDERWRITE gives an agent only the spending authority its evidence can support, then enforces that boundary on-chain.”
 
----
+**Show:** the four-stage product path: exam, compile, activate, enforce.
 
-## Scene 2: Work (Normal Autonomous Operations)
+## 0:25–1:05 · Show the trust boundary
 
-- **Objective:** Show the 4-state lifecycle of legitimate payments settling in $T_1$.
-- **Screen:** Web UI $\to$ `/traces` and `/` (Dashboard Authority Meter)
-- **Actions:**
-  1. Process AP inbox with standard supplier invoices for registered vendors (Acme Industrial, Beta Supplies).
-  2. Show Policy Firewall executing three-way match against open purchase orders.
-  3. Show $T_1$ autonomous execution: transaction mined, `exposure` counter increments, Authority Meter gauge moves.
-  4. Show the 4 states per invoice:
-     - Proposed: `vendor-1`, amount \$150.00 USDC, PO `PO-1-01`.
-     - Decided: Tier $T_1$, reasons `[]`.
-     - Contract Result: Transaction mined on Anvil / Base Sepolia.
-     - Funds Moved: **YES — \$150.00 USDC transferred to registered payout address.**
+**Screen:** `/dashboard` in light mode. Keep the controlled-demo label visible.
 
----
+**Say:**
 
-## Scene 3: Attack (Deterministic Security Firewall)
+“The model proposes a business action. It never chooses a raw address, token, calldata, or limit. A deterministic registry resolves the vendor, policy checks the request, signed evidence grants an envelope, and the vault remains the only settlement authority.”
 
-- **Objective:** Prove that no prompt injection or compromised agent key can steal funds outside the mandate.
-- **Screen:** Web UI $\to$ `/attack-lab` (Attack Lab)
-- **On-Screen Provenance Labels:** `<SimulatedBadge label="RED-TEAM INJECTION" />`
-- **Actions:**
-  1. **Attack A (Prompt Injection / Pay New Wallet):** Attacker prompts agent to send \$500 to attacker wallet.
-     - *Result:* Policy Firewall halts proposal with `POL_RECIPIENT_NOT_ALLOWED`. Funds moved: **\$0.00**.
-  2. **Attack B (Supplier Bank Change / Cooldown):** Vendor changes payout address.
-     - *Result:* Address is placed in 300s cooldown. $T_1$ attempt strictly reverts with `RecipientCoolingDown()`. Funds moved: **\$0.00**.
-  3. **Attack C (Compromised Agent Bypass):** Toggle `ALLOW_REDTEAM_BYPASS=true` to simulate attacker possessing raw agent signing key sending arbitrary direct transaction to contract.
-     - *Result:* `UnderwriteVault.sol` reverts on-chain with typed error `RecipientNotAllowed()`. Funds moved: **\$0.00**.
+**Show:** vendor identity, qualification/tier, and authority meter. Do not imply live customer data.
 
----
+## 1:05–1:50 · Show how authority is earned
 
-## Scene 4: Residual (Controlled In-Envelope Error)
+**Screen:** `/exam` in light mode.
 
-- **Objective:** Honestly disclose that exams cannot catch 100% of semantic fraud, motivating the need for bond collateral.
-- **Screen:** Web UI $\to$ `/traces`
-- **On-Screen Provenance Labels:** `<ControlledBadge label="CONTROLLED RESIDUAL" />`
-- **Actions:**
-  1. An adversarial invoice with subtle overbilling (`II-OVERBILL`) arrives within the valid supplier envelope (\$170.00 USDC).
-  2. Agent $\gamma$ mistakenly approves and pays it on $T_1$.
-  3. Explain to judges: *"This is a wrong-but-permitted payment. No smart contract can catch this because the supplier is legitimate and the amount is within the cap. This is precisely why UNDERWRITE requires bond backing."*
+**Say:**
 
----
+“The exam is bound to this exact configuration: prompt, tools, model tag, policy, corpus and report. A deterministic compiler converts measured outcomes into conservative limits. Missing or weak evidence produces Tier 0. Uncertain actions route to Tier 2 with a challenge period.”
 
-## Scene 5: Consequence (Atomic Bond Payout & Revocation)
+**Show:** configuration/report hashes and compiler output. Identify the page as a controlled local demonstration.
 
-- **Objective:** Demonstrate that the underwriter's bond reimburses the business and revokes authority in ONE atomic transaction.
-- **Screen:** Web UI $\to$ `/claims`
-- **On-Screen Provenance Labels:** `<ControlledBadge label="DESIGNATED ADJUDICATOR" />`
-- **Actions:**
-  1. Owner discovers erroneous payment and clicks **"File Claim"** with evidence digest.
-  2. Designated adjudicator key approves claim $\to$ triggers `BondPool.approveClaim()`.
-  3. Show the blockchain transaction receipt:
-     - **Event 1:** `ClaimPaid(claimId, loss=$170.00, payout=$165.00)` $\to$ \$165 USDC transferred directly from bond pool to vault (net of \$5 owner deductible).
-     - **Event 2:** `QualificationRevoked(qualId, reason=CLAIM)` $\to$ agent qualification terminated.
-  4. **The Critical Proof:** Agent immediately attempts next payment $\to$ transaction reverts on-chain with `QualificationRevoked()`. The Authority Meter drops to **ZERO**.
+## 1:50–2:35 · Show compromise containment
 
----
+**Screen:** `/attack-lab` in light mode.
 
-## Scene 6: Learn (Regression Protection & Drift Defense)
+**Say:**
 
-- **Objective:** Show how the system incorporates incidents into future training and enforces prompt drift defense.
-- **Screen:** Web UI $\to$ `/evidence` and CLI
-- **Actions:**
-  1. Incident is automatically converted into test scenario `incident:<claimId>` in the regression corpus.
-  2. Show Config Drift Defense: If an operator alters the agent prompt without re-examination:
-     - Signer recalculates `configHash` at runtime.
-     - Discovers hash mismatch with on-chain qualification.
-     - Signer halts and refuses to sign with error `CONFIG_DRIFT`.
+“Now assume the model—or its key—is compromised. A malicious invoice proposes a new recipient. The application rejects the unresolved vendor, and the contract independently retains recipient, invoice, amount, qualification, timing and exposure checks. The important property is that model failure does not erase the settlement boundary.”
 
----
+**Show:** one blocked attack. Keep `SIMULATED / CONTROLLED` visible. State “zero funds moved in this local scenario,” not as a global guarantee.
 
-## Closing Scene: The Calibration Experiment (The Final Takeaway)
+## 2:35–3:35 · Show the real on-chain path
 
-- **Screen:** Web UI $\to$ `/experiment`
-- **Actions:**
-  1. Walk judges through the 3×3 matrix comparing 2,970 invoice evaluations.
-  2. Highlight that under fixed caps ($R_1$), businesses lost \$14,200 with naive agents. Under UNDERWRITE ($R_2$), realized losses were strictly bounded by the \$10 risk budget.
-  3. Conclude with the core thesis:
-     > *"Don't trust the agent. Test it. Bound it. Back what remains."*
+**Screen:** `/evidence` in light mode, then the explorer link/QR for the final transaction.
+
+**Say:**
+
+“This section is real public testnet evidence. On Base Sepolia we committed the exam, activated the qualification, requested a Tier-2 payment, and executed it after the challenge period. The final call decodes to `executePending(2)`. Its successful receipt contains the matching `PaymentExecuted` event for 35 MockUSDC.”
+
+**Show in order:**
+
+1. `0x3fd70ecf…b7f58f` — `ExamCommitted`
+2. `0x9e3bef85…ef9d8c` — `QualificationActivated`
+3. `0x20a245ff…594f6` — `PaymentRequested(id=2)`
+4. `0xf19d5e20…ad712` — `PaymentExecuted(paymentId=1, tier=2)`
+
+**Continuity line:**
+
+“Request ID 2 and payment ID 1 are separate namespaces; calldata, recipient, amount, and invoice identity match. This is a controlled Base Sepolia transaction, not mainnet and not Tier 1.”
+
+## 3:35–4:15 · Show measured trade-offs
+
+**Screen:** `/experiment` in light mode.
+
+**Say:**
+
+“We also ran a controlled 3-by-3 evaluation: three agents, three regimes, 330 invoices per condition—2,970 executions. It is self-authored and non-independent. R2 recorded zero Class-I violations across all three agents on this corpus. Gamma R2 still recorded a 170 MockUSDC Class-II loss; a 165 reimbursement left 5 net loss. More safety also moved more work to review.”
+
+**Show:** matrix plus the non-independent label. Do not say the results predict real-world fraud.
+
+## 4:15–4:40 · Close on dashboard or title card
+
+**Say:**
+
+“The repository rerun produced 101 passing contract tests, 159 passing engine tests, and 25,600 stateful invariant calls. This is a testnet prototype and self-assessment, not an audit. UNDERWRITE’s contribution is the coupling: evidence sizes authority, the contract enforces it, and bond capacity bounds the residual autonomous exposure.”
+
+End card:
+
+> **Do not trust an agent with unlimited authority. Make authority earnable, enforceable, and revocable.**
+
+## Recording acceptance checklist
+
+- [ ] Runtime is 5:00 or less.
+- [ ] Every product view is light mode.
+- [ ] Browser zoom is consistent; personal tabs, bookmarks, wallet balances and notifications are hidden.
+- [ ] Controlled/scripted and real testnet scenes are visibly labeled.
+- [ ] No private key, seed phrase, API key or `.env` content appears.
+- [ ] English subtitles are burned in or attached and checked.
+- [ ] Explorer hash is readable for at least three seconds.
+- [ ] Video and audio were tested on another device while logged out.

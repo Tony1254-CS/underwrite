@@ -19,10 +19,11 @@
 
 - [ ] Public GitHub repository URL; verify it opens in an incognito/logged-out browser.
 - [x] README, setup/deployment instructions, and test cases in the repository.
-- [x] Technical document: `docs/TECHNICAL.pdf`.
-- [x] Security self-assessment: `docs/SECURITY_SELF_ASSESSMENT.pdf`.
-- [x] Presentation deck for a presentation of no more than 10 minutes: `docs/deck/deck.pdf`.
-- [x] Real Base Sepolia transaction evidence: `evidence/onchain/EXECUTION_EVIDENCE.md`.
+- [x] Technical document: `docs/UNDERWRITE_TECHNICAL_DOSSIER.pdf`.
+- [x] Security self-assessment: `docs/UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf`.
+- [x] Presentation deck for a presentation of no more than 10 minutes: `docs/deck/UNDERWRITE_PITCH_DECK.pdf`.
+- [x] Real Base Sepolia transaction evidence dossier: `docs/ONCHAIN_EVIDENCE.pdf`.
+- [x] Machine-readable transaction manifest: `evidence/onchain/EVIDENCE_MANIFEST.json`.
 - [x] Deployment addresses and creation hashes: `contracts/deployments/84532.json`.
 - [ ] Optional demo video of no more than 5 minutes: choose one final MP4, review it end-to-end, add English subtitles, and confirm every simulated/controlled scene is labeled.
 
@@ -40,6 +41,7 @@ The payment is a **CONTROLLED Base Sepolia testnet transaction using MockUSDC**,
 - [ ] Replace any placeholder team/contact information in `docs/competition/SUBMISSION_DRAFT.md` and the registration form.
 - [ ] Confirm the repository is public and all submission links open while logged out.
 - [ ] Open every PDF and check fonts, page order, links, and filenames.
+- [ ] Confirm every product screenshot in submitted material uses light mode.
 - [ ] Rehearse the deck to stay within 10 minutes.
 - [ ] If sending a video, confirm it is at most 5 minutes and plays with audio/subtitles on another device.
 - [ ] Attach the registration form, passports, enrollment proofs, PDFs, and video as required; use a cloud link only if the attachment limit requires it, and test permissions while logged out.

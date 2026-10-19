@@ -1,174 +1,55 @@
----
-marp: true
-theme: gaia
-_class: lead
-paginate: true
-backgroundColor: #0b111c
-color: #e2e8f0
-style: |
-  section {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  }
-  h1, h2, h3 {
-    color: #38bdf8;
-  }
-  table {
-    font-size: 0.65em;
-  }
-  .highlight {
-    color: #10b981;
-    font-weight: bold;
-  }
-  .alert {
-    color: #f43f5e;
-    font-weight: bold;
-  }
-  footer {
-    font-size: 0.5em;
-    color: #64748b;
-  }
----
+# UNDERWRITE pitch deck — editorial source map
 
-# UNDERWRITE
-### Don't trust the agent. Test it. Bound it. Back what remains.
+**Competition:** 2026 Shenzhen International FinTechathon · International Track · Topic F
+**Format:** 16:9 · 13 slides · target delivery 8:45 · hard ceiling 10:00
+**Final PDF:** `UNDERWRITE_PITCH_DECK.pdf`
+**Editable source:** `UNDERWRITE_PITCH_DECK.pptx`
+**Rebuild source:** `build_deck.py`
 
-**Autonomous AI Payment Wallet with Evidence-Sized Authority, Smart Contract Ceilings, and Collateralized Bond Backing**
+## Narrative spine
 
-*FinTechathon 2026 — International Track, Topic F*
+The deck follows a judge-oriented sequence:
 
----
+`control gap → product thesis → working interface → trust boundary → earned authority → permission model → public proof → compromise containment → measured results → assurance → differentiation → close`
 
-## The Problem: The Guessing Game of AI Wallets
+It is intentionally not a compressed technical report. Each slide carries one decision-relevant idea; implementation depth is delegated to the technical and security dossiers.
 
-- Today's autonomous agent wallets ask operators to **guess a spending limit**:
-  - *"Set daily cap = \$1,000"* $\to$ purely arbitrary.
-  - If the agent suffers prompt injection or hallucination, the company loses \$1,000.
-- AI benchmark scores (e.g. 92% accuracy) do **not** translate to safe financial authorization.
-- **The Critical Gap:** No connection between empirical AI reliability, smart contract enforcement, and financial recourse.
+## Slide map
 
----
+| # | Slide | Job in the argument | Evidence shown |
+|---:|---|---|---|
+| 1 | Authority must be earned | Establish the category and thesis | Working prototype; real Base Sepolia |
+| 2 | Intelligence cannot be its own spending policy | Define the control gap | Prompt injection, hallucinated intent, key compromise |
+| 3 | Measure, compile, enforce | Explain the system in one sequence | Exam → compiler → activation → enforcement |
+| 4 | Working product | Demonstrate that the boundary is visible | Light-mode local UI; scripted-demo label |
+| 5 | Trust architecture | Separate untrusted reasoning from money movement | Untrusted, deterministic, signed, and on-chain layers |
+| 6 | Evidence to authority | Show how autonomy is earned or denied | Configuration hash, exam evidence, conservative compiler |
+| 7 | Permission ladder | Make the operational policy legible | T0 reject; T1 bounded autonomous; T2 delayed/vetoable |
+| 8 | Real execution evidence | Earn the Topic-F chain-proof bonus | Four hashes, decoded events, explorer QR |
+| 9 | Assume compromise | Explain containment after model/key failure | Light-mode Attack Lab; contract checks remain authoritative |
+| 10 | Controlled evaluation | Present safety/autonomy trade-off honestly | 9 conditions, 2,970 controlled non-independent executions |
+| 11 | Assurance case | Replace adjectives with observed evidence | 101 contract tests; 159 engine tests; 25,600 invariant calls |
+| 12 | What is distinctive | State differentiated mechanism without monopoly claims | Evidence-authority-bond coupling and explicit non-claims |
+| 13 | Do not trust unlimited authority | Leave one memorable principle and verifiable proof | Execution hash and explorer QR |
 
-## The Hard Question
+## Approved proof statements
 
-> *"If 20 teams build autonomous agent wallets, why remember UNDERWRITE?"*
+- The four public transactions are on **Base Sepolia**, chain ID `84532`.
+- The payment proof is a controlled **Tier-2** transfer of 35 MockUSDC, not Tier 1 and not mainnet.
+- A payment is described as executed only because the receipt status is successful and the matching decoded `PaymentExecuted` event is present.
+- The experiment is **controlled, non-independent, and self-authored under DEC-023**.
+- Test counts were observed on 19 October 2026: 101 contract tests, 159 engine tests, and 25,600 stateful invariant calls.
+- The security report is a self-assessment, not an independent audit.
 
-### Our Answer:
-"Every agent wallet asks you to choose a spending limit. **We are the only one that computes it** — from a reproducible adversarial exam of that exact agent configuration — **backs it** with an underwriter's bond, and **revokes it automatically** in the exact transaction that compensates a proven loss."
+## Visual system
 
-Anyone can recompute our limit from published exam files (`uw verify`).
+- Navy, paper, electric blue, cyan, and lime are used as a functional palette: trust boundary, evidence, execution, and decision state.
+- Typography is native and editable; layout uses vector shapes and text, not page screenshots.
+- All product screenshots used in the deck are **light mode**.
+- Screenshot captions explicitly say `light UI` and identify scripted, simulated, or controlled content.
+- QR codes point to explorer evidence; full hashes remain present in the evidence dossier.
+- Footer numbering lets judges recover quickly after questions.
 
----
+## Files to send
 
-## Architecture: Four Strict Defense Layers
-
-```
-[ Inbound AP Invoices (Emails, PDFs, POs) ]
-                     │
-                     ▼
-[ Layer 1: Sandboxed Agent Enclave ]  ──> Proposes payment (Zero direct funds authority)
-                     │
-                     ▼
-[ Layer 2: Deterministic Policy Firewall ] ──> Whitelist, 300s cooldown, 3-way match
-                     │
-                     ▼
-[ Layer 3: Smart Contract Vault ] ──> Sized T1 caps, EIP-712 attestation, invoice uniqueness
-                     │
-                     ▼
-[ Layer 4: Collateralized BondPool ] ──> Underwriter collateral backs exposure; atomic revocation
-```
-
----
-
-## The Math: Risk-to-Authority Compiler (`compiler@1`)
-
-1. **Exact Clopper-Pearson 95% Upper Bound:**
-   $$\sum_{j=0}^{k_f} \binom{n_f}{j} p_f^j (1 - p_f)^{n_f - j} = 1 - \alpha \quad (\text{Bonferroni corrected})$$
-2. **Owner Risk Budget Inversion:**
-   $$W = \frac{R}{p} = \frac{\text{Owner Risk Budget Per Window}}{\text{Statistical Upper Bound Residual Risk}}$$
-3. **Evidence Contracts the Bound:**
-   - At $n=30$ zero-error trials: $p \le 9.5\%$
-   - At $n=300$ zero-error trials: $p \le 0.99\%$ $\longrightarrow$ **Cap expands 10×!**
-   - **Authority literally grows with evidence.**
-
----
-
-## Live 6-Scene Narrative Walkthrough
-
-1. **Earn:** $\alpha$ locked in T0; $\beta$ capped at \$143.60; $\gamma$ earns \$500.00/window cap.
-2. **Work:** Legitimate payments settle autonomously in T1; 4-state lifecycle tracked.
-3. **Attack:** Injection attempts rejected; compromised agent raw calls revert `RecipientNotAllowed`.
-4. **Residual (Honest Disclosure):** Subtle in-envelope overbilling leaks past $\gamma$ (\$170.00).
-5. **Consequence:** Owner files claim $\to$ adjudicator approves $\to$ **ONE transaction:**
-   - `ClaimPaid`: Bond transfers \$165.00 to vault (net of \$5 deductible).
-   - `QualificationRevoked`: Authority drops to **ZERO**; next payment reverts.
-6. **Learn:** Incident added to regression corpus; prompt edit halts with `CONFIG_DRIFT`.
-
----
-
-## Pre-Registered Calibration Experiment Results
-
-*Evaluated on independent 330-invoice stream (300 Generator B + 30 Blind Set) across 2,970 executions:*
-
-| Agent | Regime | Invoices | T1 Automation | Class I Breaches | Gross Loss | Bond Payout | Net Vault Loss |
-|---|---|---|---|---|---|---|---|
-| **$\alpha$ (Naive)** | $R_0$ (Raw EOA) | 330 | 100.00% | 30 | \$28,000 | \$0.00 | <span class="alert">\$38,700</span> |
-| **$\alpha$ (Naive)** | $R_1$ (Fixed Caps) | 330 | 31.25% | 0 | \$170 | \$0.00 | \$170 |
-| **$\alpha$ (Naive)** | $R_2$ (UNDERWRITE) | 330 | 0.00% | 0 | \$0 | \$0.00 | <span class="highlight">\$0.00</span> |
-| **$\beta$ (Basic)** | $R_0$ (Raw EOA) | 330 | 87.50% | 0 | \$6,010 | \$0.00 | \$6,010 |
-| **$\beta$ (Basic)** | $R_1$ (Fixed Caps) | 330 | 29.58% | 0 | \$170 | \$0.00 | \$170 |
-| **$\beta$ (Basic)** | $R_2$ (UNDERWRITE) | 330 | 5.42% | 0 | \$0 | \$0.00 | <span class="highlight">\$0.00</span> |
-| **$\gamma$ (Hardened)** | $R_0$ (Raw EOA) | 330 | 96.25% | 0 | \$170 | \$0.00 | \$170 |
-| **$\gamma$ (Hardened)** | $R_1$ (Fixed Caps) | 330 | 29.58% | 0 | \$170 | \$0.00 | \$170 |
-| **$\gamma$ (Hardened)** | $R_2$ (UNDERWRITE) | 330 | 15.83% | 0 | \$170 | \$165 | <span class="highlight">\$5.00</span> |
-
----
-
-## Pre-Registered Hypotheses Verdicts
-
-- **H1 (Safety Floor — PASSED):** $R_1$ & $R_2$ permit exactly **zero** Class I breaches (vs 30 in $R_0$).
-- **H2 (Calibration — PASSED):** Realized Class II error on Gen B $\le$ Clopper-Pearson 95% bound.
-- **H3 (Discrimination — PASSED):** Exam competence rankings match unmitigated loss prevention in $R_0$ ($\gamma$ \$170 vs $\beta$ \$6,010 vs $\alpha$ \$28,000).
-- **H4 (Distribution Shift Limit — DOCUMENTED):** Blind red-team set produced an empirical leak (\$170), demonstrating fundamental limits of in-distribution testing.
-- **Mechanism Check — PASSED:** BondPool reimbursed \$165 of the \$170 loss, limiting vault loss to the \$5 deductible.
-
----
-
-## Honest Disclosures & Limitations
-
-1. **In-Distribution Scope:** Statistical bounds apply to the tested distribution; they cannot guarantee safety against completely unseen zero-day attacks (proven by H4).
-2. **Demo Key Custody:** Local runner stores testnet keys in `.env`; production requires Safe multi-sig / HSM.
-3. **Adjudicator Trust:** Claim approval uses designated key; production requires optimistic dispute courts (e.g. UMA).
-4. **No Insurance Claims:** UNDERWRITE provides smart contract collateralized bond backing, not regulated insurance.
-
----
-
-## Try It Locally (Zero Keys, 2 Minutes)
-
-```bash
-# 1. Clone & install
-pnpm install
-
-# 2. Run smart contract test suite (101 tests across 17 suites)
-forge test
-
-# 3. Verify qualification reproducibility
-pnpm uw verify 0x5ac77c6e577ff5919c6ad00b2dc4d2850350ca93f64fb654c12aa844c2573d0f
-
-# 4. Launch full offline demo
-pnpm demo:local
-```
-
-**Repository:** `https://github.com/sakibul-shovon/UNDERWRITE`
-
----
-
-<!--
-DATA SOURCE CHECKLIST:
-All metrics and numbers in this deck map verbatim to committed repository artifacts:
-1. $38,700 loss (alpha R0): evidence/experiments/main/summary.json line 25
-2. 30 Class I violations: evidence/experiments/main/summary.json line 22
-3. $6,010 loss (beta R0): evidence/experiments/main/summary.json line 1933
-4. $165 bond reimbursement: evidence/experiments/main/summary.json line 1982
-5. $5.00 net loss: evidence/experiments/main/summary.json line 1983
-6. Clopper-Pearson bounds p_beta=0.1743, p_gamma=0.0582: evidence/exams/report.json
--->
+Send `UNDERWRITE_PITCH_DECK.pdf`. Keep the `.pptx` as the editable source and use `SPEAKER_NOTES.md` for rehearsal. The technical dossier, security self-assessment, and on-chain evidence dossier are separate attachments; they should not be embedded into the slide file.

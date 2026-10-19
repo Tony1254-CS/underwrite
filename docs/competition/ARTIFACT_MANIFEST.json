@@ -1,0 +1,32 @@
+﻿{
+    "schemaVersion":  "1.0",
+    "generatedAtUtc":  "2026-10-19T10:15:46Z",
+    "screenshotPolicy":  "All embedded product screenshots are light mode. Scripted, simulated and controlled views must be labeled.",
+    "artifacts":  [
+                      {
+                          "path":  "docs/UNDERWRITE_TECHNICAL_DOSSIER.pdf",
+                          "bytes":  343942,
+                          "sha256":  "b2373fbadd9e6986bb216bd2c3d7a7f865e0e0009a2ad22f7602ccf68b099b18"
+                      },
+                      {
+                          "path":  "docs/UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf",
+                          "bytes":  293153,
+                          "sha256":  "5a92c77c89d62634c9c079909df5bd31a02a4588cfed0010e5362da01c1e73bb"
+                      },
+                      {
+                          "path":  "docs/ONCHAIN_EVIDENCE.pdf",
+                          "bytes":  256745,
+                          "sha256":  "458a08999aa3b68cfe18ab9d7e05a26bb24ceba720685aee62d1d91377a2dd8b"
+                      },
+                      {
+                          "path":  "docs/deck/UNDERWRITE_PITCH_DECK.pdf",
+                          "bytes":  603378,
+                          "sha256":  "5ba8db93b0348a4105ce6208e4aa1e6f782e8724ce4e1953c5afab5cefec849c"
+                      },
+                      {
+                          "path":  "docs/deck/UNDERWRITE_PITCH_DECK.pptx",
+                          "bytes":  572273,
+                          "sha256":  "48ddee6fe528a60aad9d5cb901be2ffb5924a91d506030919f3cf698c472114d"
+                      }
+                  ]
+}

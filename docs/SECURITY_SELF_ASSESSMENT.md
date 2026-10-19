@@ -1,72 +1,136 @@
-# UNDERWRITE Security Self-Assessment & Threat Model
+# UNDERWRITE — security self-assessment
 
-> **A Formal Threat Model, Invariant Verification Matrix, and Known Risk Catalog**  
-> FinTechathon 2026 — Topic F Security Reference
+**Version:** Competition release · 19 October 2026
+**Assessment type:** First-party design and implementation review
+**Canonical designed PDF:** `UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf`
+**Publication source:** `professional/security.html`
 
----
+## Assurance statement
 
-## 1. Threat Model & Adversarial Capabilities
+UNDERWRITE is a public-testnet prototype, not an audited production custody system. This self-assessment explains the security boundary, maps safety properties to implementation evidence, records observed tests, and lists residual risks and production gates. It does not claim formal verification, regulatory approval, or third-party assurance.
 
-UNDERWRITE models accounts-payable automation as a multi-adversary environment with distinct attacker profiles:
+## Scope
 
-| Adversary | Attacker Capability | System Barrier & Mitigation | Worst-Case Outcome By Design |
-|---|---|---|---|
-| **External Invoice Attacker** | Crafts malicious invoices, prompts, and spoofed bank details sent via email | • Deterministic Policy Firewall checks supplier registry and cooldowns.<br>• Non-whitelisted addresses are strictly rejected (`POL_RECIPIENT_NOT_ALLOWED`). | Zero funds transferred. Proposal diverted to human T2 review or rejected. |
-| **Compromised Registered Supplier** | Compromised legitimate vendor issues overbilling or duplicate invoices | • On-chain invoice key tracking prevents duplicate payment (`INV-5`).<br>• Three-way PO matching catches quantity discrepancies.<br>• Sized $T_1$ caps limit exposure; BondPool covers remaining loss. | Limited to within-envelope loss $\le T_1^{\text{maxPerTx}}$, fully backed by underwriter bond. |
-| **Fully Compromised Agent Key** | Attacker extracts agent signing key or executes arbitrary malicious calldata | • Vault entry point restriction: agent key can ONLY call `pay` and `requestPayment`.<br>• Cannot pay unapproved recipients (`INV-1`, `INV-4`).<br>• Cannot exceed $T_1$ window caps (`INV-2`).<br>• Unreconciled exposure cannot exceed available bond (`INV-10`). | Compromised agent can ONLY pay registered vendors up to remaining bond, after which vault reverts. |
-| **Compromised Examiner** | Examiner issues overly generous attestations or shops for lucky exam runs | • Examiner cannot activate qualifications; requires owner on-chain activation (`INV-9`).<br>• Pre-commitment: examiner must call `commitExam(configHash, corpusHash)` before exam.<br>• Attestation must reference the LATEST commit (`INV-13`).<br>• Examiner must post capital in BondPool backing the envelope. | Sized authority is capped by owner ceilings and requires real capital commitment. |
-| **Malicious / Compromised Adjudicator** | Adjudicator approves false claims or colludes with vault owner | • Claim evidence hash recorded on-chain.<br>• Payout is strictly capped by approved loss, deductible, and remaining locked bond (`INV-11`).<br>• Payout transfers ONLY to the vault (never to an arbitrary external address). | Malicious approval transfers underwriter bond to owner vault (disclosed trust assumption). |
-| **Owner Key Compromise** | Attacker gains access to vault owner private key | • Out of scope: owner possesses root authority over treasury vault. | Total loss of vault assets (standard self-custody risk). |
+In scope:
 
----
+- `UnderwriteVault.sol` and `BondPool.sol`;
+- qualification, attestation, tier selection and compiler outputs;
+- registry and policy boundary;
+- invoice identity, delayed execution, veto, pause/revoke, exposure and claim consequence;
+- evidence recording and competition UI representation.
 
-## 2. Invariant Verification Matrix (INV-1 through INV-14)
+Out of scope:
 
-Every security invariant defined in `plan.md` §9.8 is enforced by smart contracts and verified by automated Foundry test suites (including stateful property-based invariant testing and fuzzing):
+- security of browser wallets, operating systems, RPC providers and proprietary model providers;
+- economic soundness under production capital scale;
+- jurisdiction-specific licensing or compliance conclusions;
+- independent audit of deployed bytecode.
 
-| Invariant | Formal Statement | Foundry Test Enforcement |
+## Security objectives
+
+1. Compromise of model output must not create arbitrary transaction authority.
+2. Compromise of the agent key must remain bounded by contract policy.
+3. Authority must be tied to an exact evaluated configuration and require separate consent.
+4. Payment execution must be traceable through successful receipts and matching decoded events.
+5. Residual autonomous exposure must be explicitly capacity-constrained.
+6. Simulated, scripted, controlled and public-chain evidence must never be conflated.
+
+## Assets and roles
+
+| Asset | Primary risk | Enforcing control |
 |---|---|---|
-| **INV-1** | Agent keys can move tokens ONLY through `pay()` and `requestPayment()` $\to$ `executePending()`. No direct transfer, approval, or arbitrary execution tools exist. | • `contracts/test/invariant/Vault.Invariant.t.sol::invariant_INV1_agent_key_moves_tokens_only_through_allowed_paths`<br>• `contracts/test/Vault.Skeleton.t.sol::test_unauthorized_direct_calls` |
-| **INV-2** | For every qualification and 24h window: $\sum T_1 \text{ payments} \le \text{effective } t1MaxPerWindow$. | • `contracts/test/invariant/Vault.Invariant.t.sol::invariant_INV2_window_cap_never_exceeded`<br>• `contracts/test/Vault.Fuzz.t.sol::testFuzz_window_cap_enforcement`<br>• `contracts/test/Vault.Pay.t.sol::test_pay_revert_exceeds_window` |
-| **INV-3** | Every $T_1$ payment $\le \text{effective } t1MaxPerTx$; every $T_2$ request $\le t2MaxPerTx$. | • `contracts/test/Vault.Pay.t.sol::test_pay_revert_exceeds_t1_per_tx`<br>• `contracts/test/Vault.T2.t.sol::test_revert_request_exceeds_t2_per_tx` |
-| **INV-4** | $T_1$ recipients must be active and past mandatory `activatesAt` cooldown (300s); $T_2$ recipients must be active. | • `contracts/test/Vault.Pay.t.sol::test_pay_revert_cooling_down`<br>• `contracts/test/Vault.Pay.t.sol::test_pay_revert_recipient_not_allowed`<br>• `contracts/test/Vault.T2.t.sol::test_revert_execute_after_deactivate_recipient` |
-| **INV-5** | Each `invoiceKey` reaches status `PAID` at most once; status `RESERVED` blocks concurrent duplicate execution. | • `contracts/test/invariant/Vault.Invariant.t.sol::invariant_INV5_invoices_reach_paid_at_most_once`<br>• `contracts/test/Vault.Pay.t.sol::test_pay_revert_duplicate_invoice`<br>• `contracts/test/Vault.T2.t.sol::test_veto_by_owner_releases_invoiceKey` |
-| **INV-6** | Vault token balance after any agent payment must remain $\ge reserveFloor$. | • `contracts/test/Vault.Pay.t.sol::test_pay_revert_reserve_floor_breached`<br>• `contracts/test/Vault.T2.t.sol::test_revert_execute_reserve_breached` |
-| **INV-7** | Zero agent payments permitted while contract is paused, or with an expired, revoked, inactive, or missing qualification. | • `contracts/test/Vault.Pay.t.sol::test_pay_revert_paused`<br>• `contracts/test/Vault.Pay.t.sol::test_pay_revert_expired`<br>• `contracts/test/Vault.Pay.t.sol::test_pay_revert_revoked`<br>• `contracts/test/Vault.T2.t.sol::test_revert_paused` |
-| **INV-8** | $T_2$ transactions execute only after `readyAt` delay, only if not vetoed by owner or guardian, with all permissions re-verified at execution time. | • `contracts/test/Vault.T2.t.sol::test_happy_path_t2_lifecycle`<br>• `contracts/test/Vault.T2.t.sol::test_veto_by_owner_releases_invoiceKey`<br>• `contracts/test/Vault.T2.t.sol::test_veto_by_guardian` |
-| **INV-9** | Qualification activation requires valid examiner EIP-712 signature AND owner transaction; revocation executable by owner, examiner, BondPool, or expiry. | • `contracts/test/Vault.Qualification.t.sol::test_happy_path_activation`<br>• `contracts/test/Vault.Qualification.t.sol::test_revoke_by_owner`<br>• `contracts/test/Vault.Qualification.t.sol::test_revoke_by_examiner` |
-| **INV-10** | For every qualification at all times: $\text{unreconciled } T_1 \text{ exposure} \le bondPool.remaining(qualId)$. Unreviewed payments are strictly collateralized. | • `contracts/test/invariant/Vault.Invariant.t.sol::invariant_INV10_exposure_bounded_by_bond_remaining`<br>• `contracts/test/integration/VaultBondPool.Integration.t.sol::test_exposure_tracking_and_bond_exhaustion` |
-| **INV-11** | $\sum \text{payouts for a qual} \le \text{locked amount}$; at most one payout per `paymentId`; all payouts transfer strictly to the vault. | • `contracts/test/invariant/Vault.Invariant.t.sol::invariant_INV11_payout_bounds_and_single_payout`<br>• `contracts/test/BondPool.Fuzz.t.sol::testFuzz_payout_bounds_and_single_payout`<br>• `contracts/test/BondPool.t.sol::test_approveClaim_pays_and_revokes_in_one_tx_with_both_events` |
-| **INV-12** | EIP-712 qualification attestations are domain-bound (`chainId`, `vaultAddress`) and single-use. | • `contracts/test/Vault.Qualification.t.sol::test_revert_replay_attestation`<br>• `contracts/test/Vault.Qualification.t.sol::test_revert_wrong_vault_in_attestation`<br>• `contracts/test/Vault.Qualification.t.sol::test_revert_wrong_chain_in_attestation` |
-| **INV-13** | Attestations are accepted only if referencing the latest `commitExam` on-chain for that `configHash` with matching `corpusHash`. | • `contracts/test/Vault.Qualification.t.sol::test_revert_stale_exam_commit`<br>• `contracts/test/Vault.Qualification.t.sol::test_commit_exam_and_activation_binds` |
-| **INV-14** | Reconciled payments cannot be claimed; each payment is paid out at most once. | • `contracts/test/invariant/Vault.Invariant.t.sol::invariant_INV14_reconciled_payments_unclaimable`<br>• `contracts/test/BondPool.t.sol::test_claim_on_reconciled_payment_rejected`<br>• `contracts/test/BondPool.Claims.t.sol::test_claim_reconciled_reverts` |
+| Vault tokens | unauthorized or excessive transfer | registry, qualification, amount/window, invoice and role checks |
+| Qualification | stale, forged or over-broad authority | hash binding, EIP-712 examiner signature, owner activation, expiry/revoke |
+| Invoice identity | replay or duplicate settlement | unique invoice key reservation and settlement state |
+| Bond capacity | overcommitted autonomous exposure | exposure accounting against remaining backing |
+| Evidence record | false execution claim | receipt status + decoded event + stored digest |
+| Role keys | unilateral misuse or theft | separation of duties, pause/revoke paths; multisig/HSM remains a production gate |
 
----
+Roles are owner, agent, examiner, guardian, adjudicator and registered supplier. Each is treated as potentially mistaken or compromised within the limits documented below.
 
-## 3. Known Risks & Disclosures (KR-1 through KR-6)
+## Trust boundaries
 
-In compliance with hackathon security standards and honest disclosure rules:
+- **Untrusted:** document content, model output, network content and agent intent.
+- **Deterministic application boundary:** registry lookup, schema validation, compiler and policy checks.
+- **Authorized signer boundary:** examiner attestation, owner activation, guardian/owner veto and emergency actions.
+- **On-chain boundary:** custody, state transitions, accounting, event emission and enforcement.
 
-### KR-1: Owner Key Custody in Demo
-- **Risk:** In the local demo runner (`scripts/demo-local.sh`), the owner private key resides unencrypted in memory and environment files.
-- **Mitigation:** Production deployment requires smart contract account abstraction (ERC-4337 / Safe multi-sig) or hardware security modules (HSM) for owner transactions.
+The model has no tool that accepts a raw address, token, calldata or limit. That restriction reduces capability at the first boundary; the contract independently rechecks constraints at the final boundary.
 
-### KR-2: Agent Private Keys on Local Disk
-- **Risk:** Agent keys generated by `uw keys new` are saved in `.keys/` on the local file system.
-- **Mitigation:** Protected by `.gitignore` to prevent secret leakage. For enterprise use, agent keys should reside inside a secure enclave or cloud KMS.
+## Threat analysis
 
-### KR-3: Adjudicator Trust & Collusion Vector
-- **Risk:** In the current release, claims are approved by a designated adjudicator key. If an adjudicator colludes with the vault owner, they could approve frivolous claims to transfer underwriter collateral into the vault.
-- **Mitigation:** Documented as an explicit trust assumption. Production implementations should replace the single adjudicator key with an optimistic dispute oracle (e.g., UMA / Kleros) or an independent arbitration panel.
+| Threat | Attempted consequence | Implemented response | Residual risk |
+|---|---|---|---|
+| Prompt injection in invoice | redirect or inflate payment | typed proposal, deterministic registry/policy, contract recipient/amount checks | semantically plausible registered-supplier fraud can remain Class II |
+| Hallucinated vendor or amount | wrong business payment | ID resolution, PO/policy checks, limits and review routing | source data itself may be wrong |
+| Compromised agent key | direct malicious contract calls | caller, qualification, recipient, invoice, limit, window and exposure checks | allowed-envelope abuse remains possible |
+| Duplicate/replay | pay one obligation twice | invoice-key state and signature/domain separation | faulty upstream identity normalization can cause collisions or misses |
+| Stale qualification | use evidence for changed configuration | config/corpus/report binding and latest-commit checks | proprietary provider internals are not attested |
+| Premature Tier-2 execution | bypass human challenge | `readyAt`, veto state and execution-time revalidation | compromised owner/guardian operations |
+| Bond overcommitment | create unbacked T1 exposure | free-bond and exposure accounting | market/liquidity/legal enforceability outside prototype |
+| False claim approval | transfer bond improperly | payout caps, evidence hash, fixed vault destination | adjudicator is a central trust assumption |
+| UI/evidence misrepresentation | claim a simulated result as real | explicit labels, manifest, receipt/event requirement | documentation process remains human-operated |
 
-### KR-4: Remote LLM Configuration Drift Limits
-- **Risk:** The runtime validates local prompt bytes, tool schema hashes, and provider-reported model strings. However, it cannot cryptographically guarantee provider-side neural network weights or unannounced model updates by proprietary LLM providers.
-- **Mitigation:** The system halts with `CONFIG_DRIFT` if local hashes or model tags change. Formal proof of inference requires TEE remote attestation, which is designated for future research.
+## Fourteen safety invariants
 
-### KR-5: Lack of Commercial External Audit
-- **Risk:** Smart contracts have not yet been audited by an independent third-party blockchain security firm.
-- **Mitigation:** Mitigated by 101 Foundry tests, 25,600 automated stateful invariant calls, and strict compiler gate checks. Commercial mainnet deployment must follow an external security audit.
+| ID | Property |
+|---|---|
+| INV1 | Agent-controlled flows are restricted to defined payment paths; there is no arbitrary execution interface. |
+| INV2 | Contract limits dominate model or application suggestions. |
+| INV3 | A payment requires a registered recipient and supported token path. |
+| INV4 | Qualification activation requires examiner attestation and owner consent. |
+| INV5 | Invoice identity cannot be settled twice. |
+| INV6 | Integer base-unit accounting is preserved; no floating-point money enters settlement. |
+| INV7 | Paused, revoked, expired or otherwise invalid authority cannot execute. |
+| INV8 | Tier-2 execution waits until `readyAt`, remains vetoable, and is revalidated at execution. |
+| INV9 | Qualification signatures are domain-separated and bound to the intended vault/configuration. |
+| INV10 | Unreconciled Tier-1 exposure cannot exceed available bond capacity. |
+| INV11 | Approved claim consequence pays only under bounded rules and suspends the affected qualification atomically. |
+| INV12 | Window and per-transaction ceilings cannot be bypassed by call sequencing. |
+| INV13 | Activation binds to the latest compatible exam commitment and corpus identity. |
+| INV14 | A payment is recorded as executed only after success receipt plus matching decoded `PaymentExecuted`. |
 
-### KR-6: In-Distribution Statistical Limits
-- **Risk:** Clopper-Pearson bounds provide mathematical confidence guarantees over the scenario distribution sampled by the exam. They cannot mathematically guarantee safety against completely novel zero-day attack methodologies.
-- **Mitigation:** Demonstrated empirically in our calibration experiment (Hypothesis H4), proving why smart contract ceilings (INV-2) and collateralized bond backing (INV-10) are essential complements to empirical AI evaluation.
+Exact test mappings and control references are presented in the designed security PDF. Test names retain `INV<n>_` identifiers so the assurance claim is traceable in the repository.
+
+## Observed verification
+
+The following commands were rerun on 19 October 2026:
+
+| Command | Observed result |
+|---|---|
+| `cd contracts && forge test` | 101 passed · 17 suites · 0 failed |
+| Stateful invariant campaign | 256 runs · 25,600 calls · 0 handler reverts |
+| `pnpm --filter engine test` | 159 passed · 26 files · 0 failed |
+| `pnpm --filter engine typecheck` | passed |
+
+Passing tests increase confidence in the tested behaviors; they do not establish absence of vulnerabilities.
+
+## Public-chain execution rule
+
+The competition evidence includes a Tier-2 payment only because both conditions are satisfied:
+
+1. Base Sepolia receipt status is successful; and
+2. the receipt contains a matching decoded `PaymentExecuted` event.
+
+Execution hash:
+
+`0xf19d5e201545fbe71c83c0dbd62af34a398a0414979bdaccd30fe2de827ad712`
+
+The call decodes to `executePending(2)`. The event reports `paymentId=1`; those identifiers belong to separate namespaces. Recipient, amount and invoice identity match the prior request. See `ONCHAIN_EVIDENCE.pdf` and `../evidence/onchain/EVIDENCE_MANIFEST.json`.
+
+## Residual-risk register
+
+| Risk | Current disposition | Production requirement |
+|---|---|---|
+| No independent audit | accepted for competition prototype | independent contract and application audits |
+| Central role keys | disclosed trust assumption | multisig/HSM, key ceremony, rotation and recovery |
+| Self-authored evaluation | results labeled non-independent | external corpus and independent red-team replication |
+| Model-provider opacity | local hashes cannot attest remote weights | provider assurance or TEE/attested inference where justified |
+| Adjudicator discretion | bounded but centralized | dispute policy, multisig/panel or appropriate oracle design |
+| Testnet asset/deployment | no production economic assurance | staged deployment, monitoring and incident drills |
+| Regulatory uncertainty | no compliance conclusion | jurisdiction-specific legal, AML/sanctions and data review |
+
+## Release recommendation
+
+**Competition demonstration:** suitable with explicit controlled/testnet labels and the documented trust assumptions.
+**Production funds:** not approved. Complete the listed production gates before any real-customer or mainnet deployment.

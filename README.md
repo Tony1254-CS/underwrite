@@ -21,6 +21,20 @@ An autonomous accounts-payable agent wallet for a small business that pays regis
 
 ---
 
+## Competition submission package
+
+| Artifact | Final file |
+|---|---|
+| 13-slide pitch deck | [`docs/deck/UNDERWRITE_PITCH_DECK.pdf`](docs/deck/UNDERWRITE_PITCH_DECK.pdf) |
+| Technical dossier | [`docs/UNDERWRITE_TECHNICAL_DOSSIER.pdf`](docs/UNDERWRITE_TECHNICAL_DOSSIER.pdf) |
+| Security self-assessment | [`docs/UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf`](docs/UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf) |
+| Real on-chain evidence | [`docs/ONCHAIN_EVIDENCE.pdf`](docs/ONCHAIN_EVIDENCE.pdf) |
+| Submission master | [`docs/competition/SUBMISSION_DRAFT.md`](docs/competition/SUBMISSION_DRAFT.md) |
+
+All embedded product screenshots use light mode. Controlled, simulated and public-testnet evidence are labeled separately. Artifact SHA-256 digests are in `docs/competition/ARTIFACT_MANIFEST.json`.
+
+---
+
 ## 2. 2-Minute Quickstart (Zero Keys Required, Fully Offline)
 
 The entire project runs locally on an Anvil Ethereum node without network access or third-party API keys:
@@ -30,10 +44,10 @@ The entire project runs locally on an Anvil Ethereum node without network access
 pnpm install
 
 # 2. Run the full contract test suite (101 tests across 17 suites)
-forge test
+cd contracts && forge test && cd ..
 
-# 3. Run the engine verification suite (157 unit tests)
-pnpm -r test
+# 3. Run the engine verification suite (159 tests across 26 files)
+pnpm --filter engine test
 
 # 4. Launch the local demo (Anvil node + contract deployments + Next.js UI)
 pnpm demo:local
@@ -83,7 +97,7 @@ UNDERWRITE splits safety across four independent enforcement layers:
 
 ## 4. Pre-Registered Calibration Experiment Results
 
-We evaluated 3 agent architectures across 3 control regimes on an independent 330-invoice deployment stream (300 Generator B invoices across 10 non-overlapping 24h windows + 30 isolated Blind Red-Team invoices, 80% benign / 20% adversarial):
+We evaluated 3 agent architectures across 3 control regimes on a controlled, non-independent 330-invoice stream per condition (300 Generator B invoices across 10 non-overlapping 24h windows + 30 isolated Blind Red-Team invoices, 80% benign / 20% adversarial). Generator B and the blind set were self-authored under the pre-registered fallback in DEC-023:
 
 | Agent | Regime | Invoices | $T_1$ Automation Rate | Class I Breaches | Class II Loss (USDC) | Bond Reimbursement | Net Vault Loss (USDC) | Review Burden |
 |---|---|---|---|---|---|---|---|---|
@@ -103,7 +117,7 @@ We evaluated 3 agent architectures across 3 control regimes on an independent 33
 2. **H2 (Calibration — Confirmed):** Realized error rates on Generator B stream remained bounded below Clopper-Pearson 95% upper bounds ($p_\gamma = 0.0582, p_\beta = 0.1743$).
 3. **H3 (Discrimination — Confirmed):** Exam competence rankings matched unmitigated loss prevention capability in $R_0$ (Gamma loss \$170 vs Beta loss \$6,010 vs Alpha loss \$28,000).
 4. **H4 (Distribution Shift Limit — Documented):** On the isolated Blind Red-Team set, an unseen freight discrepancy leaked past Gamma under $R_2$ (\$170.00), demonstrating that in-distribution exam bounds cannot guarantee 100% defense against out-of-distribution threats.
-5. **Mechanism Check (Passed):** Under $R_2$, the \$170.00 loss was claimed by the owner, approved by the adjudicator, and reimbursed \$165.00 by `BondPool.sol`, leaving only the \$5.00 owner deductible.
+5. **Controlled Mechanism Check (Passed):** In the scripted $R_2$ experiment, the \$170.00 synthetic MockUSDC loss was claimed by the owner, approved by the adjudicator, and reimbursed \$165.00 by `BondPool.sol`, leaving a \$5.00 deductible. This is not a public-chain or production-loss claim.
 
 ---
 

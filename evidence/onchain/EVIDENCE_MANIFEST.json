@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "generatedFor": "2026 Shenzhen International FinTechathon — International Track, Topic F",
+  "network": {
+    "name": "Base Sepolia",
+    "chainId": 84532,
+    "classification": "public testnet"
+  },
+  "contracts": {
+    "mockUSDC": "0x2e71d44170F788E892b4283c0a179bae8B8936F3",
+    "bondPool": "0xB97Be73323731209e183Bc02a0F5d23e36Cc5902",
+    "vault": "0x8a1B3BCA25B47A0f375a649b12494a1E011eD1B0"
+  },
+  "qualification": {
+    "qualId": "0x303f1ad2e95898e7d07cad084339da1d84a6455c19e7d5db86b679680e1bb4a2",
+    "t1MaxPerTxBaseUnits": "0",
+    "t2MaxPerTxBaseUnits": "2000000000"
+  },
+  "transactions": [
+    {
+      "sequence": 1,
+      "action": "commitExam",
+      "hash": "0x3fd70ecf8a582df153abf99eaf900c2dad569cb3c813617329155640b6b7f58f",
+      "blockNumber": 48315456,
+      "receiptStatus": 1,
+      "matchedEvent": "ExamCommitted",
+      "receiptFile": "receipts/real-01-exam-committed.json",
+      "receiptSha256": "4c4f9889339a0149ccbdcdcfd01f4e887991d5c5e53f266b96c3a24ea98263dc"
+    },
+    {
+      "sequence": 2,
+      "action": "activateQualification",
+      "hash": "0x9e3bef8566dd60885a2b63c39a2c96f8d05879a101bf24ef3963267b1eef9d8c",
+      "blockNumber": 48315457,
+      "receiptStatus": 1,
+      "matchedEvent": "QualificationActivated",
+      "receiptFile": "receipts/real-02-qualification-activated.json",
+      "receiptSha256": "6366405ef548afb2c1d25cff034ccb7c0ec4fc5d3db8f50ef4ab771a4cd7e535"
+    },
+    {
+      "sequence": 3,
+      "action": "requestPayment",
+      "hash": "0x20a245ff8141a3be094dce092db2da67583f529b1eae713b0898bb0a1b3594f6",
+      "blockNumber": 48315458,
+      "receiptStatus": 1,
+      "matchedEvent": "PaymentRequested",
+      "pendingRequestId": "2",
+      "amountBaseUnits": "35000000",
+      "receiptFile": "receipts/real-03-payment-requested.json",
+      "receiptSha256": "a3471ae8c2a766bb1bb3e1c2cb0174c8e96e019fb83f43b603aab9d171b7224d"
+    },
+    {
+      "sequence": 4,
+      "action": "executePending",
+      "decodedInput": "executePending(2)",
+      "hash": "0xf19d5e201545fbe71c83c0dbd62af34a398a0414979bdaccd30fe2de827ad712",
+      "blockNumber": 48315611,
+      "receiptStatus": 1,
+      "matchedEvent": "PaymentExecuted",
+      "paymentId": "1",
+      "tier": 2,
+      "amountBaseUnits": "35000000",
+      "receiptFile": "receipts/real-04-payment-executed.json",
+      "receiptSha256": "b2a0533d318a2d174884511de5e2970f25516a3dfa98a9ff6bf41f9a7eb4acc0"
+    }
+  ],
+  "continuityNote": "pending request id 2 and emitted paymentId 1 are separate contract namespaces; the execution transaction input decodes to executePending(2), and the request/execution recipient, amount and invoice identity match.",
+  "limitations": [
+    "Public testnet evidence, not mainnet or production activity.",
+    "Addresses and token are controlled demonstration infrastructure.",
+    "No Tier-1 public-chain payment is claimed."
+  ]
+}
