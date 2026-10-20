@@ -329,6 +329,6 @@ In accordance with strict research integrity standards:
 ---
 
 <div align="center">
-<b>UNDERWRITE — Authority, Earned.</b><br>
-<sub>2026 Shenzhen International FinTech Competition · Topic F: Agent Wallet</sub>
+<b>UNDERWRITE — Authority, Earned.</b>
 </div>
+

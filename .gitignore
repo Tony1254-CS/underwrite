@@ -36,3 +36,17 @@ artifacts/video/
 docs/
 video/
 scripts/
+
+# Internal agent and project management files
+AGENTS.md
+AGENT_PROMPT.md
+CHANGELOG.md
+CLAUDE.md
+DECISIONS.md
+GEMINI.md
+HUMAN_TASKS.md
+PHASES.md
+STATUS.md
+TESTING.md
+plan.md
+
