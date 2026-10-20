@@ -32,3 +32,7 @@ Thumbs.db
 # Submission staging & internal planning
 submission/
 ui-redesign.md
+artifacts/video/
+docs/
+video/
+scripts/
