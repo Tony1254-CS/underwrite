@@ -21,7 +21,7 @@
 ---
 
 <p align="center">
-  <img src="docs/professional/assets/screens-light/home.png" alt="UNDERWRITE Hero Landing" width="940"/>
+  <img src="assets/home.png" alt="UNDERWRITE Hero Landing" width="940"/>
 </p>
 <p align="center"><em>"Your AI clerk starts at $0. Spending limits are earned through empirical adversarial exams, bounded by on-chain smart contracts, and backed by a collateralized BondPool."</em></p>
 
@@ -92,7 +92,7 @@ All screens are captured in high-contrast **Light Mode** according to official c
 
 ### A. The Authority Meter & Governance Desks
 <p align="center">
-  <img src="docs/professional/assets/screens-light/dashboard.png" alt="UNDERWRITE Authority Meter & Dashboard" width="920"/>
+  <img src="assets/dashboard.png" alt="UNDERWRITE Authority Meter & Dashboard" width="920"/>
 </p>
 
 * **Real-Time Authority Meter:** Continuously displays the daily spending envelope earned by the agent ($180.00/day for Gamma), current window consumption ($42.50 spent), and active unreviewed exposure.
@@ -102,7 +102,7 @@ All screens are captured in high-contrast **Light Mode** according to official c
 
 ### B. Adversarial Exam & Clopper-Pearson Compiler
 <p align="center">
-  <img src="docs/professional/assets/screens-light/exam.png" alt="Adversarial Exam & Policy Cards" width="920"/>
+  <img src="assets/exam.png" alt="Adversarial Exam & Policy Cards" width="920"/>
 </p>
 
 * **Three Agents, One Exam:** Evaluates three agent archetypes on a fixed 390-scenario stream (120 benign, 60 out-of-bounds, 210 wrong-but-permitted):
@@ -115,7 +115,7 @@ All screens are captured in high-contrast **Light Mode** according to official c
 
 ### C. Attack Lab (Compromised Key Simulator)
 <p align="center">
-  <img src="docs/professional/assets/screens-light/attack.png" alt="Attack Lab Simulator" width="920"/>
+  <img src="assets/attack.png" alt="Attack Lab Simulator" width="920"/>
 </p>
 
 * **Stolen-Key Simulation:** Demonstrates that even if an attacker extracts the agent's private key and bypasses the policy middleware entirely, the underlying EVM smart contracts independently reject:
@@ -127,7 +127,7 @@ All screens are captured in high-contrast **Light Mode** according to official c
 
 ### D. Deterministic Cryptographic Evidence Verification
 <p align="center">
-  <img src="docs/professional/assets/screens-light/evidence.png" alt="Real-Time Evidence Verifier" width="920"/>
+  <img src="assets/evidence.png" alt="Real-Time Evidence Verifier" width="920"/>
 </p>
 
 * **Five Cryptographic Parity Checks:** The UI and CLI independently recompute and verify:
@@ -142,7 +142,7 @@ All screens are captured in high-contrast **Light Mode** according to official c
 
 ### E. Empirical Benchmark & Loss Reduction
 <p align="center">
-  <img src="docs/professional/assets/screens-light/experiment.png" alt="Empirical Benchmark & Loss Reduction" width="920"/>
+  <img src="assets/experiment.png" alt="Empirical Benchmark & Loss Reduction" width="920"/>
 </p>
 
 * **Scientific 3×3 Matrix:** 2,970 executions across 3 agent architectures and 3 control regimes.
