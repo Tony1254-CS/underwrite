@@ -13,6 +13,7 @@
 [![Contract Tests](https://img.shields.io/badge/Foundry_Tests-101%2F101_Passing-success.svg?style=flat-square)](contracts/)
 [![Engine Tests](https://img.shields.io/badge/Vitest-159%2F159_Passing-success.svg?style=flat-square)](engine/)
 [![Invariants](https://img.shields.io/badge/Invariant_Fuzz-25%2C600_Calls-success.svg?style=flat-square)](contracts/test/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Online_Prototype-00C781.svg?style=flat-square&logo=vercel)](https://underwrite.165.99.219.253.sslip.io)
 [![Theme](https://img.shields.io/badge/UI-Light_Mode_Verified-d3ff2f.svg?style=flat-square&labelColor=11110f)](web/)
 
 </div>
@@ -23,6 +24,9 @@
   <img src="docs/professional/assets/screens-light/home.png" alt="UNDERWRITE Hero Landing" width="940"/>
 </p>
 <p align="center"><em>"Your AI clerk starts at $0. Spending limits are earned through empirical adversarial exams, bounded by on-chain smart contracts, and backed by a collateralized BondPool."</em></p>
+
+> 🌐 **Live Interactive Application:** [https://underwrite.165.99.219.253.sslip.io](https://underwrite.165.99.219.253.sslip.io)  
+> *Zero-installation working prototype running on Base Sepolia and local Anvil with real-time Authority Meter, Attack Lab simulator, and on-chain verification.*
 
 ---
 
@@ -270,16 +274,16 @@ We evaluated 3 agent architectures across 3 control regimes on a controlled stre
 
 ## 8. Competition Submission Package
 
-The official competition package for FinTechathon 2026 is maintained in the [`submission/`](submission/) directory:
+The official competition package for FinTechathon 2026 is maintained in the [`docs/`](docs/) and [`artifacts/`](artifacts/) directories:
 
 | Artifact | File Path | Format & Scope |
 |---|---|---|
-| **Pitch Deck** | [`submission/02_UNDERWRITE_Pitch_Deck.pdf`](submission/02_UNDERWRITE_Pitch_Deck.pdf) | 13-slide executive presentation (<10 min presentation) |
-| **Technical Dossier** | [`submission/03_UNDERWRITE_Technical_Dossier.pdf`](submission/03_UNDERWRITE_Technical_Dossier.pdf) | 48-page system specification & mathematical formulation |
-| **Security Self-Assessment** | [`submission/04_UNDERWRITE_Security_Self_Assessment.pdf`](submission/04_UNDERWRITE_Security_Self_Assessment.pdf) | Threat matrix, 14 invariant proofs, and residual risk catalog |
-| **On-Chain Evidence Dossier** | [`submission/05_UNDERWRITE_Onchain_Evidence.pdf`](submission/05_UNDERWRITE_Onchain_Evidence.pdf) | Four real Base Sepolia transaction receipts with QR links |
+| **Pitch Deck** | [`docs/deck/UNDERWRITE_PITCH_DECK.pdf`](docs/deck/UNDERWRITE_PITCH_DECK.pdf) | 13-slide executive presentation (<10 min presentation) |
+| **Technical Dossier** | [`docs/UNDERWRITE_TECHNICAL_DOSSIER.pdf`](docs/UNDERWRITE_TECHNICAL_DOSSIER.pdf) | 48-page system specification & mathematical formulation |
+| **Security Self-Assessment** | [`docs/UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf`](docs/UNDERWRITE_SECURITY_SELF_ASSESSMENT.pdf) | Threat matrix, 14 invariant proofs, and residual risk catalog |
+| **On-Chain Evidence Dossier** | [`docs/ONCHAIN_EVIDENCE.pdf`](docs/ONCHAIN_EVIDENCE.pdf) | Four real Base Sepolia transaction receipts with QR links |
 | **Demonstration Film** | [`artifacts/video/UNDERWRITE_PRODUCT_FILM_NO_SUBTITLES.mp4`](artifacts/video/UNDERWRITE_PRODUCT_FILM_NO_SUBTITLES.mp4) | 4:40 full product film (1080p, Light Mode, Ava Voiceover) |
-| **Artifact Manifest** | [`submission/06_Artifact_Manifest.json`](submission/06_Artifact_Manifest.json) | Cryptographic SHA-256 integrity manifest for all dossiers |
+| **Artifact Manifest** | [`docs/competition/ARTIFACT_MANIFEST.json`](docs/competition/ARTIFACT_MANIFEST.json) | Cryptographic SHA-256 integrity manifest for all dossiers |
 
 ---
 
@@ -308,7 +312,6 @@ The official competition package for FinTechathon 2026 is maintained in the [`su
 ├── docs/                    # Competition dossiers and technical documentation
 │   ├── professional/assets/    # Light-mode screenshot assets and QR codes
 │   └── deck/                   # 13-slide pitch deck (PDF & PPTX)
-├── submission/              # Final competition deliverables & email draft
 └── artifacts/video/         # Master product demonstration film & captures
 ```
 

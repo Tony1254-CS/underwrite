@@ -28,3 +28,7 @@ contracts/broadcast/
 # OS artifacts
 .DS_Store
 Thumbs.db
+
+# Submission staging & internal planning
+submission/
+ui-redesign.md
